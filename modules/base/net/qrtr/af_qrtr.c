@@ -23,6 +23,7 @@
 #include <uapi/linux/sched/types.h>
 
 #include "qrtr.h"
+#include "imsdcm.h"
 
 #define QRTR_LOG_PAGE_CNT 4
 #define QRTR_INFO(ctx, x, ...)				\
@@ -320,7 +321,8 @@ static void qrtr_print_skb_failure_reason(size_t skb_len, const void *data)
 	int service_id;
 	size_t hdrlen;
 
-	qrtr_parse_header(&cb, &hdrlen, &size, data);
+	if (qrtr_parse_header(&cb, &hdrlen, &size, data, skb_len))
+		return;
 
 	service_id = qrtr_get_service_id(cb.src_node, cb.src_port);
 	if (service_id < 0)
@@ -913,6 +915,31 @@ static void qrtr_node_assign(struct qrtr_node *node, unsigned int nid)
 	spin_unlock_irqrestore(&qrtr_nodes_lock, flags);
 }
 
+#if IS_ENABLED(CONFIG_QRTR_IMSDCM_OWNERSHIP)
+/* A packet for the DCM port must come from the endpoint that owns its source node */
+static bool qrtr_imsdcm_src_foreign(struct qrtr_node *node, u32 src_node,
+				    u32 dst_node, u32 dst_port)
+{
+	struct qrtr_node *owner;
+	unsigned long flags;
+
+	if (dst_node != qrtr_local_nid || dst_port != QRTR_IMSDCM_PORT)
+		return false;
+
+	spin_lock_irqsave(&qrtr_nodes_lock, flags);
+	owner = radix_tree_lookup(&qrtr_nodes, src_node);
+	spin_unlock_irqrestore(&qrtr_nodes_lock, flags);
+
+	return owner && owner != node;
+}
+#else
+static bool qrtr_imsdcm_src_foreign(struct qrtr_node *node, u32 src_node,
+				    u32 dst_node, u32 dst_port)
+{
+	return false;
+}
+#endif
+
 /**
  * qrtr_peek_pkt_size() - Peek into the packet header to get potential pkt size
  *
@@ -1097,6 +1124,10 @@ int qrtr_endpoint_post(struct qrtr_endpoint *ep, const void *data, size_t len)
 	if (!size || len != ALIGN(size, 4) + hdrlen)
 		goto err;
 
+	if (qrtr_imsdcm_ep_post_denied(qrtr_local_nid, cb->src_node, cb->src_port,
+				       cb->dst_port, cb->type, data + hdrlen, size))
+		goto err;
+
 	if ((cb->type == QRTR_TYPE_NEW_SERVER ||
 	     cb->type == QRTR_TYPE_RESUME_TX) &&
 	    size < sizeof(struct qrtr_ctrl_pkt))
@@ -1111,6 +1142,9 @@ int qrtr_endpoint_post(struct qrtr_endpoint *ep, const void *data, size_t len)
 	skb_store_bits(skb, 0, data + hdrlen, size);
 
 	qrtr_node_assign(node, cb->src_node);
+
+	if (qrtr_imsdcm_src_foreign(node, cb->src_node, cb->dst_node, cb->dst_port))
+		goto err;
 
 	if (cb->type == QRTR_TYPE_NEW_SERVER) {
 		/* Remote node endpoint can bridge other distant nodes */
@@ -1587,6 +1621,23 @@ static void qrtr_port_put(struct qrtr_sock *ipc)
 	sock_put(&ipc->sk);
 }
 
+#if IS_ENABLED(CONFIG_QRTR_IMSDCM_OWNERSHIP)
+bool qrtr_imsdcm_port_owned(u32 port)
+{
+	struct qrtr_sock *ipc;
+	bool owned;
+
+	if (port != QRTR_IMSDCM_PORT)
+		return false;
+	ipc = qrtr_port_lookup(port);
+	if (!ipc)
+		return false;
+	owned = __kuid_val(sk_uid(&ipc->sk)) == QRTR_IMSDCM_ANDROID_UID;
+	qrtr_port_put(ipc);
+	return owned;
+}
+#endif
+
 static void qrtr_send_del_client(struct qrtr_sock *ipc)
 {
 	struct qrtr_ctrl_pkt *pkt;
@@ -1668,7 +1719,7 @@ static int qrtr_port_assign(struct qrtr_sock *ipc, int *port)
 
 	if (!*port) {
 		rc = xa_alloc_cyclic(&qrtr_ports, port, ipc,
-				     QRTR_EPH_PORT_RANGE, &qrtr_ports_next,
+				     QRTR_IMSDCM_EPH_PORT_RANGE, &qrtr_ports_next,
 				     GFP_ATOMIC);
 	} else if (*port < QRTR_MIN_EPH_SOCKET &&
 		   !(capable(CAP_NET_ADMIN) ||
@@ -1719,6 +1770,9 @@ static int __qrtr_bind(struct socket *sock,
 	unsigned long flags;
 	int port;
 	int rc;
+
+	if (qrtr_imsdcm_bind_denied(sk, addr->sq_port, zapped, ipc->us.sq_port))
+		return -EPERM;
 
 	/* rebinding ok */
 	if (!zapped && addr->sq_port == ipc->us.sq_port)
@@ -1792,6 +1846,11 @@ static int qrtr_local_enqueue(struct qrtr_node *node, struct sk_buff *skb,
 	struct qrtr_cb *cb;
 	struct sock *sk = skb->sk;
 	int rc;
+
+	if (qrtr_imsdcm_enqueue_denied(sk, to->sq_port)) {
+		kfree_skb(skb);
+		return -EPERM;
+	}
 
 	ipc = qrtr_port_lookup(to->sq_port);
 	if (!ipc || &ipc->sk == skb->sk) { /* do not send to self */
@@ -2000,6 +2059,12 @@ static int qrtr_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
 		return -ENOTCONN;
 	}
 
+	rc = qrtr_imsdcm_send_check(sk, ipc->us.sq_port, addr->sq_port);
+	if (rc) {
+		release_sock(sk);
+		return rc;
+	}
+
 	node = NULL;
 	srv_node = NULL;
 	if (addr->sq_node == QRTR_NODE_BCAST) {
@@ -2048,11 +2113,16 @@ static int qrtr_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
 	}
 
 	type = le32_to_cpu(qrtr_type);
+	rc = qrtr_imsdcm_ctrl_send_check(sk, skb, addr->sq_port, type, len,
+					 ipc->us.sq_node, ipc->us.sq_port, &pkt);
+	if (rc) {
+		kfree_skb(skb);
+		goto out_node;
+	}
 	if (addr->sq_port == QRTR_PORT_CTRL && type == QRTR_TYPE_NEW_SERVER) {
 		ipc->state = QRTR_STATE_MULTI;
 
 		/* drop new server cmds that are not forwardable to dst node*/
-		skb_copy_bits(skb, 0, &pkt, sizeof(pkt));
 		srv_node = qrtr_node_lookup(pkt.server.node);
 		if (!qrtr_must_forward(srv_node, node, type)) {
 			rc = 0;
@@ -2116,6 +2186,8 @@ static int qrtr_recvmsg(struct socket *sock, struct msghdr *msg,
 	struct qrtr_cb *cb;
 	int copied, rc;
 
+	if (qrtr_imsdcm_sock_denied(sk, qrtr_sk(sk)->us.sq_port))
+		return -EPERM;
 
 	if (sock_flag(sk, SOCK_ZAPPED))
 		return -EADDRNOTAVAIL;
@@ -2126,6 +2198,10 @@ static int qrtr_recvmsg(struct socket *sock, struct msghdr *msg,
 
 	lock_sock(sk);
 	cb = (struct qrtr_cb *)skb->cb;
+	if (qrtr_imsdcm_sock_denied(sk, qrtr_sk(sk)->us.sq_port)) {
+		rc = -EPERM;
+		goto out;
+	}
 
 	copied = skb->len;
 	if (copied > size) {
@@ -2181,6 +2257,9 @@ static int qrtr_connect(struct socket *sock, struct sockaddr *saddr,
 
 	if (len < sizeof(*addr) || addr->sq_family != AF_QIPCRTR)
 		return -EINVAL;
+
+	if (qrtr_imsdcm_sock_denied(sk, ipc->us.sq_port))
+		return -EPERM;
 
 	lock_sock(sk);
 
@@ -2303,6 +2382,9 @@ static int qrtr_shutdown(struct socket *sock, int mode)
 		return -EINVAL;
 
 	sk = sock->sk;
+
+	if (qrtr_imsdcm_sock_denied(sk, qrtr_sk(sk)->us.sq_port))
+		return -EPERM;
 
 	lock_sock(sk);
 	if (mode) {

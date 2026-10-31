@@ -1563,6 +1563,8 @@ def register_modules(registry):
             "net/qrtr/af_qrtr.c",
             "net/qrtr/ns.c",
             "net/qrtr/qrtr.h",
+            "net/qrtr/imsdcm.c",
+            "net/qrtr/imsdcm.h",
         ],
         deps = [
             "kernel/trace/qcom_ipc_logging",

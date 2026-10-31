@@ -748,6 +748,8 @@ kernel/trace/ipc_logging_debug.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 kernel/t
 kernel/trace/ipc_logging_private.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 kernel/trace/ipc_logging.c
 kernel/workqueue_internal.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) kernel/workqueue_internal.h, kept identical (core-headers.json)
 net/qrtr/af_qrtr.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 net/qrtr/af_qrtr.c
+net/qrtr/imsdcm.c	DiamaneOS, new in this port
+net/qrtr/imsdcm.h	DiamaneOS, new in this port
 net/qrtr/ns.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 net/qrtr/ns.c
 net/qrtr/qrtr.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 net/qrtr/af_qrtr.c
 net/qrtr/smd.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 net/qrtr/smd.c
