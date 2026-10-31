@@ -90,6 +90,7 @@ struct qrtr_node {
 	unsigned int id;
 	struct xarray servers;
 	u32 server_count;
+	struct rcu_head rcu;
 };
 
 static struct qrtr_node *node_get(unsigned int node_id)
@@ -130,19 +131,25 @@ int qrtr_get_service_id(unsigned int node_id, unsigned int port_id)
 	unsigned long index;
 	unsigned int svc_id;
 
+	/* A BYE frees the node: RCU keeps it valid while it is read here */
+	rcu_read_lock();
 	node = xa_load(&nodes, node_id);
-	if (!node)
+	if (!node) {
+		rcu_read_unlock();
 		return -EINVAL;
+	}
 
 	xa_lock(&node->servers);
 	xa_for_each(&node->servers, index, srv) {
 		if (srv->node == node_id && srv->port == port_id) {
 			svc_id = srv->service;
 			xa_unlock(&node->servers);
+			rcu_read_unlock();
 			return svc_id;
 		}
 	}
 	xa_unlock(&node->servers);
+	rcu_read_unlock();
 
 	return -EINVAL;
 }
@@ -439,7 +446,7 @@ static int ctrl_cmd_bye(struct sockaddr_qrtr *from)
 	/* Advertise the removal of this client to all local servers */
 	local_node = node_get(qrtr_ns.local_node);
 	if (!local_node)
-		return 0;
+		goto delete_node;
 
 	memset(&pkt, 0, sizeof(pkt));
 	pkt.cmd = cpu_to_le32(QRTR_TYPE_BYE);
@@ -459,6 +466,13 @@ static int ctrl_cmd_bye(struct sockaddr_qrtr *from)
 					   srv->service, srv->instance,
 					   srv->port, ret);
 	}
+
+delete_node:
+	/* The node is going down: free it, so BYE and HELLO cycles do not leak */
+	xa_erase(&nodes, from->sq_node);
+	node_count--;
+	xa_destroy(&node->servers);
+	kfree_rcu(node, rcu);
 
 	return 0;
 }
