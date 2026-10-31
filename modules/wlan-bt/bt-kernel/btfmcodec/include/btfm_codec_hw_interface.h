@@ -67,8 +67,8 @@ struct hwep_dai_ops {
 	void (*hwep_shutdown)(void *, int);
 	int (*hwep_hw_params)(void *, uint32_t, uint32_t, uint8_t);
 	int (*hwep_prepare)(void *, uint32_t, uint32_t, int);
-	int (*hwep_set_channel_map)(void *, unsigned int, unsigned int *,
-				unsigned int, unsigned int *);
+	int (*hwep_set_channel_map)(void *, unsigned int, const unsigned int *,
+				unsigned int, const unsigned int *);
 	int (*hwep_get_channel_map)(void *, unsigned int *, unsigned int *,
 				unsigned int *, unsigned int *, int);
 	int (*hwep_get_configs)(void *a, void *b, uint8_t c);

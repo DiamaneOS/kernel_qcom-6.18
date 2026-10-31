@@ -322,8 +322,8 @@ static void btfmcodec_dai_shutdown(struct snd_pcm_substream *substream,
 	struct btfmcodec_data *btfmcodec = snd_soc_component_get_drvdata(dai->component);
 	struct btfmcodec_state_machine *state = &btfmcodec->states;
 
-	BTFMCODEC_DBG("dai->name: %s, dai->id: %d, dai->rate: %d", dai->name,
-		dai->id, dai->rate);
+	BTFMCODEC_DBG("dai->name: %s, dai->id: %d, dai->symmetric_rate: %d", dai->name,
+		dai->id, dai->symmetric_rate);
 
 	if (btfmcodec_get_current_transport(state) != IDLE &&
 	    btfmcodec_get_current_transport(state) != BT_Connected) {
@@ -625,12 +625,12 @@ static int btfmcodec_dai_prepare(struct snd_pcm_substream *substream,
 	struct hwep_dai_driver *dai_drv = (struct hwep_dai_driver *)
 					      btfmcodec_get_dai_drvdata(hwep_info);
 	uint8_t *codectype = dai_drv->dai_ops->hwep_codectype;
-	uint32_t sampling_rate = dai->rate;
+	uint32_t sampling_rate = dai->symmetric_rate;
 	uint32_t direction = substream->stream;
 	int id = dai->id;
 	int ret ;
 
-	BTFMCODEC_INFO("dai->name: %s, dai->id: %d, dai->rate: %d direction: %d",
+	BTFMCODEC_INFO("dai->name: %s, dai->id: %d, dai->symmetric_rate: %d direction: %d",
 		dai->name, id, sampling_rate, direction);
 
 	ret = btfmcodec_check_and_cache_configs(btfmcodec, sampling_rate,
@@ -652,8 +652,8 @@ static int btfmcodec_dai_prepare(struct snd_pcm_substream *substream,
 }
 
 int btfmcodec_hwep_set_channel_map(void *hwep_info, unsigned int tx_num,
-				unsigned int *tx_slot, unsigned int rx_num,
-				unsigned int *rx_slot)
+				const unsigned int *tx_slot, unsigned int rx_num,
+				const unsigned int *rx_slot)
 {
 	struct hwep_dai_driver *dai_drv = (struct hwep_dai_driver *)
 					      btfmcodec_get_dai_drvdata(hwep_info);
@@ -669,8 +669,8 @@ int btfmcodec_hwep_set_channel_map(void *hwep_info, unsigned int tx_num,
 }
 
 static int btfmcodec_dai_set_channel_map(struct snd_soc_dai *dai,
-				unsigned int tx_num, unsigned int *tx_slot,
-				unsigned int rx_num, unsigned int *rx_slot)
+				unsigned int tx_num, const unsigned int *tx_slot,
+				unsigned int rx_num, const unsigned int *rx_slot)
 {
 	struct btfmcodec_data *btfmcodec = snd_soc_component_get_drvdata(dai->component);
 	struct btfmcodec_state_machine states = btfmcodec->states;
@@ -704,7 +704,7 @@ int btfmcodec_hwep_get_channel_map(void *hwep_info, unsigned int *tx_num,
 	}
 }
 
-static int btfmcodec_dai_get_channel_map(struct snd_soc_dai *dai,
+static int btfmcodec_dai_get_channel_map(const struct snd_soc_dai *dai,
 				 unsigned int *tx_num, unsigned int *tx_slot,
 				 unsigned int *rx_num, unsigned int *rx_slot)
 {

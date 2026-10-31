@@ -674,7 +674,7 @@ static int btfm_slim_probe(struct slim_device *slim)
 		goto register_err;
 	}
 
-	btfm_slim_class = class_create(THIS_MODULE, "btfmslim-dev");
+	btfm_slim_class = class_create("btfmslim-dev");
 	if (IS_ERR(btfm_slim_class)) {
 		BTFMSLIM_ERR("%s: coudn't create class\n", __func__);
 		ret = -1;
@@ -729,7 +729,8 @@ static const struct slim_device_id btfm_slim_id[] = {
 	.prod_code = 0x220,
 	.dev_index = 0x1,
 	.instance = 0x0,
-	}
+	},
+	{}
 };
 
 MODULE_DEVICE_TABLE(slim, btfm_slim_id);

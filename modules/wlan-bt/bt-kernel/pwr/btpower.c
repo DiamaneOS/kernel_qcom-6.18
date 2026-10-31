@@ -1720,14 +1720,13 @@ free_pdata:
 	return ret;
 }
 
-static int bt_power_remove(struct platform_device *pdev)
+static void bt_power_remove(struct platform_device *pdev)
 {
 	dev_dbg(&pdev->dev, "%s\n", __func__);
 	probe_finished = false;
 	btpower_rfkill_remove(pdev);
 	bt_power_vreg_put();
 	kfree(pwr_data);
-	return 0;
 }
 
 int btpower_register_slimdev(struct device *dev)
@@ -2423,9 +2422,9 @@ int bt_kernel_panic(char *arg) {
 		pr_err("%s: failed copy to panic reason from BT-Transport\n",
 			__func__);
 		memset(&CrashInfo, 0, sizeof(CrashInfo));
-		strlcpy(CrashInfo. PrimaryReason,
+		strscpy(CrashInfo. PrimaryReason,
 			default_crash_reason, strlen(default_crash_reason));
-		strlcpy(CrashInfo. SecondaryReason,
+		strscpy(CrashInfo. SecondaryReason,
 			default_crash_reason, strlen(default_crash_reason));
 		ret = -EFAULT;
 	}
@@ -2664,7 +2663,7 @@ static int __init btpower_init(void)
 		goto chrdev_err;
 	}
 
-	bt_class = class_create(THIS_MODULE, "bt-dev");
+	bt_class = class_create("bt-dev");
 	if (IS_ERR(bt_class)) {
 		pr_err("%s: coudn't create class\n", __func__);
 		ret = -1;

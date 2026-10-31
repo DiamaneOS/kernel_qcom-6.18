@@ -254,8 +254,8 @@ static int btfm_swr_dai_prepare(void *dai, uint32_t sampling_rate, uint32_t dire
 
 /* This function will be called once during boot up */
 static int btfm_swr_dai_set_channel_map(void *dai,
-				unsigned int tx_num, unsigned int *tx_slot,
-				unsigned int rx_num, unsigned int *rx_slot)
+				unsigned int tx_num, const unsigned int *tx_slot,
+				unsigned int rx_num, const unsigned int *rx_slot)
 {
 	BTFMSWR_DBG("");
 	return 0;

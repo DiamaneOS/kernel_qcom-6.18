@@ -603,7 +603,7 @@ static int __init btfmcodec_init(void)
 	}
 
 	BTFMCODEC_INFO("creating btfm codec class");
-	dev_class = class_create(THIS_MODULE, "btfmcodec");
+	dev_class = class_create("btfmcodec");
 	if (IS_ERR(dev_class)) {
 		ret = PTR_ERR(dev_class);
 		BTFMCODEC_ERR("class_create failed ret:%d\n", ret);
@@ -623,7 +623,7 @@ static int __init btfmcodec_init(void)
 	btfmcodec->btfmcodec_dev = btfmcodec_dev;
 	refcount_set(&btfmcodec_dev->active_clients, 1);
 	mutex_init(&btfmcodec_dev->lock);
-	strlcpy(btfmcodec_dev->dev_name, "btfmcodec_dev", DEVICE_NAME_MAX_LEN);
+	strscpy(btfmcodec_dev->dev_name, "btfmcodec_dev", DEVICE_NAME_MAX_LEN);
 	device_initialize(dev);
 	dev->class = dev_class;
 	dev->devt = MKDEV(MAJOR(dev_major), btfmcodec_dev->reuse_minor);
