@@ -4,6 +4,7 @@
  * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
  */
 
+#include <linux/vmalloc.h>
 #include <linux/iommu.h>
 #include <linux/workqueue.h>
 #include "msm_media_info.h"
@@ -3016,6 +3017,30 @@ int msm_vidc_vb2_buffer_done(struct msm_vidc_inst *inst,
 	return 0;
 }
 
+/*
+ * 6.18's v4l2_fh_add() and v4l2_fh_del() also set file->private_data. The open and close paths
+ * here set it themselves and initialise the file handle without the file, so these do the rest.
+ */
+static void msm_vidc_fh_add(struct v4l2_fh *fh)
+{
+	unsigned long flags;
+
+	v4l2_prio_open(fh->vdev->prio, &fh->prio);
+	spin_lock_irqsave(&fh->vdev->fh_lock, flags);
+	list_add(&fh->list, &fh->vdev->fh_list);
+	spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
+}
+
+static void msm_vidc_fh_del(struct v4l2_fh *fh)
+{
+	unsigned long flags;
+
+	spin_lock_irqsave(&fh->vdev->fh_lock, flags);
+	list_del_init(&fh->list);
+	spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
+	v4l2_prio_close(fh->vdev->prio, fh->prio);
+}
+
 int msm_vidc_v4l2_fh_init(struct msm_vidc_inst *inst)
 {
 	int rc = 0;
@@ -3039,7 +3064,7 @@ int msm_vidc_v4l2_fh_init(struct msm_vidc_inst *inst)
 
 	v4l2_fh_init(&inst->fh, &core->vdev[index].vdev);
 	inst->fh.ctrl_handler = &inst->ctrl_handler;
-	v4l2_fh_add(&inst->fh);
+	msm_vidc_fh_add(&inst->fh);
 
 	return rc;
 }
@@ -3054,7 +3079,7 @@ int msm_vidc_v4l2_fh_deinit(struct msm_vidc_inst *inst)
 		return 0;
 	}
 
-	v4l2_fh_del(&inst->fh);
+	msm_vidc_fh_del(&inst->fh);
 	inst->fh.ctrl_handler = NULL;
 	v4l2_fh_exit(&inst->fh);
 
@@ -3076,6 +3101,12 @@ static int vb2q_init(struct msm_vidc_inst *inst,
 	q->mem_ops = core->vb2_mem_ops;
 	q->drv_priv = inst;
 	q->copy_timestamp = 1;
+	/*
+	 * 6.18 vb2 needs a queue lock. The m2m queues come with ctx_q_lock, which the v4l2 core takes around
+	 * their ioctls. The meta queues have none, and the ioctls hold inst->lock around every vb2 call on them.
+	 */
+	if (!q->lock)
+		q->lock = &inst->lock;
 	rc = vb2_queue_init(q);
 	if (rc)
 		i_vpr_e(inst, "%s: vb2_queue_init failed for type %d\n",

@@ -353,9 +353,11 @@ const static struct component_ops cam_sensor_i2c_component_ops = {
 	.unbind = cam_sensor_i2c_component_unbind,
 };
 
-static int cam_sensor_i2c_driver_probe(struct i2c_client *client,
-	const struct i2c_device_id *id)
+static int cam_sensor_i2c_driver_probe(struct i2c_client *client)
 {
+	/* 6.3: probe gets the client only. */
+	const struct i2c_device_id *id = i2c_client_get_device_id(client);
+
 	int rc = 0;
 
 	if (client == NULL || id == NULL) {
@@ -560,10 +562,9 @@ const static struct component_ops cam_sensor_component_ops = {
 	.unbind = cam_sensor_component_unbind,
 };
 
-static int cam_sensor_platform_remove(struct platform_device *pdev)
+static void cam_sensor_platform_remove(struct platform_device *pdev)
 {
 	component_del(&pdev->dev, &cam_sensor_component_ops);
-	return 0;
 }
 
 static const struct of_device_id cam_sensor_driver_dt_match[] = {
@@ -772,7 +773,7 @@ int deviceinfo_init(void)
 {
     int ret = -1;
 
-    deviceinfo_class = class_create(THIS_MODULE, "deviceinfo");
+    deviceinfo_class = class_create("deviceinfo");
     if (IS_ERR(deviceinfo_class)) {
         pr_err("Failed to create device info class!\n");
         return -ENOMEM;

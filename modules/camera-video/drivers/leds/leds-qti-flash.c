@@ -1522,10 +1522,8 @@ static int register_switch_device(struct qti_flash_led *led,
 
 	snode->on_time_ms = 0;
 	snode->off_time_ms = 0;
-	hrtimer_init(&snode->on_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-	hrtimer_init(&snode->off_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-	snode->on_timer.function = on_timer_function;
-	snode->off_timer.function = off_timer_function;
+	hrtimer_setup(&snode->on_timer, on_timer_function, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+	hrtimer_setup(&snode->off_timer, off_timer_function, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
 
 	snode->led = led;
 	snode->cdev.brightness_set = qti_flash_led_switch_brightness_set;
@@ -1905,6 +1903,8 @@ static void qti_flash_led_remove(struct platform_device *pdev)
 
 static const struct of_device_id qti_flash_led_match_table[] = {
 	{ .compatible = "qcom,qti-pm8350c-flash-led", .data = (void *)4, },
+	/* the FP6 device tree name (6.1) */
+	{ .compatible = "qcom,pm8350c-flash-led", .data = (void *)4, },
 	{ },
 };
 

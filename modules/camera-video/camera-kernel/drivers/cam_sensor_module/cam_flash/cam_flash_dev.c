@@ -391,7 +391,7 @@ static int cam_flash_init_subdev(struct cam_flash_ctrl *fctrl)
 {
 	int rc = 0;
 
-	strlcpy(fctrl->device_name, CAM_FLASH_NAME,
+	strscpy(fctrl->device_name, CAM_FLASH_NAME,
 		sizeof(fctrl->device_name));
 	fctrl->v4l2_dev_str.internal_ops =
 		&cam_flash_internal_ops;
@@ -575,10 +575,9 @@ const static struct component_ops cam_flash_component_ops = {
 	.unbind = cam_flash_component_unbind,
 };
 
-static int cam_flash_platform_remove(struct platform_device *pdev)
+static void cam_flash_platform_remove(struct platform_device *pdev)
 {
 	component_del(&pdev->dev, &cam_flash_component_ops);
-	return 0;
 }
 
 static int32_t cam_flash_platform_probe(struct platform_device *pdev)
@@ -748,9 +747,11 @@ const static struct component_ops cam_flash_i2c_component_ops = {
 	.unbind = cam_flash_i2c_component_unbind,
 };
 
-static int32_t cam_flash_i2c_driver_probe(struct i2c_client *client,
-	const struct i2c_device_id *id)
+static int32_t cam_flash_i2c_driver_probe(struct i2c_client *client)
 {
+	/* 6.3: probe gets the client only. */
+	const struct i2c_device_id *id = i2c_client_get_device_id(client);
+
 	int rc = 0;
 
 	if (client == NULL || id == NULL) {

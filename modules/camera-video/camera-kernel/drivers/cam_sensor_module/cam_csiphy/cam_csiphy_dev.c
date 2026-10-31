@@ -612,7 +612,7 @@ static int cam_csiphy_component_bind(struct device *dev,
 	cpas_parms.dev = &pdev->dev;
 	cpas_parms.userdata = new_csiphy_dev;
 
-	strlcpy(cpas_parms.identifier, "csiphy", CAM_HW_IDENTIFIER_LENGTH);
+	strscpy(cpas_parms.identifier, "csiphy", CAM_HW_IDENTIFIER_LENGTH);
 
 	rc = cam_cpas_register_client(&cpas_parms);
 	if (rc) {
@@ -708,10 +708,9 @@ static int32_t cam_csiphy_platform_probe(struct platform_device *pdev)
 }
 
 
-static int32_t cam_csiphy_device_remove(struct platform_device *pdev)
+static void cam_csiphy_device_remove(struct platform_device *pdev)
 {
 	component_del(&pdev->dev, &cam_csiphy_component_ops);
-	return 0;
 }
 
 static const struct of_device_id cam_csiphy_dt_match[] = {

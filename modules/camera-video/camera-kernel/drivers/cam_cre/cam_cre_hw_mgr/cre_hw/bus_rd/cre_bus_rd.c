@@ -4,6 +4,7 @@
  * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include <linux/vmalloc.h>
 #include <linux/delay.h>
 #include "cam_hw.h"
 #include "cam_hw_intf.h"

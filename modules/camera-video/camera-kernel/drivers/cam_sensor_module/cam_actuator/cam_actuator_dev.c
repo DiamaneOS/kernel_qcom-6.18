@@ -158,7 +158,7 @@ static int cam_actuator_init_subdev(struct cam_actuator_ctrl_t *a_ctrl)
 		&cam_actuator_internal_ops;
 	a_ctrl->v4l2_dev_str.ops =
 		&cam_actuator_subdev_ops;
-	strlcpy(a_ctrl->device_name, CAMX_ACTUATOR_DEV_NAME,
+	strscpy(a_ctrl->device_name, CAMX_ACTUATOR_DEV_NAME,
 		sizeof(a_ctrl->device_name));
 	a_ctrl->v4l2_dev_str.name =
 		a_ctrl->device_name;
@@ -306,9 +306,11 @@ const static struct component_ops cam_actuator_i2c_component_ops = {
 	.unbind = cam_actuator_i2c_component_unbind,
 };
 
-static int32_t cam_actuator_driver_i2c_probe(struct i2c_client *client,
-	const struct i2c_device_id *id)
+static int32_t cam_actuator_driver_i2c_probe(struct i2c_client *client)
 {
+	/* 6.3: probe gets the client only. */
+	const struct i2c_device_id *id = i2c_client_get_device_id(client);
+
 	int rc = 0;
 
 	if (client == NULL || id == NULL) {
@@ -489,11 +491,10 @@ const static struct component_ops cam_actuator_platform_component_ops = {
 	.unbind = cam_actuator_platform_component_unbind,
 };
 
-static int32_t cam_actuator_platform_remove(
+static void cam_actuator_platform_remove(
 	struct platform_device *pdev)
 {
 	component_del(&pdev->dev, &cam_actuator_platform_component_ops);
-	return 0;
 }
 
 static const struct of_device_id cam_actuator_driver_dt_match[] = {

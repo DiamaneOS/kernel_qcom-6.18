@@ -4,6 +4,7 @@
  * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
  */
 
+#include <linux/vmalloc.h>
 #include <media/cam_defs.h>
 #include <media/cam_isp.h>
 #include "cam_mem_mgr.h"

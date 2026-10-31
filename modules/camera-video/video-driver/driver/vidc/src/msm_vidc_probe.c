@@ -12,6 +12,7 @@
 #include <linux/component.h>
 #include <linux/interrupt.h>
 #include <linux/iommu.h>
+#include <linux/qcom-iommu-util.h>
 #include <linux/version.h>
 #include <linux/stringify.h>
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 16, 0))
@@ -522,7 +523,7 @@ static int msm_vidc_setup_context_bank(struct msm_vidc_core *core,
 	dma_set_max_seg_size(dev, (unsigned int)DMA_BIT_MASK(32));
 	dma_set_seg_boundary(dev, (unsigned long)DMA_BIT_MASK(64));
 
-	iommu_set_fault_handler(cb->domain,
+	qcom_iommu_set_fault_handler(cb->domain,
 		msm_vidc_smmu_fault_handler, (void *)core);
 
 	d_vpr_h(
@@ -719,7 +720,7 @@ static int msm_vidc_remove_context_bank(struct platform_device *pdev)
 	return 0;
 }
 
-static int msm_vidc_remove(struct platform_device *pdev)
+static void msm_vidc_remove(struct platform_device *pdev)
 {
 	/*
 	 * Sub devices remove will be triggered by of_platform_depopulate()
@@ -727,13 +728,12 @@ static int msm_vidc_remove(struct platform_device *pdev)
 	 * sub-device remove.
 	 */
 	if (is_video_device(&pdev->dev))
-		return msm_vidc_remove_video_device(pdev);
+		msm_vidc_remove_video_device(pdev);
 	else if (is_video_context_bank_device(&pdev->dev))
-		return msm_vidc_remove_context_bank(pdev);
-
-	/* How did we end up here? */
-	WARN_ON(1);
-	return -EINVAL;
+		msm_vidc_remove_context_bank(pdev);
+	else
+		/* How did we end up here? */
+		WARN_ON(1);
 }
 
 static int msm_vidc_probe_video_device(struct platform_device *pdev)

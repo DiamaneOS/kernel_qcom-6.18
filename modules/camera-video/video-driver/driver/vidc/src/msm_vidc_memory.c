@@ -4,6 +4,7 @@
  * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include <linux/vmalloc.h>
 #include <linux/dma-buf.h>
 #include <linux/dma-heap.h>
 #include <linux/dma-mapping.h>
@@ -18,7 +19,7 @@
 #include "venus_hfi.h"
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 16, 0))
-	MODULE_IMPORT_NS(DMA_BUF);
+	MODULE_IMPORT_NS("DMA_BUF");
 #endif
 
 struct msm_vidc_type_size_name {
@@ -552,7 +553,7 @@ static int msm_vidc_iommu_map(struct msm_vidc_core *core, struct msm_vidc_mem *m
 	}
 
 	rc = iommu_map(cb->domain, mem->device_addr, mem->phys_addr,
-		mem->size, IOMMU_READ | IOMMU_WRITE | IOMMU_MMIO);
+		mem->size, IOMMU_READ | IOMMU_WRITE | IOMMU_MMIO, GFP_KERNEL);
 	if (rc) {
 		d_vpr_e("iommu_map failed for device_addr 0x%x, size %d, rc:%d\n",
 			mem->device_addr, mem->size, rc);

@@ -8,6 +8,7 @@
 #define _CAM_COMPAT_H_
 
 #include <linux/version.h>
+#include <linux/vmalloc.h>
 #include <linux/platform_device.h>
 #include <linux/component.h>
 #include <linux/iommu.h>
@@ -41,7 +42,7 @@
 #endif
 
 #if KERNEL_VERSION(5, 18, 0) <= LINUX_VERSION_CODE
-MODULE_IMPORT_NS(DMA_BUF);
+MODULE_IMPORT_NS("DMA_BUF");
 #endif
 
 #ifdef CONFIG_CSF_2_5_SECURE_CAMERA

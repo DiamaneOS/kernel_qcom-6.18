@@ -114,7 +114,8 @@ int cam_cpas_drv_channel_switch_for_dev(const struct device *dev)
 
 int cam_smmu_fetch_csf_version(struct cam_csf_version *csf_version)
 {
-#if KERNEL_VERSION(6, 0, 0) <= LINUX_VERSION_CODE
+	/* Without the CSF secure camera the SMMU proxy is not needed: the legacy version below. */
+#if KERNEL_VERSION(6, 0, 0) <= LINUX_VERSION_CODE && IS_ENABLED(CONFIG_CSF_2_5_SECURE_CAMERA)
 	struct csf_version csf_ver;
 	int rc;
 

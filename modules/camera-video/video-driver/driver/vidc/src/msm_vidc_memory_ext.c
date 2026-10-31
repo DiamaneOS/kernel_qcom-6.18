@@ -15,6 +15,11 @@
 #include "msm_vidc_debug.h"
 #include "msm_vidc_events.h"
 #include "msm_vidc_platform.h"
+
+/* 6.1's qcom-dma-mapping.h maps it to DMA_ATTR_SYS_CACHE_ONLY, which is 0 there as well. */
+#ifndef DMA_ATTR_IOMMU_USE_UPSTREAM_HINT
+#define DMA_ATTR_IOMMU_USE_UPSTREAM_HINT	(0UL)
+#endif
 #include "msm_vidc_memory.h"
 
 static bool is_non_secure_buffer(struct dma_buf *dmabuf)

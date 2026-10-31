@@ -3,6 +3,7 @@
  * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include <linux/vmalloc.h>
 #include <msm_hw_fence_synx_translation.h>
 #include "msm_vidc_core.h"
 #include "msm_vidc_internal.h"

@@ -16,7 +16,8 @@ static inline struct icc_path *cam_wrapper_icc_get(struct device *dev,
 		return (struct icc_path *)BYPASS_VALUE;
 	}
 
-	return icc_get(dev, src_id, dst_id);
+	/* 6.18: icc_get() takes names, the FP6 common kernel exports the id lookup. */
+	return icc_get_by_id(dev, src_id, dst_id);
 }
 
 static inline void cam_wrapper_icc_put(struct icc_path *path)

@@ -4,6 +4,7 @@
  * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include <linux/vmalloc.h>
 #include <linux/iommu.h>
 #include <linux/qcom_scm.h>
 #include <linux/soc/qcom/smem.h>

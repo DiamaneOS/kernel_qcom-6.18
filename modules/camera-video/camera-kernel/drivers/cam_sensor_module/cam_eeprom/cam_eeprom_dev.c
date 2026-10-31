@@ -173,7 +173,7 @@ static int cam_eeprom_init_subdev(struct cam_eeprom_ctrl_t *e_ctrl)
 
 	e_ctrl->v4l2_dev_str.internal_ops = &cam_eeprom_internal_ops;
 	e_ctrl->v4l2_dev_str.ops = &cam_eeprom_subdev_ops;
-	strlcpy(e_ctrl->device_name, CAM_EEPROM_NAME,
+	strscpy(e_ctrl->device_name, CAM_EEPROM_NAME,
 		sizeof(e_ctrl->device_name));
 	e_ctrl->v4l2_dev_str.name = e_ctrl->device_name;
 	e_ctrl->v4l2_dev_str.sd_flags =
@@ -332,9 +332,11 @@ const static struct component_ops cam_eeprom_i2c_component_ops = {
 	.unbind = cam_eeprom_i2c_component_unbind,
 };
 
-static int cam_eeprom_i2c_driver_probe(struct i2c_client *client,
-	const struct i2c_device_id *id)
+static int cam_eeprom_i2c_driver_probe(struct i2c_client *client)
 {
+	/* 6.3: probe gets the client only. */
+	const struct i2c_device_id *id = i2c_client_get_device_id(client);
+
 	int rc = 0;
 
 	if (client == NULL || id == NULL) {
@@ -611,10 +613,9 @@ static int32_t cam_eeprom_platform_driver_probe(
 	return rc;
 }
 
-static int cam_eeprom_platform_driver_remove(struct platform_device *pdev)
+static void cam_eeprom_platform_driver_remove(struct platform_device *pdev)
 {
 	component_del(&pdev->dev, &cam_eeprom_component_ops);
-	return 0;
 }
 
 static const struct of_device_id cam_eeprom_dt_match[] = {

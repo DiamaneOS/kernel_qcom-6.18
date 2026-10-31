@@ -7,6 +7,7 @@
 #include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
+#include <linux/pinctrl/consumer.h>
 #include <linux/platform_device.h>
 #include <linux/slab.h>
 #include <linux/gpio.h>
@@ -962,10 +963,9 @@ static int cam_res_mgr_probe(struct platform_device *pdev)
 	return rc;
 }
 
-static int cam_res_mgr_remove(struct platform_device *pdev)
+static void cam_res_mgr_remove(struct platform_device *pdev)
 {
 	component_del(&pdev->dev, &cam_res_mgr_component_ops);
-	return 0;
 }
 
 static const struct of_device_id cam_res_mgr_dt_match[] = {

@@ -2146,7 +2146,7 @@ static const struct attribute_group stmvl53l1_attr_group = {
 };
 
 static ssize_t stmvl53l1_calib_data_read(struct file *filp,
-	struct kobject *kobj, struct bin_attribute *attr,
+	struct kobject *kobj, const struct bin_attribute *attr,
 	char *buf, loff_t off, size_t count)
 {
 	struct device *dev = container_of(kobj, struct device, kobj);
@@ -2193,7 +2193,7 @@ error:
 }
 
 static ssize_t stmvl53l1_calib_data_write(struct file *filp,
-	struct kobject *kobj, struct bin_attribute *attr,
+	struct kobject *kobj, const struct bin_attribute *attr,
 	char *buf, loff_t off, size_t count)
 {
 	struct device *dev = container_of(kobj, struct device, kobj);
@@ -2248,7 +2248,7 @@ static struct bin_attribute stmvl53l1_calib_data_attr = {
 };
 
 static ssize_t stmvl53l1_zone_calib_data_read(struct file *filp,
-	struct kobject *kobj, struct bin_attribute *attr,
+	struct kobject *kobj, const struct bin_attribute *attr,
 	char *buf, loff_t off, size_t count)
 {
 	struct device *dev = container_of(kobj, struct device, kobj);
@@ -2295,7 +2295,7 @@ error:
 }
 
 static ssize_t stmvl53l1_zone_calib_data_write(struct file *filp,
-	struct kobject *kobj, struct bin_attribute *attr,
+	struct kobject *kobj, const struct bin_attribute *attr,
 	char *buf, loff_t off, size_t count)
 {
 	struct device *dev = container_of(kobj, struct device, kobj);
@@ -2542,27 +2542,28 @@ static bool is_new_data_for_me(struct stmvl53l1_data *data, pid_t pid,
 	return data->is_data_valid && !is_pid_in_list(pid, head);
 }
 
-static bool sleep_for_data_condition(struct stmvl53l1_data *data, pid_t pid,
-	struct list_head *head)
-{
-	bool res;
-
-	mutex_lock(&data->work_mutex);
-	res = is_new_data_for_me(data, pid, head);
-	mutex_unlock(&data->work_mutex);
-
-	return res;
-}
-
+/*
+ * Called with work_mutex held. The condition needs the mutex, which must not be taken while the task is set up
+ * to sleep, so this waits with wait_woken(): a wake-up between the check and the sleep is not lost. A stop
+ * wakes the waiters, which then return -ENODEV.
+ */
 static int sleep_for_data(struct stmvl53l1_data *data, pid_t pid,
 				struct list_head *head)
 {
-	int rc;
+	DEFINE_WAIT_FUNC(wait, woken_wake_function);
+	int rc = 0;
 
-	mutex_unlock(&data->work_mutex);
-	rc = wait_event_killable(data->waiter_for_data,
-				sleep_for_data_condition(data, pid, head));
-	mutex_lock(&data->work_mutex);
+	add_wait_queue(&data->waiter_for_data, &wait);
+	while (data->enable_sensor && !is_new_data_for_me(data, pid, head)) {
+		mutex_unlock(&data->work_mutex);
+		wait_woken(&wait, TASK_KILLABLE, MAX_SCHEDULE_TIMEOUT);
+		mutex_lock(&data->work_mutex);
+		if (fatal_signal_pending(current)) {
+			rc = -ERESTARTSYS;
+			break;
+		}
+	}
+	remove_wait_queue(&data->waiter_for_data, &wait);
 
 	return data->enable_sensor ? rc : -ENODEV;
 }

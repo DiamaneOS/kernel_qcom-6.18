@@ -34,7 +34,7 @@ TRACE_EVENT(cam_context_state,
 	TP_fast_assign(
 		__entry->ctx = ctx;
 		__entry->state = ctx->state;
-		__assign_str(name, name);
+		__assign_str(name);
 	),
 	TP_printk(
 		"%s: State ctx=%p ctx_state=%u",
@@ -81,8 +81,8 @@ TRACE_EVENT(cam_log_event,
 		__field(uint64_t, val2)
 	),
 	TP_fast_assign(
-		__assign_str(string1, string1);
-		__assign_str(string2, string2);
+		__assign_str(string1);
+		__assign_str(string2);
 		__entry->val1 = val1;
 		__entry->val2 = val2;
 	),
@@ -119,9 +119,9 @@ TRACE_EVENT(cam_icp_fw_dbg,
 		__string(dev_name, dev_name)
 	),
 	TP_fast_assign(
-		__assign_str(dbg_message, dbg_message);
+		__assign_str(dbg_message);
 		__entry->timestamp = timestamp;
-		__assign_str(dev_name, dev_name);
+		__assign_str(dev_name);
 	),
 	TP_printk(
 		"[%s] %llu %s: ",
@@ -140,7 +140,7 @@ TRACE_EVENT(cam_buf_done,
 		__field(uint64_t, request)
 	),
 	TP_fast_assign(
-		__assign_str(ctx_type, ctx_type);
+		__assign_str(ctx_type);
 		__entry->ctx = ctx;
 		__entry->link_hdl = ctx->link_hdl;
 		__entry->request = req->request_id;
@@ -161,7 +161,7 @@ TRACE_EVENT(cam_apply_req,
 		__field(int32_t, link_hdl)
 	),
 	TP_fast_assign(
-		__assign_str(entity, entity);
+		__assign_str(entity);
 		__entry->id = id;
 		__entry->req_id = req_id;
 		__entry->link_hdl = link_hdl;
@@ -180,7 +180,7 @@ TRACE_EVENT(cam_notify_frame_skip,
 		__field(uint64_t, req_id)
 	),
 	TP_fast_assign(
-		__assign_str(entity, entity);
+		__assign_str(entity);
 		__entry->req_id = req_id;
 	),
 	TP_printk(
@@ -224,7 +224,7 @@ TRACE_EVENT(cam_req_mgr_connect_device,
 		__field(void*, session)
 	),
 	TP_fast_assign(
-		__assign_str(name, info->name);
+		__assign_str(name);
 		__entry->id      = info->dev_id;
 		__entry->delay   = info->p_delay;
 		__entry->link    = link;
@@ -251,7 +251,7 @@ TRACE_EVENT(cam_req_mgr_apply_request,
 		__field(void*, session)
 	),
 	TP_fast_assign(
-		__assign_str(name, dev->dev_info.name);
+		__assign_str(name);
 		__entry->dev_id  = dev->dev_info.dev_id;
 		__entry->req_id  = req->request_id;
 		__entry->link    = link;
@@ -284,7 +284,7 @@ TRACE_EVENT(cam_req_mgr_add_req,
 		__field(int32_t, link_hdl)
 	),
 	TP_fast_assign(
-		__assign_str(name, dev->dev_info.name);
+		__assign_str(name);
 		__entry->dev_id    = dev->dev_info.dev_id;
 		__entry->req_id    = add_req->req_id;
 		__entry->slot_id   = idx;
@@ -321,8 +321,8 @@ TRACE_EVENT(cam_delay_detect,
 		__field(int32_t, rc)
 	),
 	TP_fast_assign(
-		__assign_str(entity, entity);
-		__assign_str(text, text);
+		__assign_str(entity);
+		__assign_str(text);
 		__entry->req_id      = req_id;
 		__entry->ctx_id      = ctx_id;
 		__entry->link_hdl    = link_hdl;
@@ -345,7 +345,7 @@ TRACE_EVENT(cam_submit_to_hw,
 		__field(uint64_t, req_id)
 	),
 	TP_fast_assign(
-		__assign_str(entity, entity);
+		__assign_str(entity);
 		__entry->req_id = req_id;
 	),
 	TP_printk(
@@ -362,7 +362,7 @@ TRACE_EVENT(cam_irq_activated,
 		__field(uint32_t, irq_type)
 	),
 	TP_fast_assign(
-		__assign_str(entity, entity);
+		__assign_str(entity);
 		__entry->irq_type = irq_type;
 	),
 	TP_printk(
@@ -379,7 +379,7 @@ TRACE_EVENT(cam_irq_handled,
 		__field(uint32_t, irq_type)
 	),
 	TP_fast_assign(
-		__assign_str(entity, entity);
+		__assign_str(entity);
 		__entry->irq_type = irq_type;
 	),
 	TP_printk(
@@ -396,7 +396,7 @@ TRACE_EVENT(cam_cdm_cb,
 		__field(uint32_t, status)
 	),
 	TP_fast_assign(
-		__assign_str(entity, entity);
+		__assign_str(entity);
 		__entry->status = status;
 	),
 	TP_printk(
@@ -421,7 +421,7 @@ TRACE_EVENT(cam_cci_burst,
 		__entry->index = idx;
 		__entry->master = m;
 		__entry->queue = q;
-		__assign_str(msg, msg);
+		__assign_str(msg);
 		__entry->value = val;
 	),
 	TP_printk(
