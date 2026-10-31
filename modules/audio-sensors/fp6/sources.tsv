@@ -1,6 +1,7 @@
 file	origin
 drivers/misc/diamaneos_privsw/privsw.c	kernel_qcom-6.1 android17 51b4986c187b (kernel_platform/msm-kernel)
 drivers/misc/diamaneos_privsw/privsw_core.h	kernel_qcom-6.1 android17 51b4986c187b (kernel_platform/msm-kernel)
+drivers/misc/diamaneos_privsw/privsw_test.c	kernel_qcom-6.1 android17 51b4986c187b (kernel_platform/msm-kernel)
 drivers/remoteproc/qcom_common.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 (d08fc445800a)
 drivers/remoteproc/remoteproc_internal.h	kernel_common-6.18 17 1533d5d18d15 (core header copy)
 drivers/slimbus/core.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 (d08fc445800a)
@@ -47,6 +48,7 @@ audio-kernel/asoc/codecs/lpass-cdc/lpass-cdc-clk-rsc.c	kernel_qcom-6.1 android17
 audio-kernel/asoc/codecs/lpass-cdc/lpass-cdc-clk-rsc.h	kernel_qcom-6.1 android17 51b4986c187b (vendor/qcom/opensource/audio-kernel/asoc/codecs/lpass-cdc/lpass-cdc-clk-rsc.h)
 audio-kernel/asoc/codecs/lpass-cdc/lpass-cdc-comp.c	kernel_qcom-6.1 android17 51b4986c187b (vendor/qcom/opensource/audio-kernel/asoc/codecs/lpass-cdc/lpass-cdc-comp.c)
 audio-kernel/asoc/codecs/lpass-cdc/lpass-cdc-comp.h	kernel_qcom-6.1 android17 51b4986c187b (vendor/qcom/opensource/audio-kernel/asoc/codecs/lpass-cdc/lpass-cdc-comp.h)
+audio-kernel/asoc/codecs/lpass-cdc/lpass-cdc-privsw-test.c	kernel_qcom-6.1 android17 51b4986c187b (vendor/qcom/opensource/audio-kernel/asoc/codecs/lpass-cdc/lpass-cdc-privsw-test.c)
 audio-kernel/asoc/codecs/lpass-cdc/lpass-cdc-privsw.h	kernel_qcom-6.1 android17 51b4986c187b (vendor/qcom/opensource/audio-kernel/asoc/codecs/lpass-cdc/lpass-cdc-privsw.h)
 audio-kernel/asoc/codecs/lpass-cdc/lpass-cdc-registers.h	kernel_qcom-6.1 android17 51b4986c187b (vendor/qcom/opensource/audio-kernel/asoc/codecs/lpass-cdc/lpass-cdc-registers.h)
 audio-kernel/asoc/codecs/lpass-cdc/lpass-cdc-regmap.c	kernel_qcom-6.1 android17 51b4986c187b (vendor/qcom/opensource/audio-kernel/asoc/codecs/lpass-cdc/lpass-cdc-regmap.c)

@@ -81,6 +81,28 @@ def register_modules(registry):
         copts = ["-fstrict-flex-arrays=0"],
         deps = [],
     )
+    # The privacy switch tests (KUnit). No fp6 list names them, so they stay out of the image. Build them on demand.
+    registry.register(
+        name = "drivers/misc/diamaneos_privsw/diamaneos_privsw_test",
+        out = "diamaneos_privsw_test.ko",
+        srcs = [
+            "drivers/misc/diamaneos_privsw/privsw_core.h",
+            "drivers/misc/diamaneos_privsw/privsw_test.c",
+        ],
+        copts = ["-fstrict-flex-arrays=0"],
+        deps = [],
+    )
+    registry.register(
+        name = "vendor/qcom/opensource/audio-kernel/audio:lpass_cdc_privsw_test_dlkm",
+        out = "lpass_cdc_privsw_test_dlkm.ko",
+        srcs = [
+            "audio-kernel/asoc/codecs/lpass-cdc/lpass-cdc-privsw-test.c",
+            "audio-kernel/asoc/codecs/lpass-cdc/lpass-cdc-privsw.h",
+            "audio-kernel/asoc/codecs/lpass-cdc/lpass-cdc-registers.h",
+        ],
+        copts = ["-fstrict-flex-arrays=0"],
+        deps = [],
+    )
     registry.register(
         name = "vendor/qcom/opensource/audio-kernel/audio:adsp_loader_dlkm",
         out = "adsp_loader_dlkm.ko",

@@ -190,6 +190,51 @@ ddk_module(
 )
 
 ddk_module(
+    name = "diamaneos_privsw_test",
+    out = "diamaneos_privsw_test.ko",
+    srcs = [
+        "drivers/misc/diamaneos_privsw/privsw_core.h",
+        "drivers/misc/diamaneos_privsw/privsw_test.c",
+    ],
+    includes = [
+        "drivers/misc/diamaneos_privsw",
+    ],
+    copts = [
+        "-fstrict-flex-arrays=0",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "lpass_cdc_privsw_test_dlkm",
+    out = "lpass_cdc_privsw_test_dlkm.ko",
+    srcs = [
+        "audio-kernel/asoc/codecs/lpass-cdc/lpass-cdc-privsw-test.c",
+        "audio-kernel/asoc/codecs/lpass-cdc/lpass-cdc-privsw.h",
+        "audio-kernel/asoc/codecs/lpass-cdc/lpass-cdc-registers.h",
+    ],
+    includes = [
+        "audio-kernel/asoc/codecs/lpass-cdc",
+    ],
+    copts = [
+        "-fstrict-flex-arrays=0",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
     name = "adsp_loader_dlkm",
     out = "adsp_loader_dlkm.ko",
     srcs = [

@@ -14,14 +14,17 @@
  * - A move into the blocking position applies at once. A move out of it
  *   applies once the level has been stable for the debounce time. A failed
  *   read counts as blocking. Before the first read everything is blocked.
- * - The policy (which sensors the switch blocks) is written once, early in
- *   boot, to /sys/kernel/privacy_switch/policy and sealed: later writes fail.
- *   Until it is written, every sensor is armed (fail closed).
+ * - The policy (which sensors the switch blocks) is written early in boot to
+ *   /sys/kernel/privacy_switch/policy, which seals it. Later writes may only
+ *   add sensors, so nothing unblocks one before the next boot. Until the first
+ *   write, every sensor is armed (fail closed), and only root may seal a
+ *   policy that drops one.
  * - The driver cannot be unbound and the module cannot be unloaded.
  */
 
 #define pr_fmt(fmt) "privsw: " fmt
 
+#include <linux/cred.h>
 #include <linux/device.h>
 #include <linux/gpio/consumer.h>
 #include <linux/input.h>
@@ -189,9 +192,10 @@ static ssize_t policy_store(struct kobject *kobj, struct kobj_attribute *attr,
 
 	mutex_lock(&privsw_lock);
 	old = privsw_core_blocked(&core);
-	ret = privsw_core_seal(&core, buf, count);
+	ret = privsw_core_seal(&core, buf, count,
+			       uid_eq(current_euid(), GLOBAL_ROOT_UID));
 	if (!ret) {
-		pr_info("policy %#x sealed\n", core.policy);
+		pr_info("policy %#x\n", core.policy);
 		privsw_publish_locked(old);
 	}
 	mutex_unlock(&privsw_lock);

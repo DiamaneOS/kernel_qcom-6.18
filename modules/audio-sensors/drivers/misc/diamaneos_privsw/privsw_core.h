@@ -18,8 +18,8 @@
 #define PRIVSW_ALL	GENMASK(PRIVSW_NR_SENSORS - 1, 0)
 
 struct privsw_core {
-	u32 policy;	/* sensors armed by the boot-time write */
-	bool sealed;	/* the policy was written; nothing changes it until reboot */
+	u32 policy;	/* sensors armed by the policy writes */
+	bool sealed;	/* written once: from then on the policy only grows */
 	u32 enforced;	/* sensors with a client in the kernel; only grows */
 	bool down;	/* the switch is in the blocking position */
 };
@@ -52,19 +52,23 @@ static inline u32 privsw_core_enforced(const struct privsw_core *c)
 }
 
 /*
- * The one policy write: a decimal mask of enum privsw_sensor bits. Accepted
- * once. Any later write fails with -EPERM, whatever it holds. A malformed
- * write fails with -EINVAL and does not seal, so the policy stays "all".
+ * A policy write: a decimal mask of enum privsw_sensor bits. The first one
+ * seals the policy, and only a privileged writer (root) may choose it freely.
+ * Any other writer must keep every sensor armed, which before the seal is
+ * all of them, so only root can drop a sensor from the fail-closed state. A
+ * later write may only add sensors: it must hold every sensor already
+ * armed, or it fails with -EPERM and changes nothing, so no write unblocks a
+ * sensor before the next boot. A malformed write fails with -EINVAL and
+ * changes nothing, so before the first write the policy stays "all".
  */
 static inline int privsw_core_seal(struct privsw_core *c, const char *buf,
-				   size_t len)
+				   size_t len, bool privileged)
 {
 	char tmp[12];
 	u32 value;
+	u32 armed = privsw_core_armed(c);
 	int ret;
 
-	if (c->sealed)
-		return -EPERM;
 	if (len == 0 || len >= sizeof(tmp))
 		return -EINVAL;
 	memcpy(tmp, buf, len);
@@ -74,6 +78,8 @@ static inline int privsw_core_seal(struct privsw_core *c, const char *buf,
 		return -EINVAL;
 	if (value & ~PRIVSW_ALL)
 		return -EINVAL;
+	if ((c->sealed || !privileged) && (value & armed) != armed)
+		return -EPERM;
 	c->policy = value;
 	c->sealed = true;
 	return 0;
