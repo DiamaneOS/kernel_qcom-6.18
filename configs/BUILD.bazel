@@ -1,0 +1,12 @@
+# Configuration profiles for //common:kernel_aarch64. Pass one filegroup with
+# --defconfig_fragment (Kleaf applies only the last such flag).
+
+package(default_visibility = ["//visibility:public"])
+
+filegroup(
+    name = "production_defconfigs",
+    srcs = [
+        "diamaneos_defconfig",
+        "production_defconfig",
+    ],
+)

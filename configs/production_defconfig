@@ -1,0 +1,7 @@
+# Production: dmesg restricted, debugfs not mountable, lockdown integrity as on GrapheneOS.
+# debugfs DISALLOW_MOUNT needs the fs/debugfs/inode.c fix of the 6.1 trees before a
+# production kernel boots with the vendor drivers (they fail on debugfs errors).
+CONFIG_SECURITY_DMESG_RESTRICT=y
+# CONFIG_DEBUG_FS_ALLOW_ALL is not set
+CONFIG_DEBUG_FS_DISALLOW_MOUNT=y
+CONFIG_LOCK_DOWN_KERNEL_FORCE_INTEGRITY=y
