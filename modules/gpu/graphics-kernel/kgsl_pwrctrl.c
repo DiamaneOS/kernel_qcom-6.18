@@ -1564,7 +1564,7 @@ static int kgsl_genpd_disable_wait(struct device *dev, u32 timeout)
 	}
 }
 
-int kgsl_regulator_disable_wait(struct regulator *reg, u32 timeout)
+static int kgsl_regulator_disable_wait(struct regulator *reg, u32 timeout)
 {
 	ktime_t tout = ktime_add_us(ktime_get(), timeout * USEC_PER_MSEC);
 	int ret;
@@ -2214,7 +2214,11 @@ static const struct thermal_cooling_device_ops kgsl_cooling_ops = {
 static int register_thermal_cooling_device(struct kgsl_device *device, struct device_node *np)
 {
 	struct kgsl_pwrctrl *pwr = &device->pwrctrl;
-	const char *name = "kgsl";
+	/*
+	 * The FP6 thermal engine finds the GPU cooling device by the name devfreq
+	 * cooling gave it on 6.1 (kgsl registered its devfreq there).
+	 */
+	const char *name = "thermal-devfreq-0";
 	int ret;
 
 	ret = dev_pm_qos_add_request(&device->pdev->dev, &pwr->pmqos_max_freq,
@@ -2347,7 +2351,7 @@ int kgsl_pwrctrl_init(struct kgsl_device *device)
 		dev_err(device->dev, "Unable to register notifier call for PMQOS updates: %d\n",
 				result);
 
-	pwr->cooling_worker = kthread_create_worker(0, "kgsl_cooling_worker");
+	pwr->cooling_worker = kthread_run_worker(0, "kgsl_cooling_worker");
 	if (IS_ERR(pwr->cooling_worker)) {
 		result = PTR_ERR(pwr->cooling_worker);
 		dev_err(device->dev, "Failed to create cooling worker: %d\n", result);

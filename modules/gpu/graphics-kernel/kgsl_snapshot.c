@@ -835,9 +835,15 @@ out:
 }
 
 /* Dump the sysfs binary data to the user */
+#if (KERNEL_VERSION(6, 18, 0) <= LINUX_VERSION_CODE)
+static ssize_t snapshot_show(struct file *filep, struct kobject *kobj,
+	const struct bin_attribute *attr, char *buf, loff_t off,
+	size_t count)
+#else
 static ssize_t snapshot_show(struct file *filep, struct kobject *kobj,
 	struct bin_attribute *attr, char *buf, loff_t off,
 	size_t count)
+#endif
 {
 	struct kgsl_device *device = kobj_to_device(kobj);
 	struct kgsl_snapshot *snapshot;

@@ -697,8 +697,10 @@ static void set_fence_signal_bit(struct adreno_device *adreno_dev,
 	char name[KGSL_FENCE_NAME_LEN];
 	char value[32] = "unknown";
 
+#if (KERNEL_VERSION(6, 18, 0) > LINUX_VERSION_CODE)
 	if (fence->ops->timeline_value_str)
 		fence->ops->timeline_value_str(fence, value, sizeof(value));
+#endif
 
 	if (test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags)) {
 		dev_err(gmu_pdev_dev,
@@ -2067,7 +2069,7 @@ int gen7_hwsched_boot_gpu(struct adreno_device *adreno_dev)
 		return gen7_hwsched_coldboot_gpu(adreno_dev);
 }
 
-int gen7_hwsched_warmboot_init_gmu(struct adreno_device *adreno_dev)
+static int gen7_hwsched_warmboot_init_gmu(struct adreno_device *adreno_dev)
 {
 	struct gen7_gmu_device *gmu = to_gen7_gmu(adreno_dev);
 	struct pending_cmd ack = {0};

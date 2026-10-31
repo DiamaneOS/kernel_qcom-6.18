@@ -783,7 +783,7 @@ static void kgsl_pwrscale_tz_init(struct kgsl_device *device, struct platform_de
 		return;
 	}
 
-	pwrscale->devfreq_notify_worker = kthread_create_worker(0, "kgsl_devfreq_notifier");
+	pwrscale->devfreq_notify_worker = kthread_run_worker(0, "kgsl_devfreq_notifier");
 	if (IS_ERR(pwrscale->devfreq_notify_worker)) {
 		ret = PTR_ERR(pwrscale->devfreq_notify_worker);
 		dev_err(device->dev, "Failed to create devfreq notify worker ret: %d\n", ret);

@@ -266,6 +266,12 @@ static inline void kgsl_qcom_va_md_unregister(struct kgsl_device *device)
  */
 void isdb_write(void __iomem *base, u32 offset);
 
+#if (KERNEL_VERSION(6, 18, 0) <= LINUX_VERSION_CODE)
+#define kgsl_nth_page(page, n) ((page) + (n))
+#else
+#define kgsl_nth_page(page, n) nth_page(page, n)
+#endif
+
 #if KERNEL_VERSION(6, 15, 0) <= LINUX_VERSION_CODE
 #define kgsl_delete_timer(timer) timer_delete(timer)
 #define kgsl_delete_timer_sync(timer) timer_delete_sync(timer)

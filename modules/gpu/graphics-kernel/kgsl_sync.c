@@ -327,7 +327,7 @@ bool kgsl_hw_fence_tx_slot_available(struct kgsl_device *device, u32 pending_hw_
 	return false;
 }
 
-void _hw_fence_destroy(struct kgsl_sync_fence *kfence)
+static void _hw_fence_destroy(struct kgsl_sync_fence *kfence)
 {
 	msm_hw_fence_destroy(kgsl_msm_hw_fence.handle, &kfence->fence);
 }
@@ -598,6 +598,7 @@ out:
 	return ret;
 }
 
+#if (KERNEL_VERSION(6, 18, 0) > LINUX_VERSION_CODE)
 static void kgsl_sync_timeline_value_str(struct dma_fence *fence,
 					char *str, int size)
 {
@@ -640,7 +641,9 @@ static void kgsl_sync_timeline_value_str(struct dma_fence *fence,
 put_timeline:
 	kgsl_sync_timeline_put(ktimeline);
 }
+#endif
 
+#if (KERNEL_VERSION(6, 18, 0) > LINUX_VERSION_CODE)
 static void kgsl_sync_fence_value_str(struct dma_fence *fence,
 					char *str, int size)
 {
@@ -648,6 +651,7 @@ static void kgsl_sync_fence_value_str(struct dma_fence *fence,
 
 	snprintf(str, size, "%u", kfence->timestamp);
 }
+#endif
 
 static const char *kgsl_sync_fence_driver_name(struct dma_fence *fence)
 {
@@ -761,8 +765,10 @@ static const struct dma_fence_ops kgsl_sync_fence_ops = {
 	.wait = dma_fence_default_wait,
 	.release = kgsl_sync_fence_release,
 
+#if (KERNEL_VERSION(6, 18, 0) > LINUX_VERSION_CODE)
 	.fence_value_str = kgsl_sync_fence_value_str,
 	.timeline_value_str = kgsl_sync_timeline_value_str,
+#endif
 };
 
 static void kgsl_sync_fence_callback(struct dma_fence *fence,
@@ -858,10 +864,14 @@ void kgsl_get_fence_name(struct dma_fence *f, char *name, u32 max_size)
 	int len = scnprintf(name, max_size, "%s %s", f->ops->get_driver_name(f),
 			f->ops->get_timeline_name(f));
 
+#if (KERNEL_VERSION(6, 18, 0) <= LINUX_VERSION_CODE)
+	scnprintf(name + len, max_size - len, ": %llu", f->seqno);
+#else
 	if (f->ops->fence_value_str) {
 		len += scnprintf(name + len, max_size - len, ": ");
 		f->ops->fence_value_str(f, name + len, max_size - len);
 	}
+#endif
 
 }
 void kgsl_get_fence_info(struct kgsl_drawobj_sync_event *event)
@@ -1292,6 +1302,7 @@ static const char *kgsl_syncsource_driver_name(struct dma_fence *fence)
 	return "kgsl-syncsource-timeline";
 }
 
+#if (KERNEL_VERSION(6, 18, 0) > LINUX_VERSION_CODE)
 static void kgsl_syncsource_fence_value_str(struct dma_fence *fence,
 						char *str, int size)
 {
@@ -1301,6 +1312,7 @@ static void kgsl_syncsource_fence_value_str(struct dma_fence *fence,
 	 */
 	snprintf(str, size, "%llu", fence->context);
 }
+#endif
 
 static const struct dma_fence_ops kgsl_syncsource_fence_ops = {
 	.get_driver_name = kgsl_syncsource_driver_name,
@@ -1309,6 +1321,8 @@ static const struct dma_fence_ops kgsl_syncsource_fence_ops = {
 	.wait = dma_fence_default_wait,
 	.release = kgsl_syncsource_fence_release,
 
+#if (KERNEL_VERSION(6, 18, 0) > LINUX_VERSION_CODE)
 	.fence_value_str = kgsl_syncsource_fence_value_str,
+#endif
 };
 

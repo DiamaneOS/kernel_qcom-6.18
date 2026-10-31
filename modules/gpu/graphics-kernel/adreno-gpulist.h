@@ -3831,6 +3831,7 @@ static const struct kgsl_regmap_list gen8_8_0_gbif_cx_regs[] = {
 };
 
 /* GEN8_3_0 noncontext register list */
+/* GRAPHICS.LA.14.0 values for gen8_3_0, as the FP6 runs them on 6.1 */
 static const struct gen8_nonctxt_regs gen8_3_0_nonctxt_regs[] = {
 	{ GEN8_CP_SMMU_STREAM_ID_LPAC, 0x00000101, BIT(PIPE_NONE) },
 	{ GEN8_GRAS_DBG_ECO_CNTL, 0x00f80800, BIT(PIPE_BV) | BIT(PIPE_BR) },
@@ -3852,19 +3853,21 @@ static const struct gen8_nonctxt_regs gen8_3_0_nonctxt_regs[] = {
 	{ GEN8_UCHE_GBIF_GX_CONFIG, 0x010240e0, BIT(PIPE_NONE) },
 	{ GEN8_RBBM_GBIF_CLIENT_QOS_CNTL, 0x22122212, BIT(PIPE_NONE) },
 	{ GEN8_RBBM_CGC_P2S_CNTL, 0x00000040, BIT(PIPE_NONE) },
+	/*
+	 * BIT(22): Disable PS out of order retire
+	 * BIT(23): Enable half wave mode and MM instruction src&dst is half precision
+	 */
 	{ GEN8_SP_CHICKEN_BITS_2, BIT(22) | BIT(23), BIT(PIPE_NONE) },
 	{ GEN8_SP_CHICKEN_BITS_3, 0x00300000, BIT(PIPE_NONE) },
 	{ GEN8_SP_PERFCTR_SHADER_MASK, 0x0000003f, BIT(PIPE_NONE) },
 	{ GEN8_SP_HLSQ_TIMEOUT_THRESHOLD_DP, 0x00000080, BIT(PIPE_NONE) },
-	/* Bit(20) Disable alphaOnly feature in TP */
-	{ GEN8_TPL1_DBG_ECO_CNTL, 0x10100000, BIT(PIPE_NONE) },
-	/* BIT(26): Disable final clamp for bicubic filtering */
-	{ GEN8_TPL1_DBG_ECO_CNTL1, 0x04000724, BIT(PIPE_NONE) },
+	{ GEN8_SP_READ_SEL, 0x0001ff00, BIT(PIPE_NONE) },
+	{ GEN8_TPL1_DBG_ECO_CNTL, 0x10000000, BIT(PIPE_NONE) },
+	{ GEN8_TPL1_DBG_ECO_CNTL1, 0x00000724, BIT(PIPE_NONE) },
 	{ GEN8_UCHE_MODE_CNTL, 0x00020000, BIT(PIPE_NONE) },
 	{ GEN8_UCHE_CCHE_MODE_CNTL, 0x00001000, BIT(PIPE_NONE) },
 	{ GEN8_UCHE_CCHE_CACHE_WAYS, 0x00000800, BIT(PIPE_NONE) },
-	/* Disable write slow pointer in data phase queue */
-	{ GEN8_UCHE_HW_DBG_CNTL, BIT(8), BIT(PIPE_NONE) },
+	{ GEN8_UCHE_CACHE_WAYS, 0x00080000, BIT(PIPE_NONE) },
 	{ GEN8_UCHE_VARB_IDLE_TIMEOUT, 0x00000020, BIT(PIPE_NONE) },
 	{ GEN8_VFD_DBG_ECO_CNTL, 0x00008000, BIT(PIPE_BV) | BIT(PIPE_BR) },
 	{ GEN8_VFD_CB_BV_THRESHOLD, 0x00500050, BIT(PIPE_BV) | BIT(PIPE_BR) },
@@ -3872,9 +3875,61 @@ static const struct gen8_nonctxt_regs gen8_3_0_nonctxt_regs[] = {
 	{ GEN8_VFD_CB_BUSY_REQ_CNT, 0x00200020, BIT(PIPE_BV) | BIT(PIPE_BR) },
 	{ GEN8_VFD_CB_LP_REQ_CNT, 0x00100020, BIT(PIPE_BV) | BIT(PIPE_BR) },
 	{ GEN8_VPC_FLATSHADE_MODE_CNTL, 0x00000001, BIT(PIPE_BV) | BIT(PIPE_BR) },
+	{ GEN8_VSC_BIN_SIZE, 0x00010001, BIT(PIPE_NONE) },
 	{ GEN8_RB_GC_GMEM_PROTECT, 0x00900000, BIT(PIPE_BR) },
-	/* Partially enable perf clear, Disable the DINT data forwarding feature in CCU */
-	{ GEN8_RB_CCU_DBG_ECO_CNTL, 0x00002200, BIT(PIPE_BR) },
+	{ 0 },
+};
+
+
+/* GRAPHICS.LA.14.0 protected registers for gen8_3_0, as the FP6 runs them on 6.1 */
+static const struct gen8_protected_regs gen8_3_0_protected_regs[] = {
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 0, 0x00000, 0x003a3, 0 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 1, 0x003b4, 0x0043f, 0 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 2, 0x00440, 0x0045f, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 3, 0x00580, 0x005df, 0 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 4, 0x005e0, 0x006ff, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 5, 0x0074a, 0x0074f, 0 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 6, 0x00759, 0x0077f, 0 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 7, 0x00789, 0x00789, 0 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 8, 0x0078c, 0x0079f, 0 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 9, 0x00800, 0x00829, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 10, 0x00837, 0x008e6, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 11, 0x008e7, 0x009b0, 0 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 12, 0x008ec, 0x009af, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 13, 0x009b1, 0x00c01, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 14, 0x00ce0, 0x00ce1, 0 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 15, 0x00df0, 0x00df0, 0 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 16, 0x00df1, 0x00df1, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 17, 0x00e01, 0x00e01, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 18, 0x00e03, 0x02e02, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 19, 0x03c00, 0x03cc5, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 20, 0x03cc6, 0x05cc5, 0 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 21, 0x08600, 0x087ff, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 22, 0x08e00, 0x08eff, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 23, 0x08f00, 0x08f00, 0 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 24, 0x08f01, 0x090bf, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 25, 0x09600, 0x097ff, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 26, 0x0981a, 0x09aff, 0 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 27, 0x09e00, 0x09fff, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 28, 0x0a600, 0x0a7ff, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 29, 0x0ae00, 0x0ae06, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 30, 0x0ae08, 0x0ae0e, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 31, 0x0ae10, 0x0b17f, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 32, 0x0b600, 0x0d5ff, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 33, 0x0dc00, 0x0fbff, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 34, 0x0fc00, 0x11bff, 0 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 35, 0x18400, 0x1843f, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 36, 0x18440, 0x1857f, 0 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 37, 0x18580, 0x1a57f, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 38, 0x1b400, 0x1d3ff, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 39, 0x1f400, 0x1f877, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 40, 0x1f878, 0x1ffff, 0 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 41, 0x1f930, 0x1fc59, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 42, 0x20000, 0x21fff, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 43, 0x27800, 0x2787f, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 44, 0x27880, 0x27c01, 0 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 45, 0x27882, 0x27883, 1 },
+	{ GEN8_CP_PROTECT_REG_GLOBAL + 63, 0x27c02, 0x27c02, 1 },
 	{ 0 },
 };
 
@@ -3883,9 +3938,10 @@ static const struct adreno_gen8_core adreno_gpu_core_gen8_3_0 = {
 		DEFINE_ADRENO_REV(ADRENO_REV_GEN8_3_0,
 				  UINT_MAX, UINT_MAX, UINT_MAX, ANY_ID),
 		.compatible = "qcom,adreno-gpu-gen8-3-0",
+		/* FP6: the GRAPHICS.LA.14.0 feature set its GMU firmware runs with */
 		.features = ADRENO_APRIV | ADRENO_IOCOHERENT |
-			ADRENO_CONTENT_PROTECTION | ADRENO_IFPC | ADRENO_PREEMPTION |
-			ADRENO_GMU_AB,
+			ADRENO_CONTENT_PROTECTION | ADRENO_IFPC | ADRENO_BCL |
+			ADRENO_PREEMPTION | ADRENO_ACD,
 		.gpudev = &adreno_gen8_hwsched_gpudev.base,
 		.perfcounters = &adreno_gen8_perfcounters,
 		.uche_gmem_alignment = SZ_64M,
@@ -3902,13 +3958,15 @@ static const struct adreno_gen8_core adreno_gpu_core_gen8_3_0 = {
 	.gbif = gen8_3_0_gbif_cx_regs,
 	.gbif_count = ARRAY_SIZE(gen8_3_0_gbif_cx_regs),
 	.hang_detect_cycles = 0xcfffff,
-	.protected_regs = gen8_0_0_protected_regs, /* Reuse the protected regs list from Gen8_0_0 */
+	.protected_regs = gen8_3_0_protected_regs,
 	.nonctxt_regs = gen8_3_0_nonctxt_regs,
 	.highest_bank_bit = 15,
 	.gmu_hub_clk_freq = 200000000,
 	.gen8_snapshot_block_list = &gen8_3_0_snapshot_block_list,
 	.ctxt_record_size = (4558 * SZ_1K),
 	.preempt_level = 1,
+	.bcl_data = 1,
+	.noc_timeout_us = 6800, /* 6.8 msec */
 };
 
 /* GEN8_6_0 noncontext register list */

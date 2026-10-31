@@ -15,6 +15,7 @@
 #include "kgsl_pool.h"
 #include "kgsl_sharedmem.h"
 #include "kgsl_trace.h"
+#include "kgsl_util.h"
 
 #ifdef CONFIG_QCOM_KGSL_SORT_POOL
 
@@ -519,7 +520,7 @@ done:
 	kgsl_zero_page(page, order, dev);
 
 	for (j = 0; j < (*page_size >> PAGE_SHIFT); j++) {
-		p = nth_page(page, j);
+		p = kgsl_nth_page(page, j);
 		pages[pcount] = p;
 		pcount++;
 	}

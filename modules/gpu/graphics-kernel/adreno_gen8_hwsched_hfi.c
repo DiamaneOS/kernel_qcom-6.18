@@ -620,8 +620,10 @@ static void set_fence_signal_bit(struct adreno_device *adreno_dev,
 	char name[KGSL_FENCE_NAME_LEN];
 	char value[32] = "unknown";
 
+#if (KERNEL_VERSION(6, 18, 0) > LINUX_VERSION_CODE)
 	if (fence->ops->timeline_value_str)
 		fence->ops->timeline_value_str(fence, value, sizeof(value));
+#endif
 
 	if (test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags)) {
 		dev_err(GMU_PDEV_DEV(KGSL_DEVICE(adreno_dev)),
@@ -2281,7 +2283,7 @@ static int gen8_hwsched_setup_default_votes(struct adreno_device *adreno_dev)
 	return gen8_hwsched_set_gmu_based_dcvs_votes(adreno_dev);
 }
 
-int gen8_hwsched_warmboot_init_gmu(struct adreno_device *adreno_dev)
+static int gen8_hwsched_warmboot_init_gmu(struct adreno_device *adreno_dev)
 {
 	struct gen8_gmu_device *gmu = to_gen8_gmu(adreno_dev);
 	struct pending_cmd ack = {0};

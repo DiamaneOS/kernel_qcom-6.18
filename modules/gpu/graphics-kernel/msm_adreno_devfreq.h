@@ -81,4 +81,10 @@ void devfreq_vbif_register_callback(getbw_func func, void *data);
 
 int msm_adreno_tz_reinit(struct devfreq *devfreq);
 
+/* The governors built into kgsl (6.18 has none of its own). */
+int msm_adreno_tz_init(void);
+void msm_adreno_tz_exit(void);
+int devfreq_gpubw_init(void);
+void devfreq_gpubw_exit(void);
+
 #endif
