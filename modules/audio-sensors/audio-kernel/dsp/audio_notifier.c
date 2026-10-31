@@ -566,7 +566,7 @@ int audio_notifier_register(char *client_name, int domain,
 	}
 	INIT_LIST_HEAD(&client_data->list);
 	client_data->nb = nb;
-	strlcpy(client_data->client_name, client_name,
+	strscpy(client_data->client_name, client_name,
 		sizeof(client_data->client_name));
 	client_data->service = NO_SERVICE;
 	client_data->domain = domain;
@@ -687,9 +687,8 @@ static int audio_notify_probe(struct platform_device *pdev)
 	return 0;
 }
 
-static int audio_notify_remove(struct platform_device *pdev)
+static void audio_notify_remove(struct platform_device *pdev)
 {
-	return 0;
 }
 
 static const struct of_device_id adsp_notify_dt_match[] = {

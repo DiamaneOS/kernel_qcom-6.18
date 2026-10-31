@@ -516,7 +516,7 @@ ramp_down:
 			break;
 		wcd939x_mbhc->rdown_prev_iter = val;
 	}
-	del_timer(&wcd939x_mbhc->rdown_timer);
+	timer_delete(&wcd939x_mbhc->rdown_timer);
 }
 
 static void wcd939x_mbhc_zdet_ramp(struct snd_soc_component *component,
@@ -2357,7 +2357,7 @@ int wcd939x_mbhc_init(struct wcd939x_mbhc **mbhc,
 	return 0;
 err:
 	if (wcd939x_mbhc)
-		del_timer(&wcd939x_mbhc->rdown_timer);
+		timer_delete(&wcd939x_mbhc->rdown_timer);
 	devm_kfree(component->dev, wcd939x_mbhc);
 	return ret;
 }
@@ -2385,7 +2385,7 @@ void wcd939x_mbhc_deinit(struct snd_soc_component *component)
 
 	wcd939x_mbhc = wcd939x->mbhc;
 	if (wcd939x_mbhc) {
-		del_timer(&wcd939x_mbhc->rdown_timer);
+		timer_delete(&wcd939x_mbhc->rdown_timer);
 		wcd_mbhc_deinit(&wcd939x_mbhc->wcd_mbhc);
 		devm_kfree(component->dev, wcd939x_mbhc);
 	}

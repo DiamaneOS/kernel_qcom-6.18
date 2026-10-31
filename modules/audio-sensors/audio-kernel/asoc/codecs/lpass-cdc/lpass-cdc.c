@@ -1260,7 +1260,7 @@ static void lpass_cdc_add_child_devices(struct work_struct *work)
 				__func__);
 		}
 
-		strlcpy(plat_dev_name, node->name,
+		strscpy(plat_dev_name, node->name,
 				(LPASS_CDC_STRING_LEN - 1));
 
 		pdev = platform_device_alloc(plat_dev_name, -1);
@@ -1467,12 +1467,12 @@ static int lpass_cdc_probe(struct platform_device *pdev)
 	return 0;
 }
 
-static int lpass_cdc_remove(struct platform_device *pdev)
+static void lpass_cdc_remove(struct platform_device *pdev)
 {
 	struct lpass_cdc_priv *priv = dev_get_drvdata(&pdev->dev);
 
 	if (!priv)
-		return -EINVAL;
+		return;
 
 	privsw_unregister_client(PRIVSW_MIC, &priv->privsw_nb);
 	cancel_delayed_work_sync(&priv->privsw_restore_work);
@@ -1481,7 +1481,6 @@ static int lpass_cdc_remove(struct platform_device *pdev)
 	mutex_destroy(&priv->io_lock);
 	mutex_destroy(&priv->clk_lock);
 	mutex_destroy(&priv->vote_lock);
-	return 0;
 }
 
 #ifdef CONFIG_PM

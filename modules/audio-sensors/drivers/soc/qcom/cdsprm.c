@@ -436,7 +436,7 @@ int cdsprm_compute_vtcm_set_partition_map(unsigned int b_vtcm_partitioning)
 }
 EXPORT_SYMBOL_GPL(cdsprm_compute_vtcm_set_partition_map);
 
-int cdsprm_resmgr_pdkill_config(unsigned int b_enable)
+static int cdsprm_resmgr_pdkill_config(unsigned int b_enable)
 {
 	int result = -EINVAL;
 	struct sysmon_msg_tx_v2 rpmsg_v2;
@@ -1348,7 +1348,7 @@ static char *dcvs_vcorner(unsigned int i)
 	}
 }
 
-char *dcvs_vcorner_ext(unsigned int i)
+static char *dcvs_vcorner_ext(unsigned int i)
 {
 	switch (i) {
 	case 0:

@@ -14,6 +14,11 @@
 #include <linux/dma-buf.h>
 #include <linux/dma-mapping.h>
 #include <linux/qcom-dma-mapping.h>
+#include <linux/platform_device.h>
+/* 0 in Qualcomm's 6.1 qcom-dma-mapping.h as well: no system-cache-only DMA attribute. */
+#ifndef DMA_ATTR_SYS_CACHE_ONLY
+#define DMA_ATTR_SYS_CACHE_ONLY		(0UL)
+#endif
 #include <linux/slab.h>
 #include <linux/completion.h>
 #include <linux/pagemap.h>
@@ -293,7 +298,7 @@ enum fastrpc_remote_subsys_state {
 #define DSPSIGNAL_VERBOSE(x, ...)
 /*#define DSPSIGNAL_VERBOSE ADSPRPC_INFO*/
 
-MODULE_IMPORT_NS(DMA_BUF);
+MODULE_IMPORT_NS("DMA_BUF");
 
 static struct dentry *debugfs_root;
 static struct dentry *debugfs_global_file;
@@ -8332,7 +8337,7 @@ static int fastrpc_cb_probe(struct device *dev)
 		}
 		/* Map the allocated memory with fixed IOVA and is shared to remote subsystem */
 		err = iommu_map_sg(domain, frpc_gen_addr_pool[0], sgt.sgl,
-					sgt.nents, IOMMU_READ | IOMMU_WRITE | IOMMU_CACHE);
+					sgt.nents, IOMMU_READ | IOMMU_WRITE | IOMMU_CACHE, GFP_KERNEL);
 		if (err < 0) {
 			ADSPRPC_ERR("iommu_map_sg failed with err %d", err);
 			goto iommu_map_bail;
@@ -8979,7 +8984,7 @@ static struct device fastrpc_bus = {
 	.init_name	= "fastrpc"
 };
 
-static int fastrpc_bus_match(struct device *dev, struct device_driver *driver)
+static int fastrpc_bus_match(struct device *dev, const struct device_driver *driver)
 {
 	struct fastrpc_apps *me = &gfa;
 	struct fastrpc_driver *frpc_driver = to_fastrpc_driver(driver);
@@ -9183,7 +9188,7 @@ static int __init fastrpc_device_init(void)
 				NUM_DEVICES));
 	if (err)
 		goto cdev_init_bail;
-	me->class = class_create(THIS_MODULE, "fastrpc");
+	me->class = class_create("fastrpc");
 	VERIFY(err, !IS_ERR(me->class));
 	if (err)
 		goto class_create_bail;
@@ -9224,7 +9229,8 @@ static int __init fastrpc_device_init(void)
 		me->channel[i].subsystemstate = SUBSYSTEM_UP;
 		me->channel[i].rh_dump_dev = NULL;
 		me->channel[i].nb.notifier_call = fastrpc_restart_notifier_cb;
-		me->channel[i].handle = qcom_register_ssr_notifier(
+		if (gcinfo[i].subsys)
+			me->channel[i].handle = qcom_register_ssr_notifier(
 							gcinfo[i].subsys,
 							&me->channel[i].nb);
 		if (i == CDSP_DOMAIN_ID) {

@@ -2,6 +2,8 @@
 /* Copyright (c) 2016-2020, The Linux Foundation. All rights reserved.
  */
 
+#include <linux/pinctrl/consumer.h>
+#include <linux/of_platform.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/io.h>
@@ -344,7 +346,7 @@ err_pctrl_get:
 	return ret;
 }
 
-static int msm_cdc_pinctrl_remove(struct platform_device *pdev)
+static void msm_cdc_pinctrl_remove(struct platform_device *pdev)
 {
 	struct msm_cdc_pinctrl_info *gpio_data;
 
@@ -360,8 +362,6 @@ static int msm_cdc_pinctrl_remove(struct platform_device *pdev)
 	}
 
 	devm_kfree(&pdev->dev, gpio_data);
-
-	return 0;
 }
 
 static const struct of_device_id msm_cdc_pinctrl_match[] = {

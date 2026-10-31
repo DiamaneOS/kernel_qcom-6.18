@@ -105,7 +105,6 @@ static struct regmap_irq_chip wcd937x_regmap_irq_chip = {
 	.ack_base = WCD937X_DIGITAL_INTR_CLEAR_0,
 	.use_ack = 1,
 	.clear_ack = 1,
-	.type_base = WCD937X_DIGITAL_INTR_LEVEL_0,
 	.runtime_pm = false,
 	.handle_post_irq = wcd937x_handle_post_irq,
 	.irq_drv_data = NULL,
@@ -3617,12 +3616,10 @@ static int wcd937x_probe(struct platform_device *pdev)
 					&wcd937x_comp_ops, match);
 }
 
-static int wcd937x_remove(struct platform_device *pdev)
+static void wcd937x_remove(struct platform_device *pdev)
 {
 	component_master_del(&pdev->dev, &wcd937x_comp_ops);
 	dev_set_drvdata(&pdev->dev, NULL);
-
-	return 0;
 }
 
 #ifdef CONFIG_PM_SLEEP

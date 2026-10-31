@@ -629,8 +629,7 @@ static int audio_pkt_platform_driver_probe(struct platform_device *pdev)
 		goto err_chrdev;
 	}
 
-	audpkt_dev->audio_pkt_class = class_create(THIS_MODULE,
-						   AUDPKT_DRIVER_NAME);
+	audpkt_dev->audio_pkt_class = class_create(AUDPKT_DRIVER_NAME);
 	if (IS_ERR(audpkt_dev->audio_pkt_class)) {
 		ret = PTR_ERR(audpkt_dev->audio_pkt_class);
 		AUDIO_PKT_ERR("class_create failed ret:%ld\n",
@@ -647,8 +646,8 @@ static int audio_pkt_platform_driver_probe(struct platform_device *pdev)
 			      PTR_ERR(audpkt_dev->dev));
 		goto err_device;
 	}
-	strlcpy(audpkt_dev->dev_name, AUDPKT_DRIVER_NAME, 20);
-	strlcpy(audpkt_dev->ch_name, CHANNEL_NAME, 20);
+	strscpy(audpkt_dev->dev_name, AUDPKT_DRIVER_NAME, 20);
+	strscpy(audpkt_dev->ch_name, CHANNEL_NAME, 20);
 	dev_set_name(audpkt_dev->dev, audpkt_dev->dev_name);
 
 	mutex_init(&audpkt_dev->lock);
@@ -704,7 +703,7 @@ done:
  * This function is called when the underlying device tree driver
  * removes a platform device, mapped to a Audio packet device.
  */
-static int audio_pkt_platform_driver_remove(struct platform_device *adev)
+static void audio_pkt_platform_driver_remove(struct platform_device *adev)
 {
 	struct audio_pkt_priv *ap_priv = platform_get_drvdata(adev);
 	struct audio_pkt_device *audpkt_dev = ap_priv->ap_dev;
@@ -723,8 +722,6 @@ static int audio_pkt_platform_driver_remove(struct platform_device *adev)
 
 	//of_platform_depopulate(&adev->dev);
 	AUDIO_PKT_INFO("Audio Packet Port Driver Removed\n");
-
-	return 0;
 
 }
 

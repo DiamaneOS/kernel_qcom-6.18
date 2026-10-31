@@ -4,6 +4,7 @@
  * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include <linux/cpu.h>
 #include <linux/gpio.h>
 #include <linux/of_gpio.h>
 #include <linux/platform_device.h>
@@ -961,7 +962,7 @@ void msm_common_get_backend_name(const char *stream_name, char **backend_name)
 	if (!(*backend_name))
 		return;
 
-	strlcpy(*backend_name, arg, ARRAY_SZ);
+	strscpy(*backend_name, arg, ARRAY_SZ);
 }
 
 static void msm_audio_update_qos_request(u32 latency)
@@ -1183,7 +1184,7 @@ static int msm_register_pm_qos_latency_controls(struct snd_soc_pcm_runtime *rtd)
 
 int msm_common_dai_link_init(struct snd_soc_pcm_runtime *rtd)
 {
-	struct snd_soc_dai *codec_dai = asoc_rtd_to_codec(rtd, 0);
+	struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
 	struct snd_soc_component *component = NULL;
 	struct snd_soc_dai_link *dai_link = rtd->dai_link;
 	struct device *dev = rtd->card->dev;

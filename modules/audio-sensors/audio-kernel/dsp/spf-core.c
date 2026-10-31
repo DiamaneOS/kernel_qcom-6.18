@@ -11,6 +11,7 @@
  * GNU General Public License for more details.
  */
 
+#include <linux/platform_device.h>
 #include <linux/slab.h>
 #include <linux/wait.h>
 #include <linux/kernel.h>
@@ -394,13 +395,12 @@ static int spf_core_platform_driver_probe(struct platform_device *pdev)
 	return ret;
 }
 
-static int spf_core_platform_driver_remove(struct platform_device *pdev)
+static void spf_core_platform_driver_remove(struct platform_device *pdev)
 {
 	//snd_event_client_deregister(&pdev->dev);
         gpr_driver_unregister(&qcom_spf_core_driver);
 	spf_core_priv = NULL;
     digital_cdc_rsc_mgr_exit();
-	return 0;
 }
 
 static const struct of_device_id spf_core_of_match[]  = {

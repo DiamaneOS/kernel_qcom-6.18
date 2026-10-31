@@ -65,11 +65,17 @@ static const char *const aw882xx_spin[] = {"spin_0", "spin_90",
  *
  ******************************************************/
 #ifdef AW_KERNEL_VER_OVER_4_19_1
+/* 6.18: snd_soc_unregister_component() is a macro, so the ops table gets a function. */
+static void aw_unregister_component(struct device *dev)
+{
+	snd_soc_unregister_component(dev);
+}
+
 static struct aw_componet_codec_ops aw_componet_codec_ops = {
 	.kcontrol_codec = snd_soc_kcontrol_component,
 	.codec_get_drvdata = snd_soc_component_get_drvdata,
 	.add_codec_controls = snd_soc_add_component_controls,
-	.unregister_codec = snd_soc_unregister_component,
+	.unregister_codec = aw_unregister_component,
 	.register_codec = snd_soc_register_component,
 };
 #else
@@ -2024,7 +2030,7 @@ static int aw882xx_gpio_request(struct aw882xx *aw882xx)
 
 	if (gpio_is_valid(aw882xx->irq_gpio)) {
 		ret = devm_gpio_request_one(aw882xx->dev, aw882xx->irq_gpio,
-			GPIOF_DIR_IN, "aw882xx_int");
+			GPIOF_IN, "aw882xx_int");
 		if (ret) {
 			aw_dev_err(aw882xx->dev, "int request failed");
 			return ret;

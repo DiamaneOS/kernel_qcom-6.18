@@ -1021,7 +1021,10 @@ static int qcom_slim_ngd_xfer_msg(struct slim_controller *sctrl,
 		mutex_unlock(&ctrl->tx_lock);
 		return -ENOMEM;
 	}
-	mutex_unlock(&ctrl->tx_lock);
+	/*
+	 * Keep tx_lock until the message is posted and sent: pbuf lives in the TX DMA buffers,
+	 * which the SSR/PDR down path frees under tx_lock (DiamaneOS fix, carried from 6.1).
+	 */
 
 	if (txn->mt == SLIM_MSG_MT_CORE &&
 		(txn->mc == SLIM_MSG_MC_CONNECT_SOURCE ||
@@ -1039,6 +1042,7 @@ static int qcom_slim_ngd_xfer_msg(struct slim_controller *sctrl,
 			txn->mc = SLIM_USR_MC_DISCONNECT_PORT;
 			break;
 		default:
+			mutex_unlock(&ctrl->tx_lock);
 			return -EINVAL;
 		}
 
@@ -1054,6 +1058,7 @@ static int qcom_slim_ngd_xfer_msg(struct slim_controller *sctrl,
 		ret = slim_alloc_txn_tid(sctrl, txn);
 		if (ret) {
 			SLIM_ERR(ctrl, "Unable to allocate TID\n");
+			mutex_unlock(&ctrl->tx_lock);
 			return ret;
 		}
 
@@ -1094,10 +1099,6 @@ static int qcom_slim_ngd_xfer_msg(struct slim_controller *sctrl,
 			memcpy(puc, txn->msg->wbuf, txn->msg->num_bytes);
 	}
 
-	if (!mutex_trylock(&ctrl->tx_lock)) {
-		SLIM_ERR(ctrl, "ngd going down due SSR/PDR, try again! skipping tx msg post\n");
-		return -EAGAIN;
-	}
 	ret = qcom_slim_ngd_tx_msg_post(ctrl, pbuf, txn->rl);
 	if (ret) {
 		mutex_unlock(&ctrl->tx_lock);
@@ -1801,8 +1802,16 @@ static void qcom_slim_ngd_down(struct qcom_slim_ngd_ctrl *ctrl)
 static void qcom_slim_ngd_up_worker(struct work_struct *work)
 {
 	struct qcom_slim_ngd_ctrl *ctrl;
+	bool enabled;
 
 	ctrl = container_of(work, struct qcom_slim_ngd_ctrl, ngd_up_work);
+
+	/* The SSR and the PDR notification both schedule this: enable once */
+	mutex_lock(&ctrl->ssr_lock);
+	enabled = ctrl->qmi.handle;
+	mutex_unlock(&ctrl->ssr_lock);
+	if (enabled)
+		return;
 
 	/* Make sure qmi service is up before continuing */
 	if (!wait_for_completion_interruptible_timeout(&ctrl->qmi_up,
@@ -1925,10 +1934,8 @@ static int of_qcom_slim_ngd_register(struct device *parent,
 		ngd->id = id;
 		ngd->pdev->dev.parent = parent;
 
-		ret = driver_set_override(&ngd->pdev->dev,
-					  &ngd->pdev->driver_override,
-					  QCOM_SLIM_NGD_DRV_NAME,
-					  strlen(QCOM_SLIM_NGD_DRV_NAME));
+		ret = device_set_driver_override(&ngd->pdev->dev,
+						 QCOM_SLIM_NGD_DRV_NAME);
 		if (ret) {
 			platform_device_put(ngd->pdev);
 			kfree(ngd);
@@ -2286,7 +2293,7 @@ static const struct dev_pm_ops qcom_slim_ngd_dev_pm_ops = {
 
 static struct platform_driver qcom_slim_ngd_ctrl_driver = {
 	.probe = qcom_slim_ngd_ctrl_probe,
-	.remove_new = qcom_slim_ngd_ctrl_remove,
+	.remove = qcom_slim_ngd_ctrl_remove,
 	.driver	= {
 		.name = "qcom,slim-ngd-ctrl",
 		.of_match_table = qcom_slim_ngd_dt_match,
@@ -2295,7 +2302,7 @@ static struct platform_driver qcom_slim_ngd_ctrl_driver = {
 
 static struct platform_driver qcom_slim_ngd_driver = {
 	.probe = qcom_slim_ngd_probe,
-	.remove_new = qcom_slim_ngd_remove,
+	.remove = qcom_slim_ngd_remove,
 	.driver	= {
 		.name = QCOM_SLIM_NGD_DRV_NAME,
 		.pm = &qcom_slim_ngd_dev_pm_ops,

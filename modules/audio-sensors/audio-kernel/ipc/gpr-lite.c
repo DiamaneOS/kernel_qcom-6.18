@@ -345,7 +345,7 @@ static int gpr_callback(struct rpmsg_device *rpdev, void *buf,
 	return 0;
 }
 
-static int gpr_device_match(struct device *dev, struct device_driver *drv)
+static int gpr_device_match(struct device *dev, const struct device_driver *drv)
 {
 	struct gpr_device *adev = to_gpr_device(dev);
 	struct gpr_driver *adrv = to_gpr_driver(drv);
@@ -395,7 +395,7 @@ static void gpr_device_remove(struct device *dev)
 	return;
 }
 
-static int gpr_uevent(struct device *dev, struct kobj_uevent_env *env)
+static int gpr_uevent(const struct device *dev, struct kobj_uevent_env *env)
 {
 	struct gpr_device *adev = to_gpr_device(dev);
 	int ret;

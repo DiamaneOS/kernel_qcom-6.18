@@ -181,7 +181,6 @@ static struct regmap_irq_chip wcd939x_regmap_irq_chip = {
 	.num_regs = 3,
 	.status_base = WCD939X_INTR_STATUS_0,
 	.mask_base = WCD939X_INTR_MASK_0,
-	.type_base = WCD939X_INTR_LEVEL_0,
 	.ack_base = WCD939X_INTR_CLEAR_0,
 	.use_ack = 1,
 	.runtime_pm = false,
@@ -5523,7 +5522,7 @@ err:
 	return ret;
 }
 
-static int wcd939x_remove(struct platform_device *pdev)
+static void wcd939x_remove(struct platform_device *pdev)
 {
 	struct wcd939x_priv *wcd939x = NULL;
 
@@ -5532,8 +5531,6 @@ static int wcd939x_remove(struct platform_device *pdev)
 	mutex_destroy(&wcd939x->micb_lock);
 	mutex_destroy(&wcd939x->wakeup_lock);
 	dev_set_drvdata(&pdev->dev, NULL);
-
-	return 0;
 }
 
 #ifdef CONFIG_PM_SLEEP

@@ -251,7 +251,6 @@ static struct regmap_irq_chip wcd9378_regmap_irq_chip = {
 	.num_regs = 3,
 	.status_base = SWRS_SCP_SDCA_INTSTAT_1,
 	.unmask_base = SWRS_SCP_SDCA_INTMASK_1,
-	.type_base = SWRS_SCP_SDCA_INTRTYPE_1,
 	.ack_base = SWRS_SCP_SDCA_INTSTAT_1,
 	.use_ack = 1,
 	.runtime_pm = false,
@@ -4716,7 +4715,7 @@ err:
 	return ret;
 }
 
-static int wcd9378_remove(struct platform_device *pdev)
+static void wcd9378_remove(struct platform_device *pdev)
 {
 	struct wcd9378_priv *wcd9378 = NULL;
 
@@ -4726,8 +4725,6 @@ static int wcd9378_remove(struct platform_device *pdev)
 	mutex_destroy(&wcd9378->wakeup_lock);
 	mutex_destroy(&wcd9378->sys_usage_lock);
 	dev_set_drvdata(&pdev->dev, NULL);
-
-	return 0;
 }
 
 #ifdef CONFIG_PM_SLEEP

@@ -512,12 +512,12 @@ static int lpass_bt_swr_probe(struct platform_device *pdev)
 	return 0;
 }
 
-static int lpass_bt_swr_remove(struct platform_device *pdev)
+static void lpass_bt_swr_remove(struct platform_device *pdev)
 {
 	struct lpass_bt_swr_priv *priv = dev_get_drvdata(&pdev->dev);
 
 	if (!priv)
-		return -EINVAL;
+		return;
 
 	pm_runtime_disable(&pdev->dev);
 	pm_runtime_set_suspended(&pdev->dev);
@@ -525,8 +525,6 @@ static int lpass_bt_swr_remove(struct platform_device *pdev)
 	mutex_destroy(&priv->vote_lock);
 	mutex_destroy(&priv->swr_clk_lock);
 	mutex_destroy(&priv->ssr_lock);
-
-	return 0;
 }
 
 #ifdef CONFIG_PM

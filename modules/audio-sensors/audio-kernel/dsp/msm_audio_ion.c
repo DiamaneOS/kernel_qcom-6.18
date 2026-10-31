@@ -4,6 +4,7 @@
  * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
+#include <linux/of.h>
 #include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
@@ -31,7 +32,7 @@
 #include <linux/qcom_scm.h>
 #include <soc/qcom/secure_buffer.h>
 
-MODULE_IMPORT_NS(DMA_BUF);
+MODULE_IMPORT_NS("DMA_BUF");
 
 #define MSM_AUDIO_ION_PROBED (1 << 0)
 
@@ -818,8 +819,7 @@ static int msm_audio_ion_reg_chrdev(struct msm_audio_ion_private *ion_data)
 		return ret;
 	}
 	pr_debug("%s major number %d", __func__, MAJOR(ion_data->ion_major));
-	ion_data->ion_class = class_create(THIS_MODULE,
-					ion_data->driver_name);
+	ion_data->ion_class = class_create(ion_data->driver_name);
 	if (IS_ERR(ion_data->ion_class)) {
 		ret = PTR_ERR(ion_data->ion_class);
 		pr_err("%s class create failed. ret : %d", __func__, ret);
@@ -969,13 +969,12 @@ static int msm_audio_ion_probe(struct platform_device *pdev)
 	return rc;
 }
 
-static int msm_audio_ion_remove(struct platform_device *pdev)
+static void msm_audio_ion_remove(struct platform_device *pdev)
 {
 	struct msm_audio_ion_private *ion_data = dev_get_drvdata(&pdev->dev);
 	ion_data->smmu_enabled = 0;
 	ion_data->device_status = 0;
 	msm_audio_ion_unreg_chrdev(ion_data);
-	return 0;
 }
 
 static struct platform_driver msm_audio_ion_driver = {
