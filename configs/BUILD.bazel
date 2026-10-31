@@ -10,3 +10,20 @@ filegroup(
         "production_defconfig",
     ],
 )
+
+filegroup(
+    name = "bringup_defconfigs",
+    srcs = [
+        "diamaneos_defconfig",
+        "bringup_defconfig",
+    ],
+)
+
+filegroup(
+    name = "bringup_kasan_defconfigs",
+    srcs = [
+        "diamaneos_defconfig",
+        "bringup_defconfig",
+        "bringup_kasan_defconfig",
+    ],
+)

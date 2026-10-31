@@ -1,0 +1,4 @@
+# Heavier bring-up variant, built on demand: generic KASAN and lockdep.
+CONFIG_KASAN=y
+CONFIG_KASAN_GENERIC=y
+CONFIG_PROVE_LOCKING=y
