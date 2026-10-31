@@ -98,7 +98,7 @@ static void eswin_update_charger(struct work_struct *work)
 	}
 
 }
-void eswin_charger_init(void)
+static void eswin_charger_init(void)
 {
 	int ret = 0;
     if(gephdata == NULL){
@@ -145,7 +145,7 @@ static void eph_register_for_panel_events(struct device_node *dp,
 		return;
 	}
 
-	ts_debug("registered for panel notifications panel: 0x%x\n",
+	ts_debug("registered for panel notifications panel: %pK\n",
 			active_panel);
 
 	cd->notifier_cookie = cookie;
@@ -2862,7 +2862,7 @@ static void eph_remove(struct comms_device *commsdevice)
 }
 
 #if defined(CONFIG_DRM) //|| defined(CONFIG_BOARD_CLOUDRIPPER)
-int eph_enable_report_event(struct device *dev, int enable)
+static int eph_enable_report_event(struct device *dev, int enable)
 {
     int ret = 0;
     struct eph_data *ephdata = (struct eph_data*)dev_get_drvdata(dev);
