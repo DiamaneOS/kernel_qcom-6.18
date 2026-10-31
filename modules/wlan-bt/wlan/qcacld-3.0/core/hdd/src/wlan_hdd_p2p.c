@@ -142,10 +142,12 @@ static int __wlan_hdd_cfg80211_remain_on_channel(struct wiphy *wiphy,
 	return qdf_status_to_os_return(status);
 }
 
+/* rx_addr is always NULL: the driver does not set NL80211_EXT_FEATURE_ROC_ADDR_FILTER. */
 int wlan_hdd_cfg80211_remain_on_channel(struct wiphy *wiphy,
 					struct wireless_dev *wdev,
 					struct ieee80211_channel *chan,
-					unsigned int duration, u64 *cookie)
+					unsigned int duration, u64 *cookie,
+					const u8 *rx_addr)
 {
 	int errno;
 	struct osif_vdev_sync *vdev_sync;

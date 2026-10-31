@@ -805,11 +805,25 @@ dp_rx_thread_get_dummy_netdev_ptr(struct dp_rx_thread *rx_thread)
 {
 	return rx_thread->netdev;
 }
+
+/* The dummy netdev is allocated since 6.13, so the thread keeps the pointer for deinit to free it */
+static inline void
+dp_rx_thread_set_dummy_netdev_ptr(struct dp_rx_thread *rx_thread,
+				  struct net_device *netdev)
+{
+	rx_thread->netdev = netdev;
+}
 #else
 static inline struct net_device *
 dp_rx_thread_get_dummy_netdev_ptr(struct dp_rx_thread *rx_thread)
 {
 	return &rx_thread->netdev;
+}
+
+static inline void
+dp_rx_thread_set_dummy_netdev_ptr(struct dp_rx_thread *rx_thread,
+				  struct net_device *netdev)
+{
 }
 #endif
 
@@ -817,18 +831,23 @@ dp_rx_thread_get_dummy_netdev_ptr(struct dp_rx_thread *rx_thread)
  * dp_rx_tm_thread_napi_init() - Initialize dummy rx_thread NAPI
  * @rx_thread: dp_rx_thread structure containing dummy napi and netdev
  *
- * Return: None
+ * Return: QDF_STATUS_SUCCESS, or an error if the dummy netdev could not be created
  */
-static void dp_rx_tm_thread_napi_init(struct dp_rx_thread *rx_thread)
+static QDF_STATUS dp_rx_tm_thread_napi_init(struct dp_rx_thread *rx_thread)
 {
 	struct net_device *dummy_nd;
+	QDF_STATUS status;
 
 	dummy_nd = dp_rx_thread_get_dummy_netdev_ptr(rx_thread);
 	/* Todo - optimize to use only one dummy netdev for all thread napis */
-	qdf_net_if_create_dummy_if((struct qdf_net_if **)&dummy_nd);
+	status = qdf_net_if_create_dummy_if((struct qdf_net_if **)&dummy_nd);
+	if (QDF_IS_STATUS_ERROR(status))
+		return status;
+	dp_rx_thread_set_dummy_netdev_ptr(rx_thread, dummy_nd);
 	qdf_netif_napi_add(dummy_nd, &rx_thread->napi,
 			   dp_rx_tm_thread_napi_poll, 64);
 	qdf_napi_enable(&rx_thread->napi);
+	return QDF_STATUS_SUCCESS;
 }
 
 /**
@@ -842,9 +861,14 @@ static void dp_rx_tm_thread_napi_deinit(struct dp_rx_thread *rx_thread)
 	struct net_device *dummy_nd;
 
 	dummy_nd = dp_rx_thread_get_dummy_netdev_ptr(rx_thread);
-	qdf_net_if_destroy_dummy_if((struct qdf_net_if *)dummy_nd);
+	if (!dummy_nd)
+		return;
 
+	/* the kernel deletes only a disabled NAPI, and the NAPI must go before its netdev */
+	qdf_napi_disable(&rx_thread->napi);
 	qdf_netif_napi_del(&rx_thread->napi);
+	qdf_net_if_destroy_dummy_if((struct qdf_net_if *)dummy_nd);
+	dp_rx_thread_set_dummy_netdev_ptr(rx_thread, NULL);
 }
 
 /*
@@ -881,8 +905,13 @@ static QDF_STATUS dp_rx_tm_thread_init(struct dp_rx_thread *rx_thread,
 	dp_info("%s %u", thread_name, id);
 
 	if (cdp_cfg_get(dp_rx_tm_get_soc_handle(rx_thread->rtm_handle_cmn),
-			cfg_dp_gro_enable))
-		dp_rx_tm_thread_napi_init(rx_thread);
+			cfg_dp_gro_enable)) {
+		qdf_status = dp_rx_tm_thread_napi_init(rx_thread);
+		if (QDF_IS_STATUS_ERROR(qdf_status)) {
+			dp_err("could not create the napi of dp_rx_thread %d", id);
+			return qdf_status;
+		}
+	}
 
 	rx_thread->task = qdf_create_thread(dp_rx_thread_loop,
 					    rx_thread, thread_name);

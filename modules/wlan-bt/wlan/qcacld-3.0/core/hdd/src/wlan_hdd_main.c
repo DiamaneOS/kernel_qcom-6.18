@@ -10460,7 +10460,7 @@ static void hdd_delete_sta(struct hdd_adapter *adapter)
 
 	hdd_debug("[SSR] send restart supplicant");
 	/* event supplicant to restart */
-	cfg80211_del_sta(adapter->dev,
+	cfg80211_del_sta(&adapter->wdev,
 			 (const u8 *)&bcast_mac.bytes[0],
 			 GFP_KERNEL);
 }
@@ -19290,7 +19290,7 @@ const struct file_operations wlan_hdd_state_fops = {
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(6, 2, 0))
 static struct class *wlan_hdd_class_create(const char *name)
 {
-	return class_create(THIS_MODULE, name);
+	return class_create(name);
 }
 #else
 static struct class *wlan_hdd_class_create(const char *name)
