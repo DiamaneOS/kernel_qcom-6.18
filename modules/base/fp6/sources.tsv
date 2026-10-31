@@ -300,7 +300,7 @@ drivers/usb/phy/phy-msm-snps-eusb2.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 driv
 drivers/usb/phy/phy-msm-ssusb-qmp.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/usb/phy/phy-msm-ssusb-qmp.c
 drivers/usb/repeater/repeater-qti-pmic-eusb2.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/usb/repeater/repeater-qti-pmic-eusb2.c
 drivers/usb/repeater/repeater.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/usb/repeater/repeater.c
-drivers/usb/typec/ucsi/ucsi.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/usb/typec/ucsi/ucsi.h, kept identical (core-headers.json)
+drivers/usb/typec/ucsi/ucsi.h	kernel_common-6.18 e1b942f6f949 (GrapheneOS 17, 6.18.38) drivers/usb/typec/ucsi/ucsi.h, kept identical (core-headers.json)
 drivers/usb/typec/ucsi/ucsi_qti_glink.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/usb/typec/ucsi/ucsi_qti_glink.c
 drivers/virt/gunyah/gh_dbl.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/virt/gunyah/gh_dbl.c
 drivers/virt/gunyah/gh_devices.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/virt/gunyah/gh_devices.c
@@ -736,7 +736,7 @@ include/ufs/ufshcd-crypto.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/ufs/u
 kernel/sched/cpudeadline.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) kernel/sched/cpudeadline.h, kept identical (core-headers.json)
 kernel/sched/cpupri.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) kernel/sched/cpupri.h, kept identical (core-headers.json)
 kernel/sched/ext.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) kernel/sched/ext.h, kept identical (core-headers.json)
-kernel/sched/features.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) kernel/sched/features.h, kept identical (core-headers.json)
+kernel/sched/features.h	kernel_common-6.18 e1b942f6f949 (GrapheneOS 17, 6.18.38) kernel/sched/features.h, kept identical (core-headers.json)
 kernel/sched/sched.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) kernel/sched/sched.h, kept identical (core-headers.json)
 kernel/sched/stats.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) kernel/sched/stats.h, kept identical (core-headers.json)
 kernel/time/tick-internal.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) kernel/time/tick-internal.h, kept identical (core-headers.json)
