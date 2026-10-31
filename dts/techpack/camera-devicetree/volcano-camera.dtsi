@@ -606,6 +606,8 @@
 	};
 
 	cam_cci0: qcom,cci0@ac15000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
 		cell-index = <0>;
 		compatible = "qcom,cci", "simple-bus";
 		reg = <0xac15000 0x1000>;
@@ -694,6 +696,8 @@
 	};
 
 	cam_cci1: qcom,cci1@ac16000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
 		cell-index = <1>;
 		compatible = "qcom,cci", "simple-bus";
 		reg = <0xac16000 0x1000>;
@@ -782,6 +786,8 @@
 	};
 
 	qcom,cam_smmu {
+		#address-cells = <1>;
+		#size-cells = <1>;
 		compatible = "qcom,msm-cam-smmu", "simple-bus";
 		status = "ok";
 		force_cache_allocs;

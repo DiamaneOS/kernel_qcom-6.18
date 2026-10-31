@@ -4,6 +4,8 @@
 
 &soc {
 	spf_core_platform: spf_core_platform {
+		#address-cells = <1>;
+		#size-cells = <1>;
 		compatible = "qcom,spf-core-platform";
 	};
 
@@ -22,6 +24,8 @@
 
 &glink_edge {
 	audio_gpr: qcom,gpr {
+		#address-cells = <1>;
+		#size-cells = <1>;
 		compatible = "qcom,gpr";
 		qcom,glink-channels = "adsp_apps";
 		qcom,intents = <0x200 20>;

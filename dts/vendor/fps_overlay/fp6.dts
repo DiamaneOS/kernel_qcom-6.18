@@ -14,13 +14,17 @@
 /*
  * pstore/ramoops: the inherited node sits under /soc with no reg, so the
  * upstream ramoops driver finds no memory and fails (-22). Describe it as a
- * dynamically placed reserved-memory region instead. The kernel allocates it
- * from free memory at boot, so it cannot overlap another carve-out. Sizes as
- * GrapheneOS ships on Pixels: 4 MiB, 2 MiB console, 2 MiB pmsg, no oops/panic
- * records and no ftrace (the console already holds a panic's output, and the
- * function tracer is not built). Write-combined and unmapped from the linear
- * map, so a reset loses no cached writes. Aligned to its size, so the region
- * covers whole pages and whole 2 MiB blocks of the linear map.
+ * reserved-memory region instead. Sizes as GrapheneOS ships on Pixels: 4 MiB,
+ * 2 MiB console, 2 MiB pmsg, no oops/panic records and no ftrace (the console
+ * already holds a panic's output, and the function tracer is not built).
+ * Write-combined and unmapped from the linear map, so a reset loses no cached
+ * writes. Aligned to its size, so the region covers whole pages and whole 2 MiB
+ * blocks of the linear map.
+ *
+ * The 6.18 ramoops driver takes its memory from the node's reg (pstore/ram.c,
+ * ramoops_parse_dt) and the platform code no longer fills it in from a
+ * dynamically placed region (alloc-ranges and size). The region is fixed at
+ * 0x9fe000000, where 6.1 and every 6.18 boot placed it.
  */
 &soc {
 	/delete-node/ ramoops_region;
@@ -29,9 +33,7 @@
 &reserved_memory {
 	ramoops_mem: ramoops_region {
 		compatible = "ramoops";
-		alloc-ranges = <0x0 0x00000000 0xffffffff 0xffffffff>;
-		size = <0x0 0x400000>;
-		alignment = <0x0 0x400000>;
+		reg = <0x9 0xfe000000 0x0 0x400000>;
 		console-size = <0x200000>;
 		pmsg-size = <0x200000>;
 		record-size = <0x0>;
@@ -39,4 +41,124 @@
 		mem-type = <0>;
 		no-map;
 	};
+};
+
+/*
+ * The 6.18 nvmem core rejects a bit range past its cell and a range of zero
+ * bits (nvmem/core.c), and with it the whole SDAM, so UFS never gets its
+ * ufs_dev cell. The first cell widens to hold its bits and the second one
+ * loses the empty range.
+ */
+&smb1510_present {
+	reg = <0x5d 0x2>;
+};
+
+&ufs_dev {
+	/delete-property/ bits;
+};
+
+/*
+ * The 5.0 modem PAS driver takes the CMA area for 32-bit allocations at
+ * memory-region index 1 when the modem has no DTB firmware (qcom_q6v5_pas.c,
+ * adsp_setup_32b_dma_allocs). The 6.1 tree listed the DTB region at index 1
+ * and the CMA area at 2.
+ */
+&modem_pas {
+	memory-region = <&mpss_mem &system_cma>;
+};
+
+/*
+ * The 5.0 CPUCP driver looks its two register regions up by name (qcom_cpucp.c).
+ * The 6.1 driver used the index.
+ */
+&cpucp {
+	reg-names = "tx", "rx";
+};
+
+/*
+ * The 6.18 core warns for each node that leaves #address-cells or #size-cells
+ * out and walks up the tree for them instead (of/base.c, of_bus_n_addr_cells).
+ * These get the values the walk finds, so every parse stays the same. The
+ * techpack nodes (cam_smmu, ipa, fastrpc, gpr and spf_core_platform) get theirs
+ * in their own techpack sources.
+ */
+&{/soc/funnel@109b4000/out-ports} {
+	#address-cells = <1>;
+	#size-cells = <1>;
+};
+
+&{/soc/funnel@10c0b000/out-ports} {
+	#address-cells = <1>;
+	#size-cells = <1>;
+};
+
+&{/soc/qcom,spmi@c42d000/qcom,pmk8550@0/sdam@b600} {
+	#address-cells = <1>;
+	#size-cells = <0>;
+};
+
+&{/soc/remoteproc-adsp@03000000/glink-edge} {
+	#address-cells = <1>;
+	#size-cells = <1>;
+};
+
+&{/soc/ssusb@a600000} {
+	#address-cells = <1>;
+	#size-cells = <1>;
+};
+
+/*
+ * No driver of the 6.18 set binds qcom,qcedev (none under modules/, none in the
+ * core), so both interconnect providers wait for the node in sync_state, keep
+ * their boot votes and the SoC never reaches AOSD or CXSD. No domain opens
+ * /dev/qce on these builds.
+ */
+&qcom_cedev {
+	status = "disabled";
+};
+
+/*
+ * The 5.0 sdhci-msm takes the card supply and the I/O supply as vmmc and vqmmc
+ * through mmc_regulator_get_supply (sdhci-msm.c, sdhci_msm_probe). The 6.1
+ * tree names them vdd-supply and vdd-io-supply in the board overlay, which the
+ * driver does not read, so it never powered the card and every command timed
+ * out. The two regulators are the same ones.
+ */
+&sdhc_2 {
+	vmmc-supply = <&L13B>;
+	vqmmc-supply = <&L23B>;
+};
+
+/*
+ * The 6.1 driver pinned the card supply at 2.96 V and the I/O supply between
+ * 1.8 V and 2.96 V (qcom,vdd-voltage-level and qcom,vdd-io-voltage-level).
+ * The 5.0 driver leaves the choice to the mmc core, which takes the highest
+ * voltage window the supplies offer (mmc_select_voltage, mmc_regulator_set_ocr,
+ * mmc_regulator_set_vqmmc). With the full ranges of l13 (2.7 to 3.3 V) and l23
+ * (1.65 to 3.544 V) that is about 3.3 V for the card and for 3.3 V signalling.
+ * l13 is fixed at 2.96 V, so the card gets what it got on 6.1. l23 stops at
+ * 2.96 V and keeps 1.8 V for UHS. For 3.3 V signalling the core asks for the
+ * low end of the card window, which gives 2.9 V on l23, inside the card's range.
+ */
+&pm7550_l13 {
+	regulator-min-microvolt = <2960000>;
+	regulator-max-microvolt = <2960000>;
+	qcom,init-voltage = <2960000>;
+};
+
+&pm7550_l23 {
+	regulator-max-microvolt = <2960000>;
+};
+
+/*
+ * The 5.0 interconnect driver for volcano keeps the IPA configuration slave
+ * (SLAVE_IPA_CFG) on cnoc_main (volcano.c, cnoc_main_nodes), the provider the
+ * IPA node already names. The USB controller named cnoc_cfg for it, so the
+ * xlate of the usb-ipa path finds no node, of_icc_get fails and the USB driver
+ * (dwc3-msm-core.c, dwc3_msm_probe) silently drops that path.
+ */
+&usb0 {
+	interconnects = <&aggre1_noc MASTER_USB3_0 &mc_virt SLAVE_EBI1>,
+			<&aggre1_noc MASTER_USB3_0 &cnoc_main SLAVE_IPA_CFG>,
+			<&gem_noc MASTER_APPSS_PROC &cnoc_cfg SLAVE_USB3_0>;
 };

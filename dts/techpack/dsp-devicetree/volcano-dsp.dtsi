@@ -1,6 +1,8 @@
 &soc {
 
 	msm_fastrpc: qcom,msm_fastrpc {
+		#address-cells = <1>;
+		#size-cells = <1>;
 		compatible = "qcom,msm-fastrpc-compute";
 		qcom,adsp-remoteheap-vmid = <22 37>;
 		qcom,fastrpc-adsp-audio-pdr;

@@ -20,6 +20,8 @@
         };
 
         ipa_hw: qcom,ipa@3E00000 {
+                #address-cells = <1>;
+                #size-cells = <1>;
                 compatible = "qcom,ipa";
                 reg =
                         <0x3E00000 0x84000>,
