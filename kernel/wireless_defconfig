@@ -1,0 +1,24 @@
+# cfg80211 and mac80211 as modules with the 6.1 FP6 options: power save by default, the
+# regulatory database signed and checked with the kernel's keys, nl80211 test mode, minstrel_ht.
+# The kernel tools sign the modules with the GKI key, as for the vendor modules.
+# CONFIG_MODULE_SIG_ALL is not set
+CONFIG_CFG80211=m
+CONFIG_NL80211_TESTMODE=y
+# CONFIG_CFG80211_DEVELOPER_WARNINGS is not set
+# CONFIG_CFG80211_CERTIFICATION_ONUS is not set
+CONFIG_CFG80211_REQUIRE_SIGNED_REGDB=y
+CONFIG_CFG80211_USE_KERNEL_REGDB_KEYS=y
+CONFIG_CFG80211_DEFAULT_PS=y
+# CONFIG_CFG80211_DEBUGFS is not set
+# CONFIG_CFG80211_CRDA_SUPPORT is not set
+# CONFIG_CFG80211_WEXT is not set
+# CONFIG_CFG80211_KUNIT_TEST is not set
+CONFIG_MAC80211=m
+CONFIG_MAC80211_RC_MINSTREL=y
+CONFIG_MAC80211_RC_DEFAULT_MINSTREL=y
+# CONFIG_MAC80211_KUNIT_TEST is not set
+# CONFIG_MAC80211_MESH is not set
+# CONFIG_MAC80211_LEDS is not set
+# CONFIG_MAC80211_DEBUGFS is not set
+# CONFIG_MAC80211_MESSAGE_TRACING is not set
+# CONFIG_MAC80211_DEBUG_MENU is not set

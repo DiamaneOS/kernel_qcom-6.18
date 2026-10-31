@@ -1,0 +1,6 @@
+# Common-kernel drivers the FP6 loads as modules, as on 6.1: the BAM DMA engine of the slimbus NGD
+# (the BT and audio slimbus path), and cqhci, the command queue engine of the microSD host. sdhci-msm
+# itself is a vendor module (modules/base): the common one selects the common SCM and inline crypto
+# engine, whose key interface the vendor qcom-scm does not have.
+CONFIG_QCOM_BAM_DMA=m
+CONFIG_MMC_CQHCI=m

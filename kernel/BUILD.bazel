@@ -1,0 +1,45 @@
+# The FP6 device kernel build: the GKI kernel plus the in-tree wireless core (cfg80211, mac80211),
+# which the android17-6.18 GKI build no longer makes. Built from the common tree on top of
+# //common:kernel_aarch64 as Google's wonder_aarch64 does, with the 6.1 wireless options.
+# Every FP6 DDK module names this kernel_build, so all of them see one cfg80211.
+
+load("//build/kernel/kleaf:constants.bzl", "COMMON_KCFLAGS")
+load("//build/kernel/kleaf:dwarves.bzl", "pahole")
+load("//build/kernel/kleaf:kernel.bzl", "kernel_build")
+
+# The GKI build's pahole (built from the pinned dwarves, as //common:pahole), so module BTF
+# matches the Image's.
+pahole(
+    name = "pahole",
+    deps = ["//common:bpf_x86"],
+)
+
+kernel_build(
+    name = "fp6_aarch64",
+    srcs = ["//common:common_kernel_sources"],
+    outs = [],
+    base_kernel = "//common:kernel_aarch64",
+    collect_unstripped_modules = True,
+    # As //common:kernel_aarch64, for this build and every DDK module on it.
+    kcflags = COMMON_KCFLAGS,
+    # fp6_aarch64_Module.symvers: the exports of cfg80211 and mac80211 for the module checks.
+    keep_module_symvers = True,
+    make_goals = ["modules"],
+    makefile = "//common:Makefile",
+    module_outs = [
+        "drivers/dma/qcom/bam_dma.ko",
+        "drivers/mmc/host/cqhci.ko",
+        "net/mac80211/mac80211.ko",
+        "net/wireless/cfg80211.ko",
+    ],
+    pahole = select({
+        "//build/kernel/kleaf:pahole_from_sources_is_true": ":pahole",
+        "//conditions:default": None,
+    }),
+    pre_defconfig_fragments = [
+        "platform_defconfig",
+        "wireless_defconfig",
+    ],
+    strip_modules = True,
+    visibility = ["//visibility:public"],
+)
