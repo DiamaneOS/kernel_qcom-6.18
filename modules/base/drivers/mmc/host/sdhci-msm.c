@@ -1,5 +1,11 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
+ * FP6: the common sdhci-msm of kernel_common-6.18 0f9205ec8de7 built as a vendor module without inline
+ * crypto. The common driver's ICE path takes the common qcom_ice and its SCM key calls, which the vendor
+ * qcom-scm of KERNEL.PLATFORM.5.0 does not provide (it has its own qcom_scm_derive_sw_secret). The
+ * microSD is portable storage and the FP6 uses no inline crypto on it.
+ */
+/*
  * drivers/mmc/host/sdhci-msm.c - Qualcomm SDHCI Platform driver
  *
  * Copyright (c) 2013-2014, The Linux Foundation. All rights reserved.
@@ -18,7 +24,6 @@
 #include <linux/pinctrl/consumer.h>
 #include <linux/reset.h>
 
-#include <soc/qcom/ice.h>
 
 #include "sdhci-cqhci.h"
 #include "sdhci-pltfm.h"
@@ -274,7 +279,7 @@ struct sdhci_msm_host {
 	struct clk *xo_clk;	/* TCXO clk needed for FLL feature of cm_dll*/
 	/* core, iface, cal and sleep clocks */
 	struct clk_bulk_data bulk_clks[4];
-#ifdef CONFIG_MMC_CRYPTO
+#if IS_ENABLED(CONFIG_MMC_CRYPTO) && IS_ENABLED(CONFIG_FP6_SDHCI_MSM_ICE)
 	struct qcom_ice *ice;
 #endif
 	unsigned long clk_rate;
@@ -1886,7 +1891,7 @@ out:
  *                                                                           *
 \*****************************************************************************/
 
-#ifdef CONFIG_MMC_CRYPTO
+#if IS_ENABLED(CONFIG_MMC_CRYPTO) && IS_ENABLED(CONFIG_FP6_SDHCI_MSM_ICE)
 
 static const struct blk_crypto_ll_ops sdhci_msm_crypto_ops; /* forward decl */
 
@@ -2122,6 +2127,7 @@ static const struct cqhci_host_ops sdhci_msm_cqhci_ops = {
 	.enable		= sdhci_msm_cqe_enable,
 	.disable	= sdhci_msm_cqe_disable,
 #ifdef CONFIG_MMC_CRYPTO
+	/* no profile at all: cqhci must not set up its standard one on the Qualcomm host */
 	.uses_custom_crypto_profile = true,
 #endif
 };

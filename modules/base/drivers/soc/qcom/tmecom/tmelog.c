@@ -55,7 +55,7 @@ int tmelog_process_request(uint32_t buf, uint32_t buf_capacity, uint32_t *buf_si
 
 	pr_debug("request var: cbor_header: %#x, log_len: %#x, log_ptr: %#x\n",
 			request->cbor_header, request->log_len, request->log_ptr);
-	pr_debug("request_size: %#x, response_size: %#x\n", sizeof(*request), sizeof(*response));
+	pr_debug("request_size: %#zx, response_size: %#zx\n", sizeof(*request), sizeof(*response));
 	ret = tmecom_process_request(request, sizeof(*request), response, &response_len);
 
 	if (ret != 0) {
@@ -64,7 +64,7 @@ int tmelog_process_request(uint32_t buf, uint32_t buf_capacity, uint32_t *buf_si
 	}
 
 	if (response_len != sizeof(*response)) {
-		pr_err("Tme Log failed with invalid length: %u, %u\n",
+		pr_err("Tme Log failed with invalid length: %zu, %zu\n",
 				response_len, sizeof(response));
 		ret = -EBADMSG;
 		goto err_exit;

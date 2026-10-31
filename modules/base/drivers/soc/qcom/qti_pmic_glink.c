@@ -758,6 +758,8 @@ static void pmic_glink_remove(struct platform_device *pdev)
 
 static const struct of_device_id pmic_glink_of_match[] = {
 	{ .compatible = "qcom,qti-pmic-glink" },
+	/* the 6.1 name, which the FP6 device tree uses */
+	{ .compatible = "qcom,pmic-glink" },
 	{}
 };
 MODULE_DEVICE_TABLE(of, pmic_glink_of_match);
@@ -793,3 +795,4 @@ module_exit(pmic_glink_exit);
 MODULE_DESCRIPTION("QTI PMIC Glink driver");
 MODULE_LICENSE("GPL");
 MODULE_ALIAS("qcom,qti-pmic-glink");
+MODULE_ALIAS("qcom,pmic-glink");

@@ -163,7 +163,6 @@ void ufs_qcom_phy_qmp_v4_power_control(struct ufs_qcom_phy *phy,
 					 bool power_ctrl)
 {
 	struct device *dev = phy->dev;
-	int err;
 
 	if (!power_ctrl) {
 		/* apply analog power collapse */
@@ -174,14 +173,12 @@ void ufs_qcom_phy_qmp_v4_power_control(struct ufs_qcom_phy *phy,
 		 */
 		mb();
 		ufs_qcom_phy_qmp_v4_tx_pull_down_ctrl(phy, true);
-		if (phy->vdd_phy_gdsc.reg) {
-			err = ufs_qcom_phy_disable_vreg(dev, &phy->vdd_phy_gdsc);
-			if (err)
-				dev_err(dev, "%s disable phy_gdsc err = %d\n",
-				__func__, err);
-		} else {
+		/*
+		 * The PHY GDSC holds the PHY setup and stays on, as the power domain does (always on). As a
+		 * regulator (vdd-phy-gdsc-supply) it was switched off here, and the next hibern8 exit failed.
+		 */
+		if (!phy->vdd_phy_gdsc.reg)
 			pm_runtime_put_sync(dev);
-		}
 	} else {
 		if (!phy->vdd_phy_gdsc.reg)
 			pm_runtime_get_sync(dev);

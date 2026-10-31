@@ -92,7 +92,7 @@ enum ship_mode_type {
 	SHIP_MODE_PACK_SIDE,
 };
 
-/* property ids */
+/* property ids, as the FP6 ADSP firmware numbers them (Fairphone's 6.1 driver) */
 enum battery_property_id {
 	BATT_STATUS,
 	BATT_HEALTH,
@@ -122,7 +122,7 @@ enum battery_property_id {
 	BATT_CHG_CTRL_START_THR,
 	BATT_CHG_CTRL_END_THR,
 	BATT_CURR_AVG,
-	BATT_PARALLEL_CELL_COUNT,
+	BATT_CHG_DISABLE_CHARGING,
 	BATT_PROP_MAX,
 };
 
@@ -141,7 +141,9 @@ enum usb_property_id {
 	USB_REAL_TYPE,
 	USB_TYPEC_COMPLIANT,
 	USB_SCOPE,
+	USB_TYPEC_CC_ORIENTATION,
 	USB_CONNECTOR_TYPE,
+	USB_SUSPEND_INPUT_CURRENT,
 	F_ACTIVE,
 	USB_NUM_PORTS,
 	USB_PROP_MAX,
@@ -346,6 +348,9 @@ struct battery_chg_dev {
 	u8				chg_ctrl_start_thr;
 	u8				chg_ctrl_end_thr;
 	bool				chg_ctrl_en;
+	/* charge limit pause and USB input suspend, set again after a firmware restart */
+	bool				charge_disable;
+	bool				suspend_input;
 	bool				usb_active[NUM_USB_PORTS];
 	/* To track the driver initialization status */
 	bool				initialized;
@@ -1795,7 +1800,7 @@ static int battery_chg_init_psy(struct battery_chg_dev *bcdev)
 	int rc;
 
 	psy_cfg.drv_data = bcdev;
-	psy_cfg.of_node = bcdev->dev->of_node;
+	psy_cfg.fwnode = dev_fwnode(bcdev->dev);
 	if (bcdev->micro_usb) {
 		usb_psy_desc[USB_1_PORT_ID].properties = uusb_props;
 		usb_psy_desc[USB_1_PORT_ID].num_properties = ARRAY_SIZE(uusb_props);
@@ -1904,6 +1909,21 @@ static void battery_chg_subsys_up_work(struct work_struct *work)
 		if (rc < 0)
 			pr_err("Failed to set USB-2 ICL(%u uA), rc=%d\n",
 				bcdev->usb_icl_ua[USB_2_PORT_ID], rc);
+	}
+
+	/* A restarted firmware charges and draws from USB again: keep the user's charge limit pause and USB-C Off */
+	if (bcdev->suspend_input) {
+		rc = write_property_id(bcdev, &bcdev->psy_list[PSY_TYPE_USB],
+				USB_SUSPEND_INPUT_CURRENT, 1);
+		if (rc < 0)
+			pr_err("Failed to suspend the USB input again, rc=%d\n", rc);
+	}
+
+	if (bcdev->charge_disable) {
+		rc = write_property_id(bcdev, &bcdev->psy_list[PSY_TYPE_BATTERY],
+				BATT_CHG_DISABLE_CHARGING, 1);
+		if (rc < 0)
+			pr_err("Failed to pause charging again, rc=%d\n", rc);
 	}
 }
 
@@ -2511,25 +2531,81 @@ static ssize_t ship_mode_en_show(const struct class *c,
 }
 static CLASS_ATTR_RW(ship_mode_en);
 
-#define BATT_PARALLEL_CELL_AVAIL_COUNT(val)		FIELD_GET(GENMASK(15, 8), val)
-#define BATT_PARALLEL_CELL_TOTAL_COUNT(val)		FIELD_GET(GENMASK(7, 0), val)
-
-static ssize_t battery_parallel_cell_count_show(const struct class *c,
-			const struct class_attribute *attr, char *buf)
+static ssize_t charge_disable_store(const struct class *c,
+				const struct class_attribute *attr,
+				const char *buf, size_t count)
 {
-	struct battery_chg_dev *bcdev = container_of(c, struct battery_chg_dev, battery_class);
-	struct psy_state *pst = &bcdev->psy_list[PSY_TYPE_BATTERY];
+	struct battery_chg_dev *bcdev = container_of(c, struct battery_chg_dev,
+						battery_class);
 	int rc;
+	bool val;
 
-	rc = read_property_id(bcdev, pst, BATT_PARALLEL_CELL_COUNT);
+	if (kstrtobool(buf, &val))
+		return -EINVAL;
+
+	rc = write_property_id(bcdev, &bcdev->psy_list[PSY_TYPE_BATTERY],
+				BATT_CHG_DISABLE_CHARGING, val);
 	if (rc < 0)
 		return rc;
 
-	return scnprintf(buf, PAGE_SIZE, "Parallel battery cell count (available/total): %lu/%lu\n",
-		BATT_PARALLEL_CELL_AVAIL_COUNT(pst->prop[BATT_PARALLEL_CELL_COUNT]),
-		BATT_PARALLEL_CELL_TOTAL_COUNT(pst->prop[BATT_PARALLEL_CELL_COUNT]));
+	bcdev->charge_disable = val;
+
+	return count;
 }
-static CLASS_ATTR_RO(battery_parallel_cell_count);
+
+static ssize_t charge_disable_show(const struct class *c,
+				const struct class_attribute *attr, char *buf)
+{
+	struct battery_chg_dev *bcdev = container_of(c, struct battery_chg_dev,
+						battery_class);
+	struct psy_state *pst = &bcdev->psy_list[PSY_TYPE_BATTERY];
+	int rc;
+
+	rc = read_property_id(bcdev, pst, BATT_CHG_DISABLE_CHARGING);
+	if (rc < 0)
+		return rc;
+
+	return scnprintf(buf, PAGE_SIZE, "%u\n", pst->prop[BATT_CHG_DISABLE_CHARGING]);
+}
+static CLASS_ATTR_RW(charge_disable);
+
+static ssize_t suspend_input_current_store(const struct class *c,
+				const struct class_attribute *attr,
+				const char *buf, size_t count)
+{
+	struct battery_chg_dev *bcdev = container_of(c, struct battery_chg_dev,
+						battery_class);
+	int rc;
+	bool val;
+
+	if (kstrtobool(buf, &val))
+		return -EINVAL;
+
+	rc = write_property_id(bcdev, &bcdev->psy_list[PSY_TYPE_USB],
+				USB_SUSPEND_INPUT_CURRENT, val);
+	if (rc < 0)
+		return rc;
+
+	bcdev->suspend_input = val;
+
+	return count;
+}
+
+static ssize_t suspend_input_current_show(const struct class *c,
+				const struct class_attribute *attr, char *buf)
+{
+	struct battery_chg_dev *bcdev = container_of(c, struct battery_chg_dev,
+						battery_class);
+	struct psy_state *pst = &bcdev->psy_list[PSY_TYPE_USB];
+	int rc;
+
+	rc = read_property_id(bcdev, pst, USB_SUSPEND_INPUT_CURRENT);
+	if (rc < 0)
+		return rc;
+
+	return scnprintf(buf, PAGE_SIZE, "%u\n", pst->prop[USB_SUSPEND_INPUT_CURRENT]);
+}
+static CLASS_ATTR_RW(suspend_input_current);
 
 static ssize_t battery_chg_notify_store(const struct class *c,
 					const struct class_attribute *attr,
@@ -2575,7 +2651,8 @@ static struct attribute *battery_class_attrs[] = {
 	&class_attr_usb_real_type.attr,
 	&class_attr_usb_typec_compliant.attr,
 	&class_attr_charge_control_en.attr,
-	&class_attr_battery_parallel_cell_count.attr,
+	&class_attr_charge_disable.attr,
+	&class_attr_suspend_input_current.attr,
 	NULL,
 };
 ATTRIBUTE_GROUPS(battery_class);
@@ -2599,7 +2676,6 @@ static struct attribute *battery_class_pmw6100_attrs[] = {
 	&class_attr_usb_real_type.attr,
 	&class_attr_usb_typec_compliant.attr,
 	&class_attr_charge_control_en.attr,
-	&class_attr_battery_parallel_cell_count.attr,
 	&class_attr_battery_chg_notify.attr,
 	NULL,
 };
@@ -2629,7 +2705,6 @@ static struct attribute *battery_class_usb_2_attrs[] = {
 	&class_attr_usb_typec_compliant.attr,
 	&class_attr_usb_2_typec_compliant.attr,
 	&class_attr_charge_control_en.attr,
-	&class_attr_battery_parallel_cell_count.attr,
 	NULL,
 };
 ATTRIBUTE_GROUPS(battery_class_usb_2);
@@ -2648,7 +2723,6 @@ static struct attribute *battery_class_no_wls_attrs[] = {
 	&class_attr_usb_real_type.attr,
 	&class_attr_usb_typec_compliant.attr,
 	&class_attr_charge_control_en.attr,
-	&class_attr_battery_parallel_cell_count.attr,
 	NULL,
 };
 ATTRIBUTE_GROUPS(battery_class_no_wls);
@@ -2670,7 +2744,6 @@ static struct attribute *battery_class_no_wls_usb_2_attrs[] = {
 	&class_attr_usb_typec_compliant.attr,
 	&class_attr_usb_2_typec_compliant.attr,
 	&class_attr_charge_control_en.attr,
-	&class_attr_battery_parallel_cell_count.attr,
 	NULL,
 };
 ATTRIBUTE_GROUPS(battery_class_no_wls_usb_2);

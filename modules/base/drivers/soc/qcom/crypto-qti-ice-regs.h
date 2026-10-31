@@ -1,465 +1,174 @@
-// SPDX-License-Identifier: GPL-2.0-only
+/* SPDX-License-Identifier: GPL-2.0-only */
 /*
- * Common crypto library for storage encryption.
- *
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022, 2024 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
-#include <linux/crypto-qti-common.h>
-#include <linux/module.h>
-#include <linux/platform_device.h>
-#include <linux/mod_devicetable.h>
-#include <linux/qcom_scm.h>
-#include "crypto-qti-ice-regs.h"
-#include "crypto-qti-platform.h"
-
-static int ice_check_fuse_setting(void __iomem *ice_mmio)
-{
-	uint32_t regval;
-	uint32_t version, major, minor;
-
-	version = ice_readl(ice_mmio, ICE_REGS_VERSION);
-	major = (version & ICE_CORE_MAJOR_REV_MASK) >>
-			ICE_CORE_MAJOR_REV;
-	minor = (version & ICE_CORE_MINOR_REV_MASK) >>
-			ICE_CORE_MINOR_REV;
-
-	//Check fuse setting is not supported on ICE 3.2 onwards
-	if ((major == 0x03) && (minor >= 0x02))
-		return 0;
-	regval = ice_readl(ice_mmio, ICE_REGS_FUSE_SETTING);
-	regval &= (ICE_FUSE_SETTING_MASK |
-		ICE_FORCE_HW_KEY0_SETTING_MASK |
-		ICE_FORCE_HW_KEY1_SETTING_MASK);
-
-	if (regval) {
-		pr_err("%s: error: ICE_ERROR_HW_DISABLE_FUSE_BLOWN\n",
-				__func__);
-		return -EPERM;
-	}
-	return 0;
-}
-
-static int ice_check_version(void __iomem *ice_mmio)
-{
-	uint32_t version, major, minor, step;
-
-	version = ice_readl(ice_mmio, ICE_REGS_VERSION);
-	major = (version & ICE_CORE_MAJOR_REV_MASK) >> ICE_CORE_MAJOR_REV;
-	minor = (version & ICE_CORE_MINOR_REV_MASK) >> ICE_CORE_MINOR_REV;
-	step = (version & ICE_CORE_STEP_REV_MASK) >> ICE_CORE_STEP_REV;
-
-	if (major < ICE_CORE_CURRENT_MAJOR_VERSION) {
-		pr_err("%s: Unknown ICE device at %lu, rev %d.%d.%d\n",
-			__func__, (unsigned long)ice_mmio,
-				major, minor, step);
-		return -ENODEV;
-	}
-
-	return 0;
-}
-
-int crypto_qti_init_crypto(void *mmio_data)
-{
-	int err = 0;
-	void __iomem *ice_mmio = (void __iomem *) mmio_data;
-
-	err = ice_check_version(ice_mmio);
-	if (err) {
-		pr_err("%s: check version failed, err %d\n", __func__, err);
-		return err;
-	}
-
-	err = ice_check_fuse_setting(ice_mmio);
-	if (err)
-		pr_err("%s: check fuse failed, err %d\n", __func__, err);
-
-	return err;
-}
-EXPORT_SYMBOL(crypto_qti_init_crypto);
-
-static void ice_low_power_and_optimization_enable(void __iomem *ice_mmio)
-{
-	uint32_t regval;
-
-	regval = ice_readl(ice_mmio, ICE_REGS_ADVANCED_CONTROL);
-	/* Enable low power mode sequence
-	 * [0]-0,[1]-0,[2]-0,[3]-7,[4]-0,[5]-0,[6]-0,[7]-0,
-	 * Enable CONFIG_CLK_GATING, STREAM2_CLK_GATING and STREAM1_CLK_GATING
-	 */
-	regval |= 0x7000;
-	/* Optimization enable sequence
-	 */
-	regval |= 0xD807100;
-	ice_writel(ice_mmio, regval, ICE_REGS_ADVANCED_CONTROL);
-	/*
-	 * Memory barrier - to ensure write completion before next transaction
-	 */
-	wmb();
-}
-
-static int ice_wait_bist_status(void __iomem *ice_mmio)
-{
-	int count;
-	uint32_t regval;
-
-	for (count = 0; count < QTI_ICE_MAX_BIST_CHECK_COUNT; count++) {
-		regval = ice_readl(ice_mmio, ICE_REGS_BIST_STATUS);
-		if (!(regval & ICE_BIST_STATUS_MASK))
-			break;
-		udelay(50);
-	}
-
-	if (regval) {
-		pr_err("%s: wait bist status failed, reg %d\n",
-				__func__, regval);
-		return -ETIMEDOUT;
-	}
-
-	return 0;
-}
-
-int crypto_qti_enable(void *mmio_data)
-{
-	int err = 0;
-	void __iomem *ice_mmio = (void __iomem *) mmio_data;
-
-	ice_low_power_and_optimization_enable(ice_mmio);
-	err = ice_wait_bist_status(ice_mmio);
-	if (err)
-		return err;
-
-	return err;
-}
-EXPORT_SYMBOL(crypto_qti_enable);
-
-void crypto_qti_disable(void)
-{
-	crypto_qti_disable_platform();
-}
-EXPORT_SYMBOL(crypto_qti_disable);
-
-int crypto_qti_resume(void *mmio_data)
-{
-	void __iomem *ice_mmio = (void __iomem *) mmio_data;
-
-	return ice_wait_bist_status(ice_mmio);
-}
-EXPORT_SYMBOL(crypto_qti_resume);
-
-static void ice_dump_test_bus(void __iomem *ice_mmio)
-{
-	uint32_t regval = 0x1;
-	uint32_t val;
-	uint8_t bus_selector;
-	uint8_t stream_selector;
-
-	pr_err("ICE TEST BUS DUMP:\n");
-
-	for (bus_selector = 0; bus_selector <= 0xF;  bus_selector++) {
-		regval = 0x1;	/* enable test bus */
-		regval |= bus_selector << 28;
-		if (bus_selector == 0xD)
-			continue;
-		ice_writel(ice_mmio, regval, ICE_REGS_TEST_BUS_CONTROL);
-		/*
-		 * make sure test bus selector is written before reading
-		 * the test bus register
-		 */
-		wmb();
-		val = ice_readl(ice_mmio, ICE_REGS_TEST_BUS_REG);
-		pr_err("ICE_TEST_BUS_CONTROL: 0x%08x | ICE_TEST_BUS_REG: 0x%08x\n",
-			regval, val);
-	}
-
-	pr_err("ICE TEST BUS DUMP (ICE_STREAM1_DATAPATH_TEST_BUS):\n");
-	for (stream_selector = 0; stream_selector <= 0xF; stream_selector++) {
-		regval = 0xD0000001;	/* enable stream test bus */
-		regval |= stream_selector << 16;
-		ice_writel(ice_mmio, regval, ICE_REGS_TEST_BUS_CONTROL);
-		/*
-		 * make sure test bus selector is written before reading
-		 * the test bus register
-		 */
-		wmb();
-		val = ice_readl(ice_mmio, ICE_REGS_TEST_BUS_REG);
-		pr_err("ICE_TEST_BUS_CONTROL: 0x%08x | ICE_TEST_BUS_REG: 0x%08x\n",
-			regval, val);
-	}
-}
-
-static void ice_dump_config_regs(void __iomem *ice_mmio)
-{
-	int i = 0;
-	uint32_t version = 0;
-	uint32_t  major = 0;
-	uint32_t minor = 0;
-
-	version = ice_readl(ice_mmio, ICE_REGS_VERSION);
-	major = (version & ICE_CORE_MAJOR_REV_MASK) >> ICE_CORE_MAJOR_REV;
-	minor = (version & ICE_CORE_MINOR_REV_MASK) >> ICE_CORE_MINOR_REV;
-
-	if (((major == 3) && (minor >= 2)) || (major > 3)) {
-		for (i = 0; i < 64; i++) {
-			pr_err("ICE_CRYPTOCFG_r_16 slot %d: 0x%08x\n", i,
-				ice_readl(ice_mmio, ICE_LUT_KEYS_CRYPTOCFG_R_16 +
-				ICE_LUT_KEYS_CRYPTOCFG_OFFSET*i));
-			pr_err("ICE_CRYPTOCFG_r_17 slot %d: 0x%08x\n", i,
-				ice_readl(ice_mmio, ICE_LUT_KEYS_CRYPTOCFG_R_17 +
-				ICE_LUT_KEYS_CRYPTOCFG_OFFSET*i));
-		}
-	} else {
-		for (i = 0; i < 32; i++) {
-			pr_err("ICE_CRYPTOCFG_r_16 slot %d: 0x%08x\n", i,
-				ice_readl(ice_mmio, ICE_LUT_KEYS_SW_CRYPTOCFG_R_16 +
-				ICE_LUT_KEYS_CRYPTOCFG_OFFSET*i));
-			pr_err("ICE_CRYPTOCFG_r_17 slot %d: 0x%08x\n", i,
-				ice_readl(ice_mmio, ICE_LUT_KEYS_SW_CRYPTOCFG_R_17 +
-				ICE_LUT_KEYS_CRYPTOCFG_OFFSET*i));
-		}
-	}
-}
-
-int crypto_qti_debug(const struct ice_mmio_data *mmio_data)
-{
-	void __iomem *ice_mmio =  mmio_data->ice_base_mmio;
-
-	pr_err("%s: Dumping ICE registers\n", __func__);
-	pr_err("ICE Control: 0x%08x | ICE Reset: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_CONTROL),
-		ice_readl(ice_mmio, ICE_REGS_RESET));
-
-	pr_err("ICE Version: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_VERSION));
-
-	pr_err("ICE Param1: 0x%08x | ICE Param2:  0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_PARAMETERS_1),
-		ice_readl(ice_mmio, ICE_REGS_PARAMETERS_2));
-
-	pr_err("ICE Param3: 0x%08x | ICE Param4:  0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_PARAMETERS_3),
-		ice_readl(ice_mmio, ICE_REGS_PARAMETERS_4));
-
-	pr_err("ICE Param5: 0x%08x | ICE IRQ STTS:  0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_PARAMETERS_5),
-		ice_readl(ice_mmio, ICE_REGS_NON_SEC_IRQ_STTS));
-
-	pr_err("ICE IRQ MASK: 0x%08x | ICE IRQ CLR:	0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_NON_SEC_IRQ_MASK),
-		ice_readl(ice_mmio, ICE_REGS_NON_SEC_IRQ_CLR));
-
-	pr_err("ICE INVALID CCFG ERR STTS: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_INVALID_CCFG_ERR_STTS));
-
-	pr_err("ICE GENERAL ERR STTS: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_GENERAL_ERR_STTS));
-
-	pr_err("ICE BIST Sts: 0x%08x | ICE Bypass Sts:  0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_BIST_STATUS),
-		ice_readl(ice_mmio, ICE_REGS_BYPASS_STATUS));
-
-	pr_err("ICE ADV CTRL: 0x%08x | ICE ENDIAN SWAP:	0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_ADVANCED_CONTROL),
-		ice_readl(ice_mmio, ICE_REGS_ENDIAN_SWAP));
-
-	pr_err("ICE_STM1_ERR_SYND1: 0x%08x | ICE_STM2_ERR_SYND1: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_STREAM1_ERROR_SYNDROME1),
-		ice_readl(ice_mmio, ICE_REGS_STREAM2_ERROR_SYNDROME1));
-
-	pr_err("ICE_STM1_ERR_SYND2: 0x%08x | ICE_STM2_ERR_SYND2: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_STREAM1_ERROR_SYNDROME2),
-		ice_readl(ice_mmio, ICE_REGS_STREAM2_ERROR_SYNDROME2));
-
-	pr_err("ICE_STM1_ERR_SYND3: 0x%08x | ICE_STM2_ERR_SYND3: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_STREAM1_ERROR_SYNDROME3),
-		ice_readl(ice_mmio, ICE_REGS_STREAM2_ERROR_SYNDROME3));
-
-	pr_err("ICE_STM1_COUNTER1: 0x%08x | ICE_STM1_COUNTER2: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_STREAM1_COUNTERS1),
-		ice_readl(ice_mmio, ICE_REGS_STREAM1_COUNTERS2));
-
-	pr_err("ICE_STM1_COUNTER3: 0x%08x | ICE_STM1_COUNTER4: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_STREAM1_COUNTERS3),
-		ice_readl(ice_mmio, ICE_REGS_STREAM1_COUNTERS4));
-
-	pr_err("ICE_STM2_COUNTER1: 0x%08x | ICE_STM2_COUNTER2: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_STREAM2_COUNTERS1),
-		ice_readl(ice_mmio, ICE_REGS_STREAM2_COUNTERS2));
-
-	pr_err("ICE_STM2_COUNTER3: 0x%08x | ICE_STM2_COUNTER4: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_STREAM2_COUNTERS3),
-		ice_readl(ice_mmio, ICE_REGS_STREAM2_COUNTERS4));
-
-	pr_err("ICE_STM1_CTR5_MSB: 0x%08x | ICE_STM1_CTR5_LSB: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_STREAM1_COUNTERS5_MSB),
-		ice_readl(ice_mmio, ICE_REGS_STREAM1_COUNTERS5_LSB));
-
-	pr_err("ICE_STM1_CTR6_MSB: 0x%08x | ICE_STM1_CTR6_LSB: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_STREAM1_COUNTERS6_MSB),
-		ice_readl(ice_mmio, ICE_REGS_STREAM1_COUNTERS6_LSB));
-
-	pr_err("ICE_STM1_CTR7_MSB: 0x%08x | ICE_STM1_CTR7_LSB: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_STREAM1_COUNTERS7_MSB),
-		ice_readl(ice_mmio, ICE_REGS_STREAM1_COUNTERS7_LSB));
-
-	pr_err("ICE_STM1_CTR8_MSB: 0x%08x | ICE_STM1_CTR8_LSB: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_STREAM1_COUNTERS8_MSB),
-		ice_readl(ice_mmio, ICE_REGS_STREAM1_COUNTERS8_LSB));
-
-	pr_err("ICE_STM1_CTR9_MSB: 0x%08x | ICE_STM1_CTR9_LSB: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_STREAM1_COUNTERS9_MSB),
-		ice_readl(ice_mmio, ICE_REGS_STREAM1_COUNTERS9_LSB));
-
-	pr_err("ICE_STM2_CTR5_MSB: 0x%08x | ICE_STM2_CTR5_LSB: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_STREAM2_COUNTERS5_MSB),
-		ice_readl(ice_mmio, ICE_REGS_STREAM2_COUNTERS5_LSB));
-
-	pr_err("ICE_STM2_CTR6_MSB: 0x%08x | ICE_STM2_CTR6_LSB: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_STREAM2_COUNTERS6_MSB),
-		ice_readl(ice_mmio, ICE_REGS_STREAM2_COUNTERS6_LSB));
-
-	pr_err("ICE_STM2_CTR7_MSB: 0x%08x | ICE_STM2_CTR7_LSB: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_STREAM2_COUNTERS7_MSB),
-		ice_readl(ice_mmio, ICE_REGS_STREAM2_COUNTERS7_LSB));
-
-	pr_err("ICE_STM2_CTR8_MSB: 0x%08x | ICE_STM2_CTR8_LSB: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_STREAM2_COUNTERS8_MSB),
-		ice_readl(ice_mmio, ICE_REGS_STREAM2_COUNTERS8_LSB));
-
-	pr_err("ICE_STM2_CTR9_MSB: 0x%08x | ICE_STM2_CTR9_LSB: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_REGS_STREAM2_COUNTERS9_MSB),
-		ice_readl(ice_mmio, ICE_REGS_STREAM2_COUNTERS9_LSB));
-
-	pr_err("ICE_STREAM1_HWKM_RD_ERR_STS: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_STREAM1_HWKM_RD_ERR_STTS));
-
-	pr_err("ICE_STREAM2_HWKM_RD_ERR_STS: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_STREAM2_HWKM_RD_ERR_STTS));
-
-	pr_err("ICE_CONFIG_HWKM_WR_ERR_STS: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_CONFIG_HWKM_WR_ERR_STTS));
-
-	pr_err("ICE_AES_SHARE_CONTROL: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_AES_SHARE_CONTROL));
-
-	pr_err("ICE_AES_CORE_STTS: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_AES_CORE_STTS));
-
-	pr_err("ICE_AES_CORE_DISABLE: 0x%08x\n",
-		ice_readl(ice_mmio, ICE_AES_CORE_DISABLE));
-
-	ice_dump_config_regs(ice_mmio);
-
-	ice_dump_test_bus(ice_mmio);
-
-	return 0;
-}
-EXPORT_SYMBOL(crypto_qti_debug);
-
-int crypto_qti_keyslot_program(const struct ice_mmio_data *mmio_data,
-			       const struct blk_crypto_key *key,
-			       unsigned int slot,
-			       u8 data_unit_mask, int capid, int storage_type)
-{
-	int err = 0;
-
-	err = crypto_qti_program_key(mmio_data, key, slot,
-				data_unit_mask, capid, storage_type);
-	if (err) {
-		pr_err("%s: program key failed with error %d\n", __func__, err);
-		err = crypto_qti_invalidate_key(mmio_data, slot, storage_type);
-		if (err) {
-			pr_err("%s: invalidate key failed with error %d\n",
-				__func__, err);
-			return err;
-		}
-	}
-
-	return err;
-}
-EXPORT_SYMBOL(crypto_qti_keyslot_program);
-
-int crypto_qti_keyslot_evict(const struct ice_mmio_data *mmio_data,
-							 unsigned int slot, int storage_type)
-{
-	int err = 0;
-
-	err = crypto_qti_invalidate_key(mmio_data, slot, storage_type);
-	if (err) {
-		pr_err("%s: invalidate key failed with error %d\n",
-			__func__, err);
-	}
-
-	return err;
-}
-EXPORT_SYMBOL(crypto_qti_keyslot_evict);
-
-int crypto_qti_derive_raw_secret(const struct ice_mmio_data *mmio_data, const u8 *wrapped_key,
-				 unsigned int wrapped_key_size, u8 *secret,
-				 unsigned int secret_size)
-{
-	int err = 0;
-
-	if (wrapped_key_size <= RAW_SECRET_SIZE) {
-		pr_err("%s: Invalid wrapped_key_size: %u\n",
-				__func__, wrapped_key_size);
-		err = -EINVAL;
-		return err;
-	}
-	if (secret_size != RAW_SECRET_SIZE) {
-		pr_err("%s: Invalid secret size: %u\n", __func__, secret_size);
-		err = -EINVAL;
-		return err;
-	}
-
-	if (wrapped_key_size > 64)
-		err = crypto_qti_derive_raw_secret_platform(mmio_data, wrapped_key,
-				wrapped_key_size, secret, secret_size);
-	else
-		memcpy(secret, wrapped_key, secret_size);
-
-	return err;
-}
-EXPORT_SYMBOL(crypto_qti_derive_raw_secret);
-
-static int crypto_qti_hibernate_exit(void)
-{
-	int err = 0;
-
-	err = qcom_scm_hibernate_exit();
-	if (err == -EIO)
-		pr_err("%s: Hibernate exit SCM call unsupported in TZ\n", __func__);
-	else if (err != 0)
-		pr_err("%s: SCM call Error: 0x%x\n", __func__, err);
-
-	return err;
-}
-
-static int qcom_crypto_hibernate_restore(struct device *dev)
-{
-	return crypto_qti_hibernate_exit();
-}
-
-static const struct dev_pm_ops qcom_crypto_dev_pm_ops = {
-	.restore = qcom_crypto_hibernate_restore,
-};
-
-static const struct of_device_id qti_crypto_match[] = {
-	{ .compatible = "qcom,crypto" },
-	{},
-};
-MODULE_DEVICE_TABLE(of, qti_crypto_match);
-
-static struct platform_driver qti_crypto_driver = {
-	.probe = NULL,
-	.remove = NULL,
-	.driver = {
-		.name = "qti_crypto",
-		.pm = &qcom_crypto_dev_pm_ops,
-		.of_match_table = qti_crypto_match,
-	},
-};
-module_platform_driver(qti_crypto_driver);
-
-MODULE_LICENSE("GPL");
-MODULE_DESCRIPTION("Common crypto library for storage encryption");
+#ifndef _CRYPTO_INLINE_CRYPTO_ENGINE_REGS_H_
+#define _CRYPTO_INLINE_CRYPTO_ENGINE_REGS_H_
+
+#include <linux/io.h>
+
+/* Register bits for ICE version */
+#define ICE_CORE_CURRENT_MAJOR_VERSION 0x03
+
+#define ICE_CORE_STEP_REV_MASK		0xFFFF
+#define ICE_CORE_STEP_REV		0 /* bit 15-0 */
+#define ICE_CORE_MAJOR_REV_MASK		0xFF000000
+#define ICE_CORE_MAJOR_REV		24 /* bit 31-24 */
+#define ICE_CORE_MINOR_REV_MASK		0xFF0000
+#define ICE_CORE_MINOR_REV		16 /* bit 23-16 */
+
+#define ICE_BIST_STATUS_MASK		(0xF0000000)	/* bits 28-31 */
+
+#define ICE_FUSE_SETTING_MASK			0x1
+#define ICE_FORCE_HW_KEY0_SETTING_MASK		0x2
+#define ICE_FORCE_HW_KEY1_SETTING_MASK		0x4
+
+/* QTI ICE Registers from SWI */
+#define ICE_REGS_CONTROL			0x0000
+#define ICE_REGS_RESET				0x0004
+#define ICE_REGS_VERSION			0x0008
+#define ICE_REGS_FUSE_SETTING			0x0010
+#define ICE_REGS_PARAMETERS_1			0x0014
+#define ICE_REGS_PARAMETERS_2			0x0018
+#define ICE_REGS_PARAMETERS_3			0x001C
+#define ICE_REGS_PARAMETERS_4			0x0020
+#define ICE_REGS_PARAMETERS_5			0x0024
+
+
+/* QTI ICE v3.X only */
+#define ICE_GENERAL_ERR_STTS			0x0040
+#define ICE_INVALID_CCFG_ERR_STTS		0x0030
+#define ICE_GENERAL_ERR_MASK			0x0044
+
+#define ICE_STREAM1_HWKM_RD_ERR_STTS	0x123C
+#define ICE_STREAM2_HWKM_RD_ERR_STTS	0x1248
+#define ICE_CONFIG_HWKM_WR_ERR_STTS		0x1254
+
+/* QTI ICE v2.X only */
+#define ICE_REGS_NON_SEC_IRQ_STTS		0x0040
+#define ICE_REGS_NON_SEC_IRQ_MASK		0x0044
+
+
+#define ICE_REGS_NON_SEC_IRQ_CLR		0x0048
+#define ICE_REGS_STREAM1_ERROR_SYNDROME1	0x0050
+#define ICE_REGS_STREAM1_ERROR_SYNDROME2	0x0054
+#define ICE_REGS_STREAM2_ERROR_SYNDROME1	0x0058
+#define ICE_REGS_STREAM2_ERROR_SYNDROME2	0x005C
+#define ICE_REGS_STREAM1_ERROR_SYNDROME3	0x0080
+#define ICE_REGS_STREAM2_ERROR_SYNDROME3	0x0084
+#define ICE_REGS_STREAM1_BIST_ERROR_VEC		0x0060
+#define ICE_REGS_STREAM2_BIST_ERROR_VEC		0x0064
+#define ICE_REGS_STREAM1_BIST_FINISH_VEC	0x0068
+#define ICE_REGS_STREAM2_BIST_FINISH_VEC	0x006C
+#define ICE_REGS_BIST_STATUS			0x0070
+#define ICE_REGS_BYPASS_STATUS			0x0074
+#define ICE_REGS_ADVANCED_CONTROL		0x1000
+#define ICE_REGS_ENDIAN_SWAP			0x1004
+#define ICE_REGS_TEST_BUS_CONTROL		0x1010
+#define ICE_REGS_TEST_BUS_REG			0x1014
+#define ICE_REGS_STREAM1_COUNTERS1		0x1100
+#define ICE_REGS_STREAM1_COUNTERS2		0x1104
+#define ICE_REGS_STREAM1_COUNTERS3		0x1108
+#define ICE_REGS_STREAM1_COUNTERS4		0x110C
+#define ICE_REGS_STREAM1_COUNTERS5_MSB		0x1110
+#define ICE_REGS_STREAM1_COUNTERS5_LSB		0x1114
+#define ICE_REGS_STREAM1_COUNTERS6_MSB		0x1118
+#define ICE_REGS_STREAM1_COUNTERS6_LSB		0x111C
+#define ICE_REGS_STREAM1_COUNTERS7_MSB		0x1120
+#define ICE_REGS_STREAM1_COUNTERS7_LSB		0x1124
+#define ICE_REGS_STREAM1_COUNTERS8_MSB		0x1128
+#define ICE_REGS_STREAM1_COUNTERS8_LSB		0x112C
+#define ICE_REGS_STREAM1_COUNTERS9_MSB		0x1130
+#define ICE_REGS_STREAM1_COUNTERS9_LSB		0x1134
+#define ICE_REGS_STREAM2_COUNTERS1		0x1200
+#define ICE_REGS_STREAM2_COUNTERS2		0x1204
+#define ICE_REGS_STREAM2_COUNTERS3		0x1208
+#define ICE_REGS_STREAM2_COUNTERS4		0x120C
+#define ICE_REGS_STREAM2_COUNTERS5_MSB		0x1210
+#define ICE_REGS_STREAM2_COUNTERS5_LSB		0x1214
+#define ICE_REGS_STREAM2_COUNTERS6_MSB		0x1218
+#define ICE_REGS_STREAM2_COUNTERS6_LSB		0x121C
+#define ICE_REGS_STREAM2_COUNTERS7_MSB		0x1220
+#define ICE_REGS_STREAM2_COUNTERS7_LSB		0x1224
+#define ICE_REGS_STREAM2_COUNTERS8_MSB		0x1228
+#define ICE_REGS_STREAM2_COUNTERS8_LSB		0x122C
+#define ICE_REGS_STREAM2_COUNTERS9_MSB		0x1230
+#define ICE_REGS_STREAM2_COUNTERS9_LSB		0x1234
+
+#define ICE_STREAM1_PREMATURE_LBA_CHANGE	(1L << 0)
+#define ICE_STREAM2_PREMATURE_LBA_CHANGE	(1L << 1)
+#define ICE_STREAM1_NOT_EXPECTED_LBO		(1L << 2)
+#define ICE_STREAM2_NOT_EXPECTED_LBO		(1L << 3)
+#define ICE_STREAM1_NOT_EXPECTED_DUN		(1L << 4)
+#define ICE_STREAM2_NOT_EXPECTED_DUN		(1L << 5)
+#define ICE_STREAM1_NOT_EXPECTED_DUS		(1L << 6)
+#define ICE_STREAM2_NOT_EXPECTED_DUS		(1L << 7)
+#define ICE_STREAM1_NOT_EXPECTED_DBO		(1L << 8)
+#define ICE_STREAM2_NOT_EXPECTED_DBO		(1L << 9)
+#define ICE_STREAM1_NOT_EXPECTED_ENC_SEL	(1L << 10)
+#define ICE_STREAM2_NOT_EXPECTED_ENC_SEL	(1L << 11)
+#define ICE_STREAM1_NOT_EXPECTED_CONF_IDX	(1L << 12)
+#define ICE_STREAM2_NOT_EXPECTED_CONF_IDX	(1L << 13)
+#define ICE_STREAM1_NOT_EXPECTED_NEW_TRNS	(1L << 14)
+#define ICE_STREAM2_NOT_EXPECTED_NEW_TRNS	(1L << 15)
+
+#define ICE_NON_SEC_IRQ_MASK				\
+			(ICE_STREAM1_PREMATURE_LBA_CHANGE |\
+			 ICE_STREAM2_PREMATURE_LBA_CHANGE |\
+			 ICE_STREAM1_NOT_EXPECTED_LBO |\
+			 ICE_STREAM2_NOT_EXPECTED_LBO |\
+			 ICE_STREAM1_NOT_EXPECTED_DUN |\
+			 ICE_STREAM2_NOT_EXPECTED_DUN |\
+			 ICE_STREAM2_NOT_EXPECTED_DUS |\
+			 ICE_STREAM1_NOT_EXPECTED_DBO |\
+			 ICE_STREAM2_NOT_EXPECTED_DBO |\
+			 ICE_STREAM1_NOT_EXPECTED_ENC_SEL |\
+			 ICE_STREAM2_NOT_EXPECTED_ENC_SEL |\
+			 ICE_STREAM1_NOT_EXPECTED_CONF_IDX |\
+			 ICE_STREAM1_NOT_EXPECTED_NEW_TRNS |\
+			 ICE_STREAM2_NOT_EXPECTED_NEW_TRNS)
+
+/* QTI ICE registers from secure side */
+#define ICE_TEST_BUS_REG_SECURE_INTR            (1L << 28)
+#define ICE_TEST_BUS_REG_NON_SECURE_INTR        (1L << 2)
+
+#define ICE_LUT_KEYS_CRYPTOCFG_R_16		0x4040
+#define ICE_LUT_KEYS_CRYPTOCFG_R_17		0x4044
+
+#define ICE_LUT_KEYS_ICE_SEC_IRQ_STTS		0x6200
+#define ICE_LUT_KEYS_ICE_SEC_IRQ_MASK		0x6204
+#define ICE_LUT_KEYS_ICE_SEC_IRQ_CLR		0x6208
+
+#define ICE_LUT_KEYS_CRYPTOCFG_OFFSET           0x80
+
+/* Non HWKM Targets */
+#define ICE_LUT_KEYS_SW_CRYPTOCFG_R_16		0x2040
+#define ICE_LUT_KEYS_SW_CRYPTOCFG_R_17		0x2044
+
+#define ICE_LUT_KEYS_SW_ICE_SEC_IRQ_STTS	0x3100
+#define ICE_LUT_KEYS_SW_ICE_SEC_IRQ_MASK	0x3104
+#define ICE_LUT_KEYS_SW_ICE_SEC_IRQ_CLR		0x3108
+
+#define ICE_STREAM1_PARTIALLY_SET_KEY_USED	(1L << 0)
+#define ICE_STREAM2_PARTIALLY_SET_KEY_USED	(1L << 1)
+#define ICE_QTIC_DBG_OPEN_EVENT			(1L << 30)
+#define ICE_KEYS_RAM_RESET_COMPLETED		(1L << 31)
+
+#define ICE_SEC_IRQ_MASK					  \
+			(ICE_STREAM1_PARTIALLY_SET_KEY_USED |\
+			 ICE_STREAM2_PARTIALLY_SET_KEY_USED |\
+			 ICE_QTIC_DBG_OPEN_EVENT |	  \
+			 ICE_KEYS_RAM_RESET_COMPLETED)
+
+/* Shared ICE */
+#define ICE_AES_SHARE_CONTROL		0x0100
+#define ICE_AES_CORE_STTS			0x0104
+#define ICE_AES_CORE_DISABLE		0x1400
+
+#define ice_writel(ice_mmio, val, reg)	\
+	writel_relaxed((val), ice_mmio + (reg))
+#define ice_readl(ice_mmio, reg)	\
+	readl_relaxed(ice_mmio + (reg))
+
+#endif /* _CRYPTO_INLINE_CRYPTO_ENGINE_REGS_H_ */

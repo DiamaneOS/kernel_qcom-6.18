@@ -38,6 +38,7 @@ struct ice_mmio_data {
 #if IS_ENABLED(CONFIG_QTI_CRYPTO_COMMON)
 int crypto_qti_init_crypto(void *mmio_data);
 int crypto_qti_enable(void *mmio_data);
+int crypto_qti_resume(void *mmio_data);
 void crypto_qti_disable(void);
 int crypto_qti_debug(const struct ice_mmio_data *mmio_data);
 int crypto_qti_keyslot_program(const struct ice_mmio_data *mmio_data,

@@ -9,7 +9,7 @@
 #include <linux/module.h>
 #include <linux/platform_device.h>
 #include <linux/mod_devicetable.h>
-#include <linux/qcom_scm.h>
+#include <linux/firmware/qcom/qcom_scm.h>
 #include "crypto-qti-ice-regs.h"
 #include "crypto-qti-platform.h"
 
@@ -422,26 +422,11 @@ int crypto_qti_derive_raw_secret(const struct ice_mmio_data *mmio_data, const u8
 }
 EXPORT_SYMBOL(crypto_qti_derive_raw_secret);
 
-static int crypto_qti_hibernate_exit(void)
-{
-	int err = 0;
-
-	err = qcom_scm_hibernate_exit();
-	if (err == -EIO)
-		pr_err("%s: Hibernate exit SCM call unsupported in TZ\n", __func__);
-	else if (err != 0)
-		pr_err("%s: SCM call Error: 0x%x\n", __func__, err);
-
-	return err;
-}
-
-static int qcom_crypto_hibernate_restore(struct device *dev)
-{
-	return crypto_qti_hibernate_exit();
-}
-
+/*
+ * The FP6 kernel has no hibernation (CONFIG_HIBERNATION is off) and the 6.18
+ * qcom-scm has no hibernate exit call, so the restore handler is gone.
+ */
 static const struct dev_pm_ops qcom_crypto_dev_pm_ops = {
-	.restore = qcom_crypto_hibernate_restore,
 };
 
 static const struct of_device_id qti_crypto_match[] = {

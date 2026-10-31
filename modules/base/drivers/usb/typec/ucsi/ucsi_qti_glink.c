@@ -415,14 +415,6 @@ static int ucsi_qti_async_control(struct ucsi *ucsi, u64 command)
 }
 
 
-static int ucsi_qti_sync_control(struct ucsi *ucsi, u64 command)
-{
-	struct ucsi_dev *udev = ucsi_get_drvdata(ucsi);
-
-	return ucsi_qti_glink_write(udev, UCSI_CONTROL, &command,
-				sizeof(command), true);
-}
-
 static int ucsi_qti_read(struct ucsi_dev *udev, unsigned int offset,
 			       void *val, size_t val_len)
 {
@@ -495,6 +487,26 @@ static int ucsi_qti_read_message_in(struct ucsi *ucsi, void *val,
 	struct ucsi_dev *udev = ucsi_get_drvdata(ucsi);
 
 	return ucsi_qti_read(udev, UCSI_MESSAGE_IN, val, val_len);
+}
+
+/*
+ * 6.18 UCSI core: sync_control returns CCI and the message in, as
+ * ucsi_sync_control_common() does, here with the synchronous glink write.
+ */
+static int ucsi_qti_sync_control(struct ucsi *ucsi, u64 command, u32 *cci,
+				 void *data, size_t size)
+{
+	struct ucsi_dev *udev = ucsi_get_drvdata(ucsi);
+	int ret;
+
+	ret = ucsi_qti_glink_write(udev, UCSI_CONTROL, &command,
+				sizeof(command), true);
+	if (!ret && cci)
+		ret = ucsi_qti_read_cci(ucsi, cci);
+	if (!ret && cci && data && (*cci & UCSI_CCI_COMMAND_COMPLETE))
+		ret = ucsi_qti_read_message_in(ucsi, data, size);
+
+	return ret;
 }
 
 static const struct ucsi_operations ucsi_qti_ops = {
