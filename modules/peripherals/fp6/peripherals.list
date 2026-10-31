@@ -1,0 +1,16 @@
+drivers/dma/qcom/msm_gpi
+drivers/i2c/busses/i2c-msm-geni
+drivers/spi/spi-msm-geni
+drivers/tty/serial/msm_geni_serial
+drivers/iio/adc/qcom-vadc-common
+drivers/iio/adc/qcom-spmi-adc5-gen3
+drivers/iio/adc/qti-glink-adc
+drivers/mfd/qcom-i2c-pmic
+drivers/soc/qcom/charger-ulog-glink
+drivers/regulator/qti-ocp-notifier
+drivers/input/hall_kernel/hall_det
+drivers/input/misc/qcom-hv-haptics
+drivers/leds/leds-qpnp-vibrator-ldo
+drivers/misc/haptic_hv/haptic
+drivers/input/finger/focal_finger/focaltech_fp
+vendor/samsung_slsi/nfc/driver/sec_nfc:sec_nfc

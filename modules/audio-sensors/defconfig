@@ -1,0 +1,10 @@
+# Vendor Kconfig values of modules/audio-sensors, from gen_config.py: the modules' own symbols and the
+# 6.1 vendor values of the other symbols their sources test. The base layer's values come from
+# modules/base.
+CONFIG_DIAMANEOS_PRIVSW=m
+CONFIG_QCOM_ADSP_SLEEPMON=m
+CONFIG_QCOM_CDSP_RM=m
+CONFIG_QCOM_FSA4480_I2C=m
+CONFIG_QCOM_WCD_USBSS_I2C=m
+CONFIG_SLIMBUS=m
+CONFIG_SLIM_QCOM_NGD_CTRL=m

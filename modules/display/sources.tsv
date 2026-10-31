@@ -1,0 +1,445 @@
+path	source
+display-drivers/Android.bp	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/Android.bp
+display-drivers/Android.mk	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/Android.mk
+display-drivers/Documentation/devicetree/bindings/drm/msm/sde-dp-sim.txt	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/Documentation/devicetree/bindings/drm/msm/sde-dp-sim.txt
+display-drivers/Kbuild	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/Kbuild
+display-drivers/Makefile	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/Makefile
+display-drivers/Makefile.am	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/Makefile.am
+display-drivers/NOTICE	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/NOTICE
+display-drivers/bridge-drivers/lt9611uxc.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/bridge-drivers/lt9611uxc.c
+display-drivers/config/augen3disp.conf	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/augen3disp.conf
+display-drivers/config/augen3dispconf.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/augen3dispconf.h
+display-drivers/config/bengaldisp.conf	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/bengaldisp.conf
+display-drivers/config/bengaldispconf.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/bengaldispconf.h
+display-drivers/config/gki_holidisp.conf	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_holidisp.conf
+display-drivers/config/gki_holidispconf.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_holidispconf.h
+display-drivers/config/gki_kalamadisp.conf	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_kalamadisp.conf
+display-drivers/config/gki_kalamadispconf.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_kalamadispconf.h
+display-drivers/config/gki_kalamadisptui.conf	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_kalamadisptui.conf
+display-drivers/config/gki_kalamadisptuiconf.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_kalamadisptuiconf.h
+display-drivers/config/gki_lahainadisp.conf	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_lahainadisp.conf
+display-drivers/config/gki_lahainadispconf.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_lahainadispconf.h
+display-drivers/config/gki_neodisp.conf	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_neodisp.conf
+display-drivers/config/gki_neodispconf.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_neodispconf.h
+display-drivers/config/gki_niobedisp.conf	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_niobedisp.conf
+display-drivers/config/gki_niobedispconf.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_niobedispconf.h
+display-drivers/config/gki_parrotdisp.conf	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_parrotdisp.conf
+display-drivers/config/gki_parrotdispconf.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_parrotdispconf.h
+display-drivers/config/gki_pineappledisp.conf	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_pineappledisp.conf
+display-drivers/config/gki_pineappledispconf.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_pineappledispconf.h
+display-drivers/config/gki_pineappledisptui.conf	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_pineappledisptui.conf
+display-drivers/config/gki_pineappledisptuiconf.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_pineappledisptuiconf.h
+display-drivers/config/gki_pittidisp.conf	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_pittidisp.conf
+display-drivers/config/gki_pittidispconf.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_pittidispconf.h
+display-drivers/config/gki_waipiodisp.conf	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_waipiodisp.conf
+display-drivers/config/gki_waipiodispconf.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_waipiodispconf.h
+display-drivers/config/gki_waipiodisptui.conf	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_waipiodisptui.conf
+display-drivers/config/gki_waipiodisptuiconf.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/gki_waipiodisptuiconf.h
+display-drivers/config/holidisp.conf	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/holidisp.conf
+display-drivers/config/holidispconf.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/holidispconf.h
+display-drivers/config/konadisp.conf	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/konadisp.conf
+display-drivers/config/konadispconf.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/konadispconf.h
+display-drivers/config/lahainadisp.conf	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/lahainadisp.conf
+display-drivers/config/lahainadispconf.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/lahainadispconf.h
+display-drivers/config/saipdisp.conf	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/saipdisp.conf
+display-drivers/config/saipdispconf.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/config/saipdispconf.h
+display-drivers/display_driver_board.mk	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/display_driver_board.mk
+display-drivers/display_driver_build.bzl	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/display_driver_build.bzl
+display-drivers/display_driver_product.mk	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/display_driver_product.mk
+display-drivers/display_kernel_headers.py	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/display_kernel_headers.py
+display-drivers/display_modules.bzl	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/display_modules.bzl
+display-drivers/hdcp/msm_hdcp.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/hdcp/msm_hdcp.c
+display-drivers/include/Kbuild	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/include/Kbuild
+display-drivers/include/Makefile.am	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/include/Makefile.am
+display-drivers/include/configure.ac	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/include/configure.ac
+display-drivers/include/linux/Kbuild	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/include/linux/Kbuild
+display-drivers/include/linux/msm_hdcp.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/include/linux/msm_hdcp.h
+display-drivers/include/linux/sde_io_util.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/include/linux/sde_io_util.h
+display-drivers/include/linux/sde_rsc.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/include/linux/sde_rsc.h
+display-drivers/include/linux/sde_vm_event.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/include/linux/sde_vm_event.h
+display-drivers/include/uapi/Kbuild	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/include/uapi/Kbuild
+display-drivers/include/uapi/display/Kbuild	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/include/uapi/display/Kbuild
+display-drivers/include/uapi/display/drm/Kbuild	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/include/uapi/display/drm/Kbuild
+display-drivers/include/uapi/display/drm/msm_drm_pp.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/include/uapi/display/drm/msm_drm_pp.h
+display-drivers/include/uapi/display/drm/sde_drm.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/include/uapi/display/drm/sde_drm.h
+display-drivers/include/uapi/display/hdcp/Kbuild	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/include/uapi/display/hdcp/Kbuild
+display-drivers/include/uapi/display/hdcp/msm_hdmi_hdcp_mgr.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/include/uapi/display/hdcp/msm_hdmi_hdcp_mgr.h
+display-drivers/include/uapi/display/media/Kbuild	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/include/uapi/display/media/Kbuild
+display-drivers/include/uapi/display/media/mmm_color_fmt.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/include/uapi/display/media/mmm_color_fmt.h
+display-drivers/include/uapi/display/media/msm_sde_rotator.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/include/uapi/display/media/msm_sde_rotator.h
+display-drivers/msm/Android.mk	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/Android.mk
+display-drivers/msm/Kbuild	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/Kbuild
+display-drivers/msm/Makefile	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/Makefile
+display-drivers/msm/dp/dp_altmode.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_altmode.c
+display-drivers/msm/dp/dp_altmode.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_altmode.h
+display-drivers/msm/dp/dp_audio.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_audio.c
+display-drivers/msm/dp/dp_audio.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_audio.h
+display-drivers/msm/dp/dp_aux.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_aux.c
+display-drivers/msm/dp/dp_aux.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_aux.h
+display-drivers/msm/dp/dp_aux_bridge.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_aux_bridge.c
+display-drivers/msm/dp/dp_aux_bridge.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_aux_bridge.h
+display-drivers/msm/dp/dp_bridge_hpd.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_bridge_hpd.c
+display-drivers/msm/dp/dp_bridge_hpd.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_bridge_hpd.h
+display-drivers/msm/dp/dp_catalog.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_catalog.c
+display-drivers/msm/dp/dp_catalog.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_catalog.h
+display-drivers/msm/dp/dp_catalog_v200.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_catalog_v200.c
+display-drivers/msm/dp/dp_catalog_v420.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_catalog_v420.c
+display-drivers/msm/dp/dp_ctrl.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_ctrl.c
+display-drivers/msm/dp/dp_ctrl.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_ctrl.h
+display-drivers/msm/dp/dp_debug.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_debug.c
+display-drivers/msm/dp/dp_debug.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_debug.h
+display-drivers/msm/dp/dp_display.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_display.c
+display-drivers/msm/dp/dp_display.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_display.h
+display-drivers/msm/dp/dp_drm.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_drm.c
+display-drivers/msm/dp/dp_drm.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_drm.h
+display-drivers/msm/dp/dp_gpio_hpd.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_gpio_hpd.c
+display-drivers/msm/dp/dp_gpio_hpd.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_gpio_hpd.h
+display-drivers/msm/dp/dp_hdcp2p2.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_hdcp2p2.c
+display-drivers/msm/dp/dp_hpd.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_hpd.c
+display-drivers/msm/dp/dp_hpd.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_hpd.h
+display-drivers/msm/dp/dp_link.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_link.c
+display-drivers/msm/dp/dp_link.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_link.h
+display-drivers/msm/dp/dp_lphw_hpd.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_lphw_hpd.c
+display-drivers/msm/dp/dp_lphw_hpd.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_lphw_hpd.h
+display-drivers/msm/dp/dp_mst_drm.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_mst_drm.c
+display-drivers/msm/dp/dp_mst_drm.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_mst_drm.h
+display-drivers/msm/dp/dp_mst_sim.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_mst_sim.c
+display-drivers/msm/dp/dp_mst_sim.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_mst_sim.h
+display-drivers/msm/dp/dp_mst_sim_helper.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_mst_sim_helper.c
+display-drivers/msm/dp/dp_mst_sim_helper.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_mst_sim_helper.h
+display-drivers/msm/dp/dp_panel.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_panel.c
+display-drivers/msm/dp/dp_panel.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_panel.h
+display-drivers/msm/dp/dp_parser.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_parser.c
+display-drivers/msm/dp/dp_parser.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_parser.h
+display-drivers/msm/dp/dp_pll.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_pll.c
+display-drivers/msm/dp/dp_pll.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_pll.h
+display-drivers/msm/dp/dp_pll_4nm.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_pll_4nm.c
+display-drivers/msm/dp/dp_pll_5nm.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_pll_5nm.c
+display-drivers/msm/dp/dp_power.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_power.c
+display-drivers/msm/dp/dp_power.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_power.h
+display-drivers/msm/dp/dp_reg.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_reg.h
+display-drivers/msm/dp/dp_usbpd.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_usbpd.c
+display-drivers/msm/dp/dp_usbpd.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dp/dp_usbpd.h
+display-drivers/msm/dsi/dsi_catalog.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_catalog.c
+display-drivers/msm/dsi/dsi_catalog.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_catalog.h
+display-drivers/msm/dsi/dsi_clk.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_clk.h
+display-drivers/msm/dsi/dsi_clk_manager.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_clk_manager.c
+display-drivers/msm/dsi/dsi_ctrl.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_ctrl.c
+display-drivers/msm/dsi/dsi_ctrl.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_ctrl.h
+display-drivers/msm/dsi/dsi_ctrl_hw.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_ctrl_hw.h
+display-drivers/msm/dsi/dsi_ctrl_hw_2_2.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_ctrl_hw_2_2.c
+display-drivers/msm/dsi/dsi_ctrl_hw_cmn.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_ctrl_hw_cmn.c
+display-drivers/msm/dsi/dsi_ctrl_reg.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_ctrl_reg.h
+display-drivers/msm/dsi/dsi_defs.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_defs.h
+display-drivers/msm/dsi/dsi_display.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_display.c
+display-drivers/msm/dsi/dsi_display.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_display.h
+display-drivers/msm/dsi/dsi_display_test.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_display_test.c
+display-drivers/msm/dsi/dsi_display_test.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_display_test.h
+display-drivers/msm/dsi/dsi_drm.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_drm.c
+display-drivers/msm/dsi/dsi_drm.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_drm.h
+display-drivers/msm/dsi/dsi_hw.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_hw.h
+display-drivers/msm/dsi/dsi_panel.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_panel.c
+display-drivers/msm/dsi/dsi_panel.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_panel.h
+display-drivers/msm/dsi/dsi_parser.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_parser.c
+display-drivers/msm/dsi/dsi_parser.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_parser.h
+display-drivers/msm/dsi/dsi_phy.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_phy.c
+display-drivers/msm/dsi/dsi_phy.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_phy.h
+display-drivers/msm/dsi/dsi_phy_hw.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_phy_hw.h
+display-drivers/msm/dsi/dsi_phy_hw_v3_0.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_phy_hw_v3_0.c
+display-drivers/msm/dsi/dsi_phy_hw_v4_0.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_phy_hw_v4_0.c
+display-drivers/msm/dsi/dsi_phy_hw_v5_0.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_phy_hw_v5_0.c
+display-drivers/msm/dsi/dsi_phy_timing_calc.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_phy_timing_calc.c
+display-drivers/msm/dsi/dsi_phy_timing_calc.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_phy_timing_calc.h
+display-drivers/msm/dsi/dsi_phy_timing_v3_0.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_phy_timing_v3_0.c
+display-drivers/msm/dsi/dsi_phy_timing_v4_0.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_phy_timing_v4_0.c
+display-drivers/msm/dsi/dsi_pll.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_pll.c
+display-drivers/msm/dsi/dsi_pll.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_pll.h
+display-drivers/msm/dsi/dsi_pll_4nm.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_pll_4nm.c
+display-drivers/msm/dsi/dsi_pll_4nm.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_pll_4nm.h
+display-drivers/msm/dsi/dsi_pll_5nm.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_pll_5nm.c
+display-drivers/msm/dsi/dsi_pll_5nm.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_pll_5nm.h
+display-drivers/msm/dsi/dsi_pwr.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_pwr.c
+display-drivers/msm/dsi/dsi_pwr.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/dsi/dsi_pwr.h
+display-drivers/msm/msm_atomic.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/msm_atomic.c
+display-drivers/msm/msm_cooling_device.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/msm_cooling_device.c
+display-drivers/msm/msm_cooling_device.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/msm_cooling_device.h
+display-drivers/msm/msm_drv.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/msm_drv.c
+display-drivers/msm/msm_drv.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/msm_drv.h
+display-drivers/msm/msm_fb.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/msm_fb.c
+display-drivers/msm/msm_gem.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/msm_gem.c
+display-drivers/msm/msm_gem.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/msm_gem.h
+display-drivers/msm/msm_gem_prime.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/msm_gem_prime.c
+display-drivers/msm/msm_gem_vma.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/msm_gem_vma.c
+display-drivers/msm/msm_kms.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/msm_kms.h
+display-drivers/msm/msm_mmu.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/msm_mmu.h
+display-drivers/msm/msm_prop.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/msm_prop.c
+display-drivers/msm/msm_prop.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/msm_prop.h
+display-drivers/msm/msm_smmu.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/msm_smmu.c
+display-drivers/msm/sde/sde_ad4.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_ad4.h
+display-drivers/msm/sde/sde_color_processing.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_color_processing.c
+display-drivers/msm/sde/sde_color_processing.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_color_processing.h
+display-drivers/msm/sde/sde_connector.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_connector.c
+display-drivers/msm/sde/sde_connector.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_connector.h
+display-drivers/msm/sde/sde_core_irq.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_core_irq.c
+display-drivers/msm/sde/sde_core_irq.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_core_irq.h
+display-drivers/msm/sde/sde_core_perf.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_core_perf.c
+display-drivers/msm/sde/sde_core_perf.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_core_perf.h
+display-drivers/msm/sde/sde_crtc.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_crtc.c
+display-drivers/msm/sde/sde_crtc.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_crtc.h
+display-drivers/msm/sde/sde_encoder.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_encoder.c
+display-drivers/msm/sde/sde_encoder.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_encoder.h
+display-drivers/msm/sde/sde_encoder_dce.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_encoder_dce.c
+display-drivers/msm/sde/sde_encoder_dce.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_encoder_dce.h
+display-drivers/msm/sde/sde_encoder_phys.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_encoder_phys.h
+display-drivers/msm/sde/sde_encoder_phys_cmd.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_encoder_phys_cmd.c
+display-drivers/msm/sde/sde_encoder_phys_vid.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_encoder_phys_vid.c
+display-drivers/msm/sde/sde_encoder_phys_wb.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_encoder_phys_wb.c
+display-drivers/msm/sde/sde_fence.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_fence.c
+display-drivers/msm/sde/sde_fence.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_fence.h
+display-drivers/msm/sde/sde_formats.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_formats.c
+display-drivers/msm/sde/sde_formats.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_formats.h
+display-drivers/msm/sde/sde_hw_ad4.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_ad4.c
+display-drivers/msm/sde/sde_hw_catalog.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_catalog.c
+display-drivers/msm/sde/sde_hw_catalog.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_catalog.h
+display-drivers/msm/sde/sde_hw_catalog_format.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_catalog_format.h
+display-drivers/msm/sde/sde_hw_cdm.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_cdm.c
+display-drivers/msm/sde/sde_hw_cdm.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_cdm.h
+display-drivers/msm/sde/sde_hw_color_proc_common_v4.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_color_proc_common_v4.h
+display-drivers/msm/sde/sde_hw_color_proc_v4.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_color_proc_v4.c
+display-drivers/msm/sde/sde_hw_color_proc_v4.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_color_proc_v4.h
+display-drivers/msm/sde/sde_hw_color_processing.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_color_processing.h
+display-drivers/msm/sde/sde_hw_color_processing_v1_7.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_color_processing_v1_7.c
+display-drivers/msm/sde/sde_hw_color_processing_v1_7.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_color_processing_v1_7.h
+display-drivers/msm/sde/sde_hw_ctl.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_ctl.c
+display-drivers/msm/sde/sde_hw_ctl.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_ctl.h
+display-drivers/msm/sde/sde_hw_dnsc_blur.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_dnsc_blur.c
+display-drivers/msm/sde/sde_hw_dnsc_blur.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_dnsc_blur.h
+display-drivers/msm/sde/sde_hw_ds.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_ds.c
+display-drivers/msm/sde/sde_hw_ds.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_ds.h
+display-drivers/msm/sde/sde_hw_dsc.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_dsc.c
+display-drivers/msm/sde/sde_hw_dsc.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_dsc.h
+display-drivers/msm/sde/sde_hw_dsc_1_2.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_dsc_1_2.c
+display-drivers/msm/sde/sde_hw_dsc_1_2.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_dsc_1_2.h
+display-drivers/msm/sde/sde_hw_dspp.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_dspp.c
+display-drivers/msm/sde/sde_hw_dspp.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_dspp.h
+display-drivers/msm/sde/sde_hw_interrupts.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_interrupts.c
+display-drivers/msm/sde/sde_hw_interrupts.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_interrupts.h
+display-drivers/msm/sde/sde_hw_intf.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_intf.c
+display-drivers/msm/sde/sde_hw_intf.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_intf.h
+display-drivers/msm/sde/sde_hw_lm.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_lm.c
+display-drivers/msm/sde/sde_hw_lm.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_lm.h
+display-drivers/msm/sde/sde_hw_mdss.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_mdss.h
+display-drivers/msm/sde/sde_hw_pingpong.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_pingpong.c
+display-drivers/msm/sde/sde_hw_pingpong.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_pingpong.h
+display-drivers/msm/sde/sde_hw_qdss.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_qdss.c
+display-drivers/msm/sde/sde_hw_qdss.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_qdss.h
+display-drivers/msm/sde/sde_hw_rc.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_rc.c
+display-drivers/msm/sde/sde_hw_rc.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_rc.h
+display-drivers/msm/sde/sde_hw_reg_dma_v1.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_reg_dma_v1.c
+display-drivers/msm/sde/sde_hw_reg_dma_v1.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_reg_dma_v1.h
+display-drivers/msm/sde/sde_hw_reg_dma_v1_color_proc.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_reg_dma_v1_color_proc.c
+display-drivers/msm/sde/sde_hw_reg_dma_v1_color_proc.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_reg_dma_v1_color_proc.h
+display-drivers/msm/sde/sde_hw_sspp.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_sspp.c
+display-drivers/msm/sde/sde_hw_sspp.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_sspp.h
+display-drivers/msm/sde/sde_hw_top.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_top.c
+display-drivers/msm/sde/sde_hw_top.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_top.h
+display-drivers/msm/sde/sde_hw_uidle.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_uidle.c
+display-drivers/msm/sde/sde_hw_uidle.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_uidle.h
+display-drivers/msm/sde/sde_hw_util.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_util.c
+display-drivers/msm/sde/sde_hw_util.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_util.h
+display-drivers/msm/sde/sde_hw_vbif.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_vbif.c
+display-drivers/msm/sde/sde_hw_vbif.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_vbif.h
+display-drivers/msm/sde/sde_hw_vdc.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_vdc.c
+display-drivers/msm/sde/sde_hw_vdc.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_vdc.h
+display-drivers/msm/sde/sde_hw_wb.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_wb.c
+display-drivers/msm/sde/sde_hw_wb.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hw_wb.h
+display-drivers/msm/sde/sde_hwio.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_hwio.h
+display-drivers/msm/sde/sde_irq.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_irq.c
+display-drivers/msm/sde/sde_irq.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_irq.h
+display-drivers/msm/sde/sde_kms.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_kms.c
+display-drivers/msm/sde/sde_kms.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_kms.h
+display-drivers/msm/sde/sde_kms_utils.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_kms_utils.c
+display-drivers/msm/sde/sde_plane.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_plane.c
+display-drivers/msm/sde/sde_plane.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_plane.h
+display-drivers/msm/sde/sde_reg_dma.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_reg_dma.c
+display-drivers/msm/sde/sde_reg_dma.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_reg_dma.h
+display-drivers/msm/sde/sde_rm.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_rm.c
+display-drivers/msm/sde/sde_rm.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_rm.h
+display-drivers/msm/sde/sde_trace.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_trace.h
+display-drivers/msm/sde/sde_vbif.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_vbif.c
+display-drivers/msm/sde/sde_vbif.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_vbif.h
+display-drivers/msm/sde/sde_vm.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_vm.h
+display-drivers/msm/sde/sde_vm_common.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_vm_common.c
+display-drivers/msm/sde/sde_vm_common.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_vm_common.h
+display-drivers/msm/sde/sde_vm_msgq.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_vm_msgq.c
+display-drivers/msm/sde/sde_vm_msgq.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_vm_msgq.h
+display-drivers/msm/sde/sde_vm_primary.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_vm_primary.c
+display-drivers/msm/sde/sde_vm_trusted.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_vm_trusted.c
+display-drivers/msm/sde/sde_wb.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_wb.c
+display-drivers/msm/sde/sde_wb.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde/sde_wb.h
+display-drivers/msm/sde_dbg.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde_dbg.c
+display-drivers/msm/sde_dbg.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde_dbg.h
+display-drivers/msm/sde_dbg_evtlog.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde_dbg_evtlog.c
+display-drivers/msm/sde_dsc_helper.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde_dsc_helper.c
+display-drivers/msm/sde_dsc_helper.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde_dsc_helper.h
+display-drivers/msm/sde_edid_parser.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde_edid_parser.c
+display-drivers/msm/sde_edid_parser.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde_edid_parser.h
+display-drivers/msm/sde_hdcp.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde_hdcp.h
+display-drivers/msm/sde_hdcp_1x.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde_hdcp_1x.c
+display-drivers/msm/sde_hdcp_2x.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde_hdcp_2x.c
+display-drivers/msm/sde_hdcp_2x.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde_hdcp_2x.h
+display-drivers/msm/sde_io_util.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde_io_util.c
+display-drivers/msm/sde_power_handle.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde_power_handle.c
+display-drivers/msm/sde_power_handle.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde_power_handle.h
+display-drivers/msm/sde_rsc.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde_rsc.c
+display-drivers/msm/sde_rsc_hw.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde_rsc_hw.c
+display-drivers/msm/sde_rsc_hw.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde_rsc_hw.h
+display-drivers/msm/sde_rsc_hw_v3.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde_rsc_hw_v3.c
+display-drivers/msm/sde_rsc_priv.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde_rsc_priv.h
+display-drivers/msm/sde_vdc_helper.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde_vdc_helper.c
+display-drivers/msm/sde_vdc_helper.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde_vdc_helper.h
+display-drivers/msm/sde_vm_event.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/msm/sde_vm_event.c
+display-drivers/rotator/sde_rotator_base.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_base.c
+display-drivers/rotator/sde_rotator_base.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_base.h
+display-drivers/rotator/sde_rotator_core.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_core.c
+display-drivers/rotator/sde_rotator_core.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_core.h
+display-drivers/rotator/sde_rotator_debug.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_debug.c
+display-drivers/rotator/sde_rotator_debug.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_debug.h
+display-drivers/rotator/sde_rotator_dev.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_dev.c
+display-drivers/rotator/sde_rotator_dev.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_dev.h
+display-drivers/rotator/sde_rotator_formats.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_formats.c
+display-drivers/rotator/sde_rotator_formats.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_formats.h
+display-drivers/rotator/sde_rotator_hwio.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_hwio.h
+display-drivers/rotator/sde_rotator_inline.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_inline.h
+display-drivers/rotator/sde_rotator_io_util.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_io_util.c
+display-drivers/rotator/sde_rotator_io_util.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_io_util.h
+display-drivers/rotator/sde_rotator_r1.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_r1.c
+display-drivers/rotator/sde_rotator_r1.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_r1.h
+display-drivers/rotator/sde_rotator_r1_ctl.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_r1_ctl.c
+display-drivers/rotator/sde_rotator_r1_debug.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_r1_debug.c
+display-drivers/rotator/sde_rotator_r1_debug.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_r1_debug.h
+display-drivers/rotator/sde_rotator_r1_hwio.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_r1_hwio.h
+display-drivers/rotator/sde_rotator_r1_internal.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_r1_internal.h
+display-drivers/rotator/sde_rotator_r1_pipe.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_r1_pipe.c
+display-drivers/rotator/sde_rotator_r1_wb.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_r1_wb.c
+display-drivers/rotator/sde_rotator_r3.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_r3.c
+display-drivers/rotator/sde_rotator_r3.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_r3.h
+display-drivers/rotator/sde_rotator_r3_debug.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_r3_debug.c
+display-drivers/rotator/sde_rotator_r3_debug.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_r3_debug.h
+display-drivers/rotator/sde_rotator_r3_hwio.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_r3_hwio.h
+display-drivers/rotator/sde_rotator_r3_internal.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_r3_internal.h
+display-drivers/rotator/sde_rotator_smmu.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_smmu.c
+display-drivers/rotator/sde_rotator_smmu.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_smmu.h
+display-drivers/rotator/sde_rotator_sync.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_sync.c
+display-drivers/rotator/sde_rotator_sync.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_sync.h
+display-drivers/rotator/sde_rotator_trace.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_trace.h
+display-drivers/rotator/sde_rotator_util.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_util.c
+display-drivers/rotator/sde_rotator_util.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_util.h
+display-drivers/rotator/sde_rotator_vbif.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/rotator/sde_rotator_vbif.h
+display-drivers/target.bzl	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-10100-lanai.0 1065a7677a1a + Fairphone b8ef8488b596) vendor/qcom/opensource/display-drivers/target.bzl
+drivers/emkit/Kconfig	kernel_qcom-6.1 a00020674ea (kernel_platform/msm-kernel) drivers/emkit/Kconfig
+drivers/emkit/Makefile	kernel_qcom-6.1 a00020674ea (kernel_platform/msm-kernel) drivers/emkit/Makefile
+drivers/emkit/emkit_info.c	kernel_qcom-6.1 a00020674ea (kernel_platform/msm-kernel) drivers/emkit/emkit_info.c
+drivers/regulator/qpnp-lcdb-regulator.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 (d08fc445800a) drivers/regulator/qpnp-lcdb-regulator.c
+drivers/video/backlight/qcom-spmi-wled.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 (d08fc445800a) drivers/video/backlight/qcom-spmi-wled.c
+include/emkit/emkit.h	kernel_qcom-6.1 a00020674ea (kernel_platform/msm-kernel) include/emkit/emkit.h
+include/emkit/emkit_info.h	kernel_qcom-6.1 a00020674ea (kernel_platform/msm-kernel) include/emkit/emkit_info.h
+include/emkit/mandata.h	kernel_qcom-6.1 a00020674ea (kernel_platform/msm-kernel) include/emkit/mandata.h
+include/emkit/module_names.txt	kernel_qcom-6.1 a00020674ea (kernel_platform/msm-kernel) include/emkit/module_names.txt
+include/linux/soc/qcom/msm_ext_display.h	kernel_qcom-6.1 a00020674ea (kernel_platform/msm-kernel) include/linux/soc/qcom/msm_ext_display.h
+mm-drivers/hw_fence/include/msm_hw_fence.h	kernel_qcom-6.1 a00020674ea (kernel_platform/msm-kernel) include/linux/soc/qcom/msm_hw_fence.h
+mm-drivers/Android.bp	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/Android.bp
+mm-drivers/Android.mk	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/Android.mk
+mm-drivers/config/kalamammdrivers.conf	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/config/kalamammdrivers.conf
+mm-drivers/config/kalamammdriversconf.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/config/kalamammdriversconf.h
+mm-drivers/hw_fence/Android.mk	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/hw_fence/Android.mk
+mm-drivers/hw_fence/Kbuild	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/hw_fence/Kbuild
+mm-drivers/hw_fence/Kconfig	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/hw_fence/Kconfig
+mm-drivers/hw_fence/Makefile	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/hw_fence/Makefile
+mm-drivers/hw_fence/defconfig	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/hw_fence/defconfig
+mm-drivers/hw_fence/define_hw_fence.bzl	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/hw_fence/define_hw_fence.bzl
+mm-drivers/hw_fence/include/hw_fence_drv_debug.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/hw_fence/include/hw_fence_drv_debug.h
+mm-drivers/hw_fence/include/hw_fence_drv_ipc.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/hw_fence/include/hw_fence_drv_ipc.h
+mm-drivers/hw_fence/include/hw_fence_drv_priv.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/hw_fence/include/hw_fence_drv_priv.h
+mm-drivers/hw_fence/include/hw_fence_drv_utils.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/hw_fence/include/hw_fence_drv_utils.h
+mm-drivers/hw_fence/include/msm_hw_fence_synx_translation.h	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/hw_fence/include/msm_hw_fence_synx_translation.h
+mm-drivers/hw_fence/src/hw_fence_drv_debug.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/hw_fence/src/hw_fence_drv_debug.c
+mm-drivers/hw_fence/src/hw_fence_drv_ipc.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/hw_fence/src/hw_fence_drv_ipc.c
+mm-drivers/hw_fence/src/hw_fence_drv_priv.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/hw_fence/src/hw_fence_drv_priv.c
+mm-drivers/hw_fence/src/hw_fence_drv_utils.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/hw_fence/src/hw_fence_drv_utils.c
+mm-drivers/hw_fence/src/hw_fence_ioctl.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/hw_fence/src/hw_fence_ioctl.c
+mm-drivers/hw_fence/src/msm_hw_fence.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/hw_fence/src/msm_hw_fence.c
+mm-drivers/hw_fence/src/msm_hw_fence_synx_translation.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/hw_fence/src/msm_hw_fence_synx_translation.c
+mm-drivers/mm_driver_board.mk	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/mm_driver_board.mk
+mm-drivers/mm_driver_product.mk	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/mm_driver_product.mk
+mm-drivers/mm_drivers_kernel_headers.py	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/mm_drivers_kernel_headers.py
+mm-drivers/msm_ext_display/Android.mk	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/msm_ext_display/Android.mk
+mm-drivers/msm_ext_display/Kbuild	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/msm_ext_display/Kbuild
+mm-drivers/msm_ext_display/Kconfig	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/msm_ext_display/Kconfig
+mm-drivers/msm_ext_display/Makefile	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/msm_ext_display/Makefile
+mm-drivers/msm_ext_display/defconfig	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/msm_ext_display/defconfig
+mm-drivers/msm_ext_display/define_msm_ext_display.bzl	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/msm_ext_display/define_msm_ext_display.bzl
+mm-drivers/msm_ext_display/src/msm_ext_display.c	kernel_qcom-6.1 a00020674ea (DISPLAY.LA.4.0.r2-08000-lanai.0 a7b138e9ad13) vendor/qcom/opensource/mm-drivers/msm_ext_display/src/msm_ext_display.c
+mm-drivers/sync_fence/Android.mk	DISPLAY.LA.6.11.r2-01100-kaanapali.0 (88d1e1816cdf) mm-drivers/sync_fence/Android.mk
+mm-drivers/sync_fence/Kbuild	DISPLAY.LA.6.11.r2-01100-kaanapali.0 (88d1e1816cdf) mm-drivers/sync_fence/Kbuild
+mm-drivers/sync_fence/Kconfig	DISPLAY.LA.6.11.r2-01100-kaanapali.0 (88d1e1816cdf) mm-drivers/sync_fence/Kconfig
+mm-drivers/sync_fence/Makefile	DISPLAY.LA.6.11.r2-01100-kaanapali.0 (88d1e1816cdf) mm-drivers/sync_fence/Makefile
+mm-drivers/sync_fence/defconfig	DISPLAY.LA.6.11.r2-01100-kaanapali.0 (88d1e1816cdf) mm-drivers/sync_fence/defconfig
+mm-drivers/sync_fence/define_sync_fence.bzl	DISPLAY.LA.6.11.r2-01100-kaanapali.0 (88d1e1816cdf) mm-drivers/sync_fence/define_sync_fence.bzl
+mm-drivers/sync_fence/include/qcom_sync_file.h	DISPLAY.LA.6.11.r2-01100-kaanapali.0 (88d1e1816cdf) mm-drivers/sync_fence/include/qcom_sync_file.h
+mm-drivers/sync_fence/include/uapi/Kbuild	DISPLAY.LA.6.11.r2-01100-kaanapali.0 (88d1e1816cdf) mm-drivers/sync_fence/include/uapi/Kbuild
+mm-drivers/sync_fence/include/uapi/sync_fence/qcom_sync_file.h	DISPLAY.LA.6.11.r2-01100-kaanapali.0 (88d1e1816cdf) mm-drivers/sync_fence/include/uapi/sync_fence/qcom_sync_file.h
+mm-drivers/sync_fence/src/qcom_sync_file.c	DISPLAY.LA.6.11.r2-01100-kaanapali.0 (88d1e1816cdf) mm-drivers/sync_fence/src/qcom_sync_file.c
+mmrm-driver/Android.mk	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/Android.mk
+mmrm-driver/Kbuild	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/Kbuild
+mmrm-driver/Makefile	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/Makefile
+mmrm-driver/config/waipiommrm.conf	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/config/waipiommrm.conf
+mmrm-driver/config/waipiommrmconf.h	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/config/waipiommrmconf.h
+mmrm-driver/driver/Kbuild	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/driver/Kbuild
+mmrm-driver/driver/src/mmrm_clk_rsrc_mgr.c	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/driver/src/mmrm_clk_rsrc_mgr.c
+mmrm-driver/driver/src/mmrm_clk_rsrc_mgr.h	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/driver/src/mmrm_clk_rsrc_mgr.h
+mmrm-driver/driver/src/mmrm_clk_rsrc_mgr_cxipeak.c	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/driver/src/mmrm_clk_rsrc_mgr_cxipeak.c
+mmrm-driver/driver/src/mmrm_clk_rsrc_mgr_sw.c	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/driver/src/mmrm_clk_rsrc_mgr_sw.c
+mmrm-driver/driver/src/mmrm_debug.c	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/driver/src/mmrm_debug.c
+mmrm-driver/driver/src/mmrm_debug.h	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/driver/src/mmrm_debug.h
+mmrm-driver/driver/src/mmrm_fixedpoint.h	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/driver/src/mmrm_fixedpoint.h
+mmrm-driver/driver/src/mmrm_internal.c	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/driver/src/mmrm_internal.c
+mmrm-driver/driver/src/mmrm_internal.h	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/driver/src/mmrm_internal.h
+mmrm-driver/driver/src/mmrm_res_parse.c	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/driver/src/mmrm_res_parse.c
+mmrm-driver/driver/src/mmrm_resources.h	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/driver/src/mmrm_resources.h
+mmrm-driver/driver/src/msm_mmrm.c	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/driver/src/msm_mmrm.c
+mmrm-driver/mmrm_kernel_board.mk	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/mmrm_kernel_board.mk
+mmrm-driver/mmrm_kernel_product.mk	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/mmrm_kernel_product.mk
+mmrm-driver/mmrm_modules.bzl	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/mmrm_modules.bzl
+mmrm-driver/mmrm_modules_build.bzl	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/mmrm_modules_build.bzl
+mmrm-driver/target.bzl	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/target.bzl
+mmrm-driver/target_variants.bzl	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/target_variants.bzl
+mmrm-driver/vm/be/Kbuild	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/vm/be/Kbuild
+mmrm-driver/vm/be/src/mmrm_vm_be.h	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/vm/be/src/mmrm_vm_be.h
+mmrm-driver/vm/be/src/mmrm_vm_be.rc	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/vm/be/src/mmrm_vm_be.rc
+mmrm-driver/vm/be/src/mmrm_vm_be_dispatch.c	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/vm/be/src/mmrm_vm_be_dispatch.c
+mmrm-driver/vm/be/src/mmrm_vm_be_main.c	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/vm/be/src/mmrm_vm_be_main.c
+mmrm-driver/vm/be/src/mmrm_vm_be_msgq.c	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/vm/be/src/mmrm_vm_be_msgq.c
+mmrm-driver/vm/common/inc/mmrm_vm_debug.h	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/vm/common/inc/mmrm_vm_debug.h
+mmrm-driver/vm/common/inc/mmrm_vm_interface.h	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/vm/common/inc/mmrm_vm_interface.h
+mmrm-driver/vm/common/inc/mmrm_vm_msgq.h	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/vm/common/inc/mmrm_vm_msgq.h
+mmrm-driver/vm/common/src/mmrm_vm_debug.c	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/vm/common/src/mmrm_vm_debug.c
+mmrm-driver/vm/fe/Kbuild	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/vm/fe/Kbuild
+mmrm-driver/vm/fe/src/Makefile.am	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/vm/fe/src/Makefile.am
+mmrm-driver/vm/fe/src/mmrm_vm_fe.h	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/vm/fe/src/mmrm_vm_fe.h
+mmrm-driver/vm/fe/src/mmrm_vm_fe_api.c	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/vm/fe/src/mmrm_vm_fe_api.c
+mmrm-driver/vm/fe/src/mmrm_vm_fe_frontend.c	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/vm/fe/src/mmrm_vm_fe_frontend.c
+mmrm-driver/vm/fe/src/mmrm_vm_fe_main.c	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/vm/fe/src/mmrm_vm_fe_main.c
+mmrm-driver/vm/fe/src/mmrm_vm_fe_msgq.c	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/vm/fe/src/mmrm_vm_fe_msgq.c
+mmrm-driver/vm/fe/vm_test/Kbuild	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/vm/fe/vm_test/Kbuild
+mmrm-driver/vm/fe/vm_test/mmrm_vm_fe_test_internal.c	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/vm/fe/vm_test/mmrm_vm_fe_test_internal.c
+mmrm-driver/vm/fe/vm_test/mmrm_vm_fe_test_internal.h	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/vm/fe/vm_test/mmrm_vm_fe_test_internal.h
+mmrm-driver/vm/fe/vm_test/mmrm_vm_fe_test_main.c	VIDEO_HANDSET.LA.1.0.r10-00300-kaanapali.0 mmrm-driver (2abc11944768) mmrm-driver/vm/fe/vm_test/mmrm_vm_fe_test_main.c
+synx-kernel/include/uapi/synx/media/synx_header.h	kernel_qcom-6.1 a00020674ea (synx-kernel, LA.VENDOR.14.3.0.r1-23400 base e63a9eaf9544) vendor/qcom/opensource/synx-kernel/include/uapi/synx/media/synx_header.h
+synx-kernel/msm/synx/ipclite_client.h	kernel_qcom-6.1 a00020674ea (synx-kernel, LA.VENDOR.14.3.0.r1-23400 base e63a9eaf9544) vendor/qcom/opensource/synx-kernel/msm/synx/ipclite_client.h
+synx-kernel/msm/synx/synx_api.h	kernel_qcom-6.1 a00020674ea (synx-kernel, LA.VENDOR.14.3.0.r1-23400 base e63a9eaf9544) vendor/qcom/opensource/synx-kernel/msm/synx/synx_api.h
+synx-kernel/msm/synx/synx_debugfs.h	kernel_qcom-6.1 a00020674ea (synx-kernel, LA.VENDOR.14.3.0.r1-23400 base e63a9eaf9544) vendor/qcom/opensource/synx-kernel/msm/synx/synx_debugfs.h
+synx-kernel/msm/synx/synx_err.h	kernel_qcom-6.1 a00020674ea (synx-kernel, LA.VENDOR.14.3.0.r1-23400 base e63a9eaf9544) vendor/qcom/opensource/synx-kernel/msm/synx/synx_err.h
+synx-kernel/msm/synx/synx_global.h	kernel_qcom-6.1 a00020674ea (synx-kernel, LA.VENDOR.14.3.0.r1-23400 base e63a9eaf9544) vendor/qcom/opensource/synx-kernel/msm/synx/synx_global.h
+synx-kernel/msm/synx/synx_private.h	kernel_qcom-6.1 a00020674ea (synx-kernel, LA.VENDOR.14.3.0.r1-23400 base e63a9eaf9544) vendor/qcom/opensource/synx-kernel/msm/synx/synx_private.h
+synx-kernel/msm/synx/synx_util.h	kernel_qcom-6.1 a00020674ea (synx-kernel, LA.VENDOR.14.3.0.r1-23400 base e63a9eaf9544) vendor/qcom/opensource/synx-kernel/msm/synx/synx_util.h

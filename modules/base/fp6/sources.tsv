@@ -1,0 +1,790 @@
+path	source
+arch/arm64/gunyah/gh_arm.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 arch/arm64/gunyah/gh_arm.c
+arch/arm64/gunyah/irq.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 arch/arm64/gunyah/irq.c
+arch/arm64/gunyah/reset.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 arch/arm64/gunyah/reset.c
+arch/arm64/gunyah/reset.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 arch/arm64/gunyah/reset.c
+arch/arm64/include/asm/arm-smmu-v3-common.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 arch/arm64/include/asm/arm-smmu-v3-common.h
+arch/arm64/include/asm/gunyah.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 arch/arm64/include/asm/gunyah.h
+arch/arm64/include/asm/gunyah/hcall.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 arch/arm64/include/asm/gunyah/hcall.h
+drivers/android/debug_kinfo.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/android/debug_kinfo.h, kept identical (core-headers.json)
+drivers/clk/clk.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/clk/clk.h, kept identical (core-headers.json)
+drivers/clk/qcom/camcc-volcano.c	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/clk/qcom/camcc-volcano.c
+drivers/clk/qcom/clk-alpha-pll.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-alpha-pll.c
+drivers/clk/qcom/clk-alpha-pll.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-alpha-pll.c
+drivers/clk/qcom/clk-branch.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-branch.c
+drivers/clk/qcom/clk-branch.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-branch.c
+drivers/clk/qcom/clk-debug.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-debug.c
+drivers/clk/qcom/clk-debug.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-alpha-pll.c
+drivers/clk/qcom/clk-dummy.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-dummy.c
+drivers/clk/qcom/clk-hfpll.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-hfpll.c
+drivers/clk/qcom/clk-hfpll.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-hfpll.c
+drivers/clk/qcom/clk-krait.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-krait.c
+drivers/clk/qcom/clk-krait.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-krait.c
+drivers/clk/qcom/clk-opp.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-opp.c
+drivers/clk/qcom/clk-opp.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-opp.c
+drivers/clk/qcom/clk-pll.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-pll.c
+drivers/clk/qcom/clk-pll.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-pll.c
+drivers/clk/qcom/clk-pm.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-pm.c
+drivers/clk/qcom/clk-pm.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-pm.c
+drivers/clk/qcom/clk-rcg.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-rcg.c
+drivers/clk/qcom/clk-rcg.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-rcg.c
+drivers/clk/qcom/clk-rcg2.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-rcg2.c
+drivers/clk/qcom/clk-regmap-divider.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-regmap-divider.c
+drivers/clk/qcom/clk-regmap-divider.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-regmap-divider.c
+drivers/clk/qcom/clk-regmap-mux-div.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-regmap-mux-div.c
+drivers/clk/qcom/clk-regmap-mux-div.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-regmap-mux-div.c
+drivers/clk/qcom/clk-regmap-mux.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-regmap-mux.c
+drivers/clk/qcom/clk-regmap-mux.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-regmap-mux.c
+drivers/clk/qcom/clk-regmap-phy-mux.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-regmap-phy-mux.c
+drivers/clk/qcom/clk-regmap-phy-mux.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-regmap-phy-mux.c
+drivers/clk/qcom/clk-regmap.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-regmap.c
+drivers/clk/qcom/clk-regmap.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-alpha-pll.c
+drivers/clk/qcom/clk-rpmh.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-rpmh.c
+drivers/clk/qcom/common.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/common.c
+drivers/clk/qcom/common.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-alpha-pll.c
+drivers/clk/qcom/debugcc-volcano.c	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/clk/qcom/debugcc-volcano.c
+drivers/clk/qcom/dispcc-volcano.c	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/clk/qcom/dispcc-volcano.c
+drivers/clk/qcom/gcc-volcano.c	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/clk/qcom/gcc-volcano.c
+drivers/clk/qcom/gdsc-debug.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/gdsc-debug.c
+drivers/clk/qcom/gdsc-debug.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-debug.c
+drivers/clk/qcom/gdsc-regulator.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/gdsc-regulator.c
+drivers/clk/qcom/gdsc.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/gdsc.c
+drivers/clk/qcom/gdsc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-regmap.c
+drivers/clk/qcom/gpucc-volcano.c	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/clk/qcom/gpucc-volcano.c
+drivers/clk/qcom/reset.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/reset.c
+drivers/clk/qcom/reset.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/common.c
+drivers/clk/qcom/tcsrcc-pineapple.c	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/clk/qcom/tcsrcc-pineapple.c
+drivers/clk/qcom/trace-gdsc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/gdsc-regulator.c
+drivers/clk/qcom/trace.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-debug.c
+drivers/clk/qcom/vdd-class.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/vdd-class.c
+drivers/clk/qcom/vdd-class.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-alpha-pll.c
+drivers/clk/qcom/vdd-level.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/clk/qcom/clk-alpha-pll.c
+drivers/clk/qcom/videocc-volcano.c	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/clk/qcom/videocc-volcano.c
+drivers/cpuidle/governors/qcom-cluster-lpm.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/cpuidle/governors/qcom-cluster-lpm.c
+drivers/cpuidle/governors/qcom-lpm-sysfs.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/cpuidle/governors/qcom-lpm-sysfs.c
+drivers/cpuidle/governors/qcom-lpm.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/cpuidle/governors/qcom-lpm.c
+drivers/cpuidle/governors/qcom-lpm.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/cpuidle/governors/qcom-cluster-lpm.c
+drivers/cpuidle/governors/trace-cluster-lpm.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/cpuidle/governors/qcom-cluster-lpm.c
+drivers/cpuidle/governors/trace-qcom-lpm.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/cpuidle/governors/qcom-lpm.c
+drivers/dma-buf/heaps/deferred-free-helper.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/deferred-free-helper.c
+drivers/dma-buf/heaps/deferred-free-helper.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_sg_ops.h
+drivers/dma-buf/heaps/qcom_carveout_heap.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_carveout_heap.c
+drivers/dma-buf/heaps/qcom_carveout_heap.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_carveout_heap.h
+drivers/dma-buf/heaps/qcom_cma_heap.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_cma_heap.c
+drivers/dma-buf/heaps/qcom_cma_heap.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_cma_heap.h
+drivers/dma-buf/heaps/qcom_dma_heap.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_dma_heap.c
+drivers/dma-buf/heaps/qcom_dma_heap_priv.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_sg_ops.h
+drivers/dma-buf/heaps/qcom_dma_heap_secure_utils.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_dma_heap_secure_utils.c
+drivers/dma-buf/heaps/qcom_dma_heap_secure_utils.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_system_heap.c
+drivers/dma-buf/heaps/qcom_dt_parser.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_dt_parser.c
+drivers/dma-buf/heaps/qcom_dt_parser.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_carveout_heap.h
+drivers/dma-buf/heaps/qcom_dynamic_page_pool.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_dynamic_page_pool.c
+drivers/dma-buf/heaps/qcom_dynamic_page_pool.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_dma_heap.c
+drivers/dma-buf/heaps/qcom_secure_system_heap.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_secure_system_heap.c
+drivers/dma-buf/heaps/qcom_secure_system_heap.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_dma_heap.c
+drivers/dma-buf/heaps/qcom_sg_ops.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_sg_ops.c
+drivers/dma-buf/heaps/qcom_sg_ops.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_sg_ops.h
+drivers/dma-buf/heaps/qcom_system_heap.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_system_heap.c
+drivers/dma-buf/heaps/qcom_system_heap.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_dma_heap.c
+drivers/dma-buf/heaps/qcom_system_movable_heap.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_system_movable_heap.c
+drivers/dma-buf/heaps/qcom_system_movable_heap.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_dma_heap.c
+drivers/dma-buf/heaps/qcom_tvm_carveout_heap.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_tvm_carveout_heap.c
+drivers/dma-buf/heaps/qcom_ubwcp_heap.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/dma-buf/heaps/qcom_ubwcp_heap.c
+drivers/firmware/qcom/lcp-ppddr-internal.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/firmware/qcom/qcom_scm.c
+drivers/firmware/qcom/qcom_scm-legacy.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/firmware/qcom/qcom_scm-legacy.c
+drivers/firmware/qcom/qcom_scm-scm.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/firmware/qcom/qcom_scm-scm.c
+drivers/firmware/qcom/qcom_scm-smc.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/firmware/qcom/qcom_scm-smc.c
+drivers/firmware/qcom/qcom_scm.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/firmware/qcom/qcom_scm.c
+drivers/firmware/qcom/qcom_scm.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/firmware/qcom/qcom_scm-legacy.c
+drivers/firmware/qcom/qcom_scm_hab.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/firmware/qcom/qcom_scm_hab.c
+drivers/firmware/qcom/qcom_scm_trace.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/firmware/qcom/qcom_scm-smc.c
+drivers/firmware/qcom/qcom_tzmem.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/firmware/qcom/qcom_tzmem.c
+drivers/firmware/qcom/qcom_tzmem.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/firmware/qcom/qcom_scm.c
+drivers/firmware/qcom/qcom_tzmem_ffa.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/firmware/qcom/qcom_tzmem_ffa.c
+drivers/firmware/qcom/qtee_shmbridge.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/firmware/qcom/qtee_shmbridge.c
+drivers/firmware/qcom/qtee_shmbridge_internal.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/firmware/qcom/qcom_scm.c
+drivers/hwspinlock/hwspinlock_internal.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/hwspinlock/hwspinlock_internal.h, kept identical (core-headers.json)
+drivers/hwspinlock/qcom_hwspinlock.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/hwspinlock/qcom_hwspinlock.c
+drivers/input/misc/pm8941-pwrkey.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/input/misc/pm8941-pwrkey.c
+drivers/interconnect/internal.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/interconnect/internal.h, kept identical (core-headers.json)
+drivers/interconnect/qcom/bcm-voter.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/interconnect/qcom/bcm-voter.c
+drivers/interconnect/qcom/bcm-voter.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/interconnect/qcom/bcm-voter.c
+drivers/interconnect/qcom/icc-common.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/interconnect/qcom/icc-common.h, kept identical (core-headers.json)
+drivers/interconnect/qcom/icc-debug.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/interconnect/qcom/icc-debug.c
+drivers/interconnect/qcom/icc-debug.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/interconnect/qcom/icc-debug.h
+drivers/interconnect/qcom/icc-rpmh.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/interconnect/qcom/icc-rpmh.c
+drivers/interconnect/qcom/icc-rpmh.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/interconnect/qcom/bcm-voter.c
+drivers/interconnect/qcom/qnoc-qos.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/interconnect/qcom/qnoc-qos.c
+drivers/interconnect/qcom/qnoc-qos.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/interconnect/qcom/icc-rpmh.c
+drivers/interconnect/qcom/trace.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/interconnect/qcom/bcm-voter.c
+drivers/interconnect/qcom/volcano.c	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/interconnect/qcom/volcano.c
+drivers/iommu/arm/arm-smmu/arm-smmu-impl.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/arm/arm-smmu/arm-smmu-impl.c
+drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
+drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c
+drivers/iommu/arm/arm-smmu/arm-smmu-qcom-pm.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/arm/arm-smmu/arm-smmu-qcom-pm.c
+drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+drivers/iommu/arm/arm-smmu/arm-smmu-qcom.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+drivers/iommu/arm/arm-smmu/arm-smmu-trace.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/arm/arm-smmu/arm-smmu-trace.h
+drivers/iommu/arm/arm-smmu/arm-smmu.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/arm/arm-smmu/arm-smmu.c
+drivers/iommu/arm/arm-smmu/arm-smmu.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/arm/arm-smmu/arm-smmu-impl.c
+drivers/iommu/dma-iommu.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/iommu/dma-iommu.h, kept identical (core-headers.json)
+drivers/iommu/dma-mapping-fast.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/dma-mapping-fast.c
+drivers/iommu/io-pgtable-fast.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/io-pgtable-fast.c
+drivers/iommu/iommu-logger.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/iommu-logger.c
+drivers/iommu/iommu-logger.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/arm/arm-smmu/arm-smmu.c
+drivers/iommu/iommu-pages.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/iommu/iommu-pages.h, kept identical (core-headers.json)
+drivers/iommu/iommu-priv.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/iommu/iommu-priv.h, kept identical (core-headers.json)
+drivers/iommu/msm_dma_iommu_mapping.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/msm_dma_iommu_mapping.c
+drivers/iommu/qcom-dma-iommu-generic.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/qcom-dma-iommu-generic.c
+drivers/iommu/qcom-dma-iommu-generic.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/arm/arm-smmu/arm-smmu.c
+drivers/iommu/qcom-io-pgtable-alloc.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/qcom-io-pgtable-alloc.c
+drivers/iommu/qcom-io-pgtable-alloc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/arm/arm-smmu/arm-smmu.c
+drivers/iommu/qcom-io-pgtable-arm.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/qcom-io-pgtable-arm.c
+drivers/iommu/qcom-iommu-debug-alloc.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/qcom-iommu-debug-alloc.c
+drivers/iommu/qcom-iommu-debug-alloc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/qcom-iommu-debug-user.c
+drivers/iommu/qcom-iommu-debug-dpd.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/qcom-iommu-debug-dpd.c
+drivers/iommu/qcom-iommu-debug-user.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/qcom-iommu-debug-user.c
+drivers/iommu/qcom-iommu-debug.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/qcom-iommu-debug.c
+drivers/iommu/qcom-iommu-debug.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/qcom-iommu-debug-user.c
+drivers/iommu/qcom-iommu-pages.h	DiamaneOS, new in this port
+drivers/iommu/qcom-iommu-util.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/iommu/qcom-iommu-util.c
+drivers/irqchip/msm_show_resume_irq.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/irqchip/msm_show_resume_irq.c
+drivers/irqchip/qcom-pdc.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/irqchip/qcom-pdc.c
+drivers/mailbox/msm_qmp.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/mailbox/msm_qmp.c
+drivers/mailbox/qcom-ipcc.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/mailbox/qcom-ipcc.c
+drivers/mfd/qcom-spmi-pmic.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/mfd/qcom-spmi-pmic.c
+drivers/misc/qseecom_proxy.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/misc/qseecom_proxy.c
+drivers/mmc/host/cqhci.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/mmc/host/cqhci.h, kept identical (core-headers.json)
+drivers/mmc/host/sdhci-cqhci.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/mmc/host/sdhci-cqhci.h, kept identical (core-headers.json)
+drivers/mmc/host/sdhci-msm.c	kernel_common-6.18 0f9205ec8de7 drivers/mmc/host/sdhci-msm.c with its inline crypto code switched off (FP6)
+drivers/mmc/host/sdhci-pltfm.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/mmc/host/sdhci-pltfm.h, kept identical (core-headers.json)
+drivers/mmc/host/sdhci.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/mmc/host/sdhci.h, kept identical (core-headers.json)
+drivers/nvmem/qcom-spmi-sdam.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/nvmem/qcom-spmi-sdam.c
+drivers/nvmem/qfprom.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/nvmem/qfprom.c
+drivers/phy/qualcomm/phy-qcom-ufs-i.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/phy/qualcomm/phy-qcom-ufs-i.h
+drivers/phy/qualcomm/phy-qcom-ufs-qmp-v4-crow.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/phy/qualcomm/phy-qcom-ufs-qmp-v4-crow.c
+drivers/phy/qualcomm/phy-qcom-ufs-qmp-v4-crow.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/phy/qualcomm/phy-qcom-ufs-qmp-v4-crow.c
+drivers/phy/qualcomm/phy-qcom-ufs.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/phy/qualcomm/phy-qcom-ufs.c
+drivers/pinctrl/core.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/pinctrl/core.h, kept identical (core-headers.json)
+drivers/pinctrl/pinconf.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/pinctrl/pinconf.h, kept identical (core-headers.json)
+drivers/pinctrl/pinctrl-utils.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/pinctrl/pinctrl-utils.h, kept identical (core-headers.json)
+drivers/pinctrl/qcom/pinctrl-msm.c	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/pinctrl/qcom/pinctrl-msm.c
+drivers/pinctrl/qcom/pinctrl-msm.h	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/pinctrl/qcom/pinctrl-msm.c
+drivers/pinctrl/qcom/pinctrl-spmi-gpio.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+drivers/pinctrl/qcom/pinctrl-volcano.c	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/pinctrl/qcom/pinctrl-volcano.c
+drivers/power/reset/qcom-dload-mode.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/power/reset/qcom-dload-mode.c
+drivers/power/reset/qcom-pon.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/power/reset/qcom-pon.c
+drivers/power/reset/qcom-reboot-reason.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/power/reset/qcom-reboot-reason.c
+drivers/power/reset/reboot-mode.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/power/reset/reboot-mode.c
+drivers/power/supply/qti_battery_charger.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/power/supply/qti_battery_charger.c
+drivers/power/supply/qti_charger_boost_lib.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/power/supply/qti_charger_boost_lib.c
+drivers/power/supply/qti_charger_boost_lib.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/power/supply/qti_battery_charger.c
+drivers/power/supply/qti_typec_class.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/power/supply/qti_typec_class.c
+drivers/power/supply/qti_typec_class.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/power/supply/qti_battery_charger.c
+drivers/regulator/debug-regulator.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/regulator/debug-regulator.c
+drivers/regulator/internal.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/regulator/internal.h, kept identical (core-headers.json)
+drivers/regulator/proxy-consumer.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/regulator/proxy-consumer.c
+drivers/regulator/qcom_pm8008-regulator.c	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/regulator/qcom_pm8008-regulator.c
+drivers/regulator/qti-fixed-regulator.c	kernel_common-6.18 0f9205ec8de7 drivers/regulator/fixed.c with the QTI_FIXED_REGULATOR parts of kernel_qcom-6.1 d7053a6 drivers/regulator/fixed.c and qti-fixed-regulator.c
+drivers/regulator/rpmh-regulator.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/regulator/rpmh-regulator.c
+drivers/regulator/stub-regulator.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/regulator/stub-regulator.c
+drivers/remoteproc/qcom_common.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/remoteproc/qcom_common.c
+drivers/remoteproc/qcom_common.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/remoteproc/qcom_common.c
+drivers/remoteproc/qcom_pil_info.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/remoteproc/qcom_pil_info.c
+drivers/remoteproc/qcom_pil_info.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/remoteproc/qcom_pil_info.h
+drivers/remoteproc/qcom_q6v5.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/remoteproc/qcom_q6v5.c
+drivers/remoteproc/qcom_q6v5.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/remoteproc/qcom_q6v5.c
+drivers/remoteproc/qcom_q6v5_pas.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/remoteproc/qcom_q6v5_pas.c
+drivers/remoteproc/qcom_sysmon.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/remoteproc/qcom_sysmon.c
+drivers/remoteproc/qcom_tracepoints.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/remoteproc/qcom_tracepoints.c
+drivers/remoteproc/remoteproc_elf_helpers.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/remoteproc/remoteproc_elf_helpers.h, kept identical (core-headers.json)
+drivers/remoteproc/remoteproc_internal.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/remoteproc/remoteproc_internal.h, kept identical (core-headers.json)
+drivers/rpmsg/qcom_glink_memshare.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/rpmsg/qcom_glink_memshare.c
+drivers/rpmsg/qcom_glink_native.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/rpmsg/qcom_glink_native.c
+drivers/rpmsg/qcom_glink_native.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/rpmsg/qcom_glink_native.c
+drivers/rpmsg/qcom_glink_smem.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/rpmsg/qcom_glink_smem.c
+drivers/rpmsg/qcom_glink_ssr.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/rpmsg/qcom_glink_ssr.c
+drivers/rpmsg/rpmsg_internal.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/rpmsg/rpmsg_internal.h, kept identical (core-headers.json)
+drivers/rtc/rtc-pm8xxx.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/rtc/rtc-pm8xxx.c
+drivers/soc/qcom/altmode-glink.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/altmode-glink.c
+drivers/soc/qcom/cmd-db.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/cmd-db.c
+drivers/soc/qcom/crypto-qti-common.c	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/soc/qcom/crypto-qti-common.c
+drivers/soc/qcom/crypto-qti-hwkm.c	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/soc/qcom/crypto-qti-hwkm.c
+drivers/soc/qcom/crypto-qti-ice-regs.h	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/soc/qcom/crypto-qti-common.c
+drivers/soc/qcom/crypto-qti-platform.h	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/soc/qcom/crypto-qti-common.c
+drivers/soc/qcom/dcc_v2.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/dcc_v2.c
+drivers/soc/qcom/debug_symbol.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/debug_symbol.c
+drivers/soc/qcom/debug_symbol.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/debug_symbol.c
+drivers/soc/qcom/elf.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/elf.h
+drivers/soc/qcom/gh_cpusys_vm_mem_access.c	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/soc/qcom/gh_cpusys_vm_mem_access.c
+drivers/soc/qcom/glink_probe.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/glink_probe.c
+drivers/soc/qcom/hwkm.c	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/soc/qcom/hwkm.c
+drivers/soc/qcom/hwkm_serialize.h	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/soc/qcom/hwkm.c
+drivers/soc/qcom/hwkmregs.h	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/soc/qcom/crypto-qti-hwkm.c
+drivers/soc/qcom/llcc-qcom.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/llcc-qcom.c
+drivers/soc/qcom/mdt_loader.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/mdt_loader.c
+drivers/soc/qcom/mem_buf/mem-buf-dev-gh.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/mem_buf/mem-buf-dev-gh.c
+drivers/soc/qcom/mem_buf/mem-buf-dev.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/mem_buf/mem-buf-dev.c
+drivers/soc/qcom/mem_buf/mem-buf-dev.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/mem_buf/mem-buf-dev.c
+drivers/soc/qcom/mem_buf/mem-buf-gh.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/mem_buf/mem-buf-gh.c
+drivers/soc/qcom/mem_buf/mem-buf-gh.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/mem_buf/mem-buf-gh.h
+drivers/soc/qcom/mem_buf/mem-buf-ids.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/mem_buf/mem-buf-ids.c
+drivers/soc/qcom/mem_buf/mem-buf-ids.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/mem_buf/mem-buf-dev.c
+drivers/soc/qcom/mem_buf/mem-buf-msgq.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/mem_buf/mem-buf-dev-gh.c
+drivers/soc/qcom/mem_buf/mem-buf.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/mem_buf/mem-buf.c
+drivers/soc/qcom/mem_buf/mem_buf_dma_buf.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/mem_buf/mem_buf_dma_buf.c
+drivers/soc/qcom/mem_buf/trace-mem-buf.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/mem_buf/mem-buf-dev-gh.c
+drivers/soc/qcom/memory_dump_v2.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/memory_dump_v2.c
+drivers/soc/qcom/minidump_log.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/minidump_log.c
+drivers/soc/qcom/minidump_memory.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/minidump_memory.c
+drivers/soc/qcom/minidump_memory.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/minidump_log.c
+drivers/soc/qcom/minidump_private.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/minidump_private.h
+drivers/soc/qcom/minidump_rm.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/minidump_rm.c
+drivers/soc/qcom/minidump_smem.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/minidump_smem.c
+drivers/soc/qcom/msm_minidump.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/msm_minidump.c
+drivers/soc/qcom/panel_event_notifier.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/panel_event_notifier.c
+drivers/soc/qcom/pdr_interface.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/pdr_interface.c
+drivers/soc/qcom/pdr_internal.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/pdr_internal.h
+drivers/soc/qcom/pmic-pon-log.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/pmic-pon-log.c
+drivers/soc/qcom/qcom_aoss.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/qcom_aoss.c
+drivers/soc/qcom/qcom_cpuss_sleep_stats.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/qcom_cpuss_sleep_stats.c
+drivers/soc/qcom/qcom_pdr_msg.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/qcom_pdr_msg.c
+drivers/soc/qcom/qcom_ramdump.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/qcom_ramdump.c
+drivers/soc/qcom/qcom_sdei.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/qcom_sdei.c
+drivers/soc/qcom/qcom_stats.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/qcom_stats.c
+drivers/soc/qcom/qcom_va_minidump.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/qcom_va_minidump.c
+drivers/soc/qcom/qcom_wdt_core.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/qcom_wdt_core.c
+drivers/soc/qcom/qmi_encdec.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/qmi_encdec.c
+drivers/soc/qcom/qmi_interface.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/qmi_interface.c
+drivers/soc/qcom/qti_pmic_glink.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/qti_pmic_glink.c
+drivers/soc/qcom/rpmh-internal.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/rpmh-internal.h
+drivers/soc/qcom/rpmh-rsc.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/rpmh-rsc.c
+drivers/soc/qcom/rpmh.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/rpmh.c
+drivers/soc/qcom/secure_buffer.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/secure_buffer.c
+drivers/soc/qcom/smem.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/smem.c
+drivers/soc/qcom/smp2p.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/smp2p.c
+drivers/soc/qcom/socinfo.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/socinfo.c
+drivers/soc/qcom/sysmon_subsystem_stats.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/sysmon_subsystem_stats.c
+drivers/soc/qcom/tmecom/tme_hwkm_master.c	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/soc/qcom/tmecom/tme_hwkm_master.c
+drivers/soc/qcom/tmecom/tme_hwkm_master_intf.h	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/soc/qcom/tmecom/tme_hwkm_master.c
+drivers/soc/qcom/tmecom/tmecom.c	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/soc/qcom/tmecom/tmecom.c
+drivers/soc/qcom/tmecom/tmecom.h	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/soc/qcom/tmecom/tmecom.c
+drivers/soc/qcom/tmecom/tmelog.c	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/soc/qcom/tmecom/tmelog.c
+drivers/soc/qcom/trace-aoss.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/qcom_aoss.c
+drivers/soc/qcom/trace-rpmh.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/rpmh-rsc.c
+drivers/soc/qcom/trace_secure_buffer.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/soc/qcom/secure_buffer.c
+drivers/spmi/spmi-pmic-arb-debug.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/spmi/spmi-pmic-arb-debug.c
+drivers/spmi/spmi-pmic-arb.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/spmi/spmi-pmic-arb.c
+drivers/ufs/core/ufs_trace_types.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/ufs/core/ufs_trace_types.h, kept identical (core-headers.json)
+drivers/ufs/host/ufs-qcom-ice.c	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/ufs/host/ufs-qcom-ice.c
+drivers/ufs/host/ufs-qcom-trace.h	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/ufs/host/ufs-qcom.c
+drivers/ufs/host/ufs-qcom.c	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/ufs/host/ufs-qcom.c
+drivers/ufs/host/ufs-qcom.h	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/ufs/host/ufs-qcom.c
+drivers/ufs/host/ufshcd-crypto-qti.c	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) drivers/ufs/host/ufshcd-crypto-qti.c
+drivers/ufs/host/ufshcd-pltfrm.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/ufs/host/ufshcd-pltfrm.h, kept identical (core-headers.json)
+drivers/usb/dwc3/core.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/usb/dwc3/core.h, kept identical (core-headers.json)
+drivers/usb/dwc3/debug-ipc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/usb/dwc3/debug-ipc.h
+drivers/usb/dwc3/debug.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/usb/dwc3/debug.h, kept identical (core-headers.json)
+drivers/usb/dwc3/debug_ipc.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/usb/dwc3/debug_ipc.c
+drivers/usb/dwc3/dwc3-msm-core.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/usb/dwc3/dwc3-msm-core.c
+drivers/usb/dwc3/dwc3-msm-ops.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/usb/dwc3/dwc3-msm-ops.c
+drivers/usb/dwc3/gadget.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/usb/dwc3/gadget.h, kept identical (core-headers.json)
+drivers/usb/dwc3/io.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/usb/dwc3/io.h, kept identical (core-headers.json)
+drivers/usb/dwc3/trace.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/usb/dwc3/trace.h, kept identical (core-headers.json)
+drivers/usb/host/pci-quirks.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/usb/host/pci-quirks.h, kept identical (core-headers.json)
+drivers/usb/host/xhci-caps.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/usb/host/xhci-caps.h, kept identical (core-headers.json)
+drivers/usb/host/xhci-ext-caps.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/usb/host/xhci-ext-caps.h, kept identical (core-headers.json)
+drivers/usb/host/xhci-port.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/usb/host/xhci-port.h, kept identical (core-headers.json)
+drivers/usb/host/xhci.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/usb/host/xhci.h, kept identical (core-headers.json)
+drivers/usb/phy/phy-msm-snps-eusb2.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/usb/phy/phy-msm-snps-eusb2.c
+drivers/usb/phy/phy-msm-ssusb-qmp.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/usb/phy/phy-msm-ssusb-qmp.c
+drivers/usb/repeater/repeater-qti-pmic-eusb2.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/usb/repeater/repeater-qti-pmic-eusb2.c
+drivers/usb/repeater/repeater.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/usb/repeater/repeater.c
+drivers/usb/typec/ucsi/ucsi.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/usb/typec/ucsi/ucsi.h, kept identical (core-headers.json)
+drivers/usb/typec/ucsi/ucsi_qti_glink.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/usb/typec/ucsi/ucsi_qti_glink.c
+drivers/virt/gunyah/gh_dbl.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/virt/gunyah/gh_dbl.c
+drivers/virt/gunyah/gh_devices.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/virt/gunyah/gh_devices.c
+drivers/virt/gunyah/gh_irq_lend.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/virt/gunyah/gh_irq_lend.c
+drivers/virt/gunyah/gh_mem_notifier.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/virt/gunyah/gh_mem_notifier.c
+drivers/virt/gunyah/gh_msgq.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/virt/gunyah/gh_msgq.c
+drivers/virt/gunyah/gh_rm_core.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/virt/gunyah/gh_rm_core.c
+drivers/virt/gunyah/gh_rm_drv_private.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/virt/gunyah/gh_rm_core.c
+drivers/virt/gunyah/gh_rm_iface.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/virt/gunyah/gh_rm_iface.c
+drivers/virt/gunyah/gh_virt_wdt.c	kernel_qcom-6.1 51b4986 kernel_platform/msm-kernel/drivers/virt/gunyah/gh_virt_wdt.c (ported to the 5.0 watchdog core)
+drivers/virt/gunyah/hcall_dbl.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/virt/gunyah/gh_dbl.c
+drivers/virt/gunyah/hcall_msgq.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/virt/gunyah/gh_msgq.c
+drivers/virt/gunyah/rsc_mgr.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/virt/gunyah/rsc_mgr.h, kept identical (core-headers.json)
+include/dt-bindings/arm/msm/qcom_dma_heap_dt_constants.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/arm/msm/qcom_dma_heap_dt_constants.h
+include/dt-bindings/arm/msm/qti-smmu-proxy-dt-ids.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/arm/msm/qti-smmu-proxy-dt-ids.h
+include/dt-bindings/arm/qcom,ids.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/arm/qcom,ids.h
+include/dt-bindings/clock/mdss-5nm-pll-clk.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/mdss-5nm-pll-clk.h
+include/dt-bindings/clock/qcom,alor-camcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,alor-camcc.h
+include/dt-bindings/clock/qcom,alor-gcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,alor-gcc.h
+include/dt-bindings/clock/qcom,aop-qmp.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,aop-qmp.h
+include/dt-bindings/clock/qcom,cambistmclkcc-canoe.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,cambistmclkcc-canoe.h
+include/dt-bindings/clock/qcom,cambistmclkcc-sun.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,cambistmclkcc-sun.h
+include/dt-bindings/clock/qcom,camcc-canoe.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,camcc-canoe.h
+include/dt-bindings/clock/qcom,camcc-pineapple.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,camcc-pineapple.h
+include/dt-bindings/clock/qcom,camcc-sc7280.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,camcc-sc7280.h
+include/dt-bindings/clock/qcom,camcc-seraph.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,camcc-seraph.h
+include/dt-bindings/clock/qcom,camcc-sm8150.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,camcc-sm8150.h
+include/dt-bindings/clock/qcom,camcc-sm8350.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,camcc-sm8350.h
+include/dt-bindings/clock/qcom,camcc-sun.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,camcc-sun.h
+include/dt-bindings/clock/qcom,camcc-volcano.h	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) include/dt-bindings/clock/qcom,camcc-volcano.h
+include/dt-bindings/clock/qcom,chora-camcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,chora-camcc.h
+include/dt-bindings/clock/qcom,chora-dispcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,chora-dispcc.h
+include/dt-bindings/clock/qcom,chora-gcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,chora-gcc.h
+include/dt-bindings/clock/qcom,chora-gpucc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,chora-gpucc.h
+include/dt-bindings/clock/qcom,chora-tcsrcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,chora-tcsrcc.h
+include/dt-bindings/clock/qcom,chora-videocc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,chora-videocc.h
+include/dt-bindings/clock/qcom,dispcc-canoe.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,dispcc-canoe.h
+include/dt-bindings/clock/qcom,dispcc-khaje.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,dispcc-khaje.h
+include/dt-bindings/clock/qcom,dispcc-monaco.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,dispcc-monaco.h
+include/dt-bindings/clock/qcom,dispcc-pineapple.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,dispcc-pineapple.h
+include/dt-bindings/clock/qcom,dispcc-qcm2290.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,dispcc-qcm2290.h
+include/dt-bindings/clock/qcom,dispcc-sc7280.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,dispcc-sc7280.h
+include/dt-bindings/clock/qcom,dispcc-sm8250.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,dispcc-sm8250.h
+include/dt-bindings/clock/qcom,dispcc-sm8350.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,dispcc-sm8350.h
+include/dt-bindings/clock/qcom,dispcc-sun.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,dispcc-sun.h
+include/dt-bindings/clock/qcom,dispcc-volcano.h	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) include/dt-bindings/clock/qcom,dispcc-volcano.h
+include/dt-bindings/clock/qcom,evacc-canoe.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,evacc-canoe.h
+include/dt-bindings/clock/qcom,evacc-seraph.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,evacc-seraph.h
+include/dt-bindings/clock/qcom,evacc-sun.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,evacc-sun.h
+include/dt-bindings/clock/qcom,gcc-canoe.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gcc-canoe.h
+include/dt-bindings/clock/qcom,gcc-direwolf.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gcc-direwolf.h
+include/dt-bindings/clock/qcom,gcc-khaje.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gcc-khaje.h
+include/dt-bindings/clock/qcom,gcc-lemans.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gcc-lemans.h
+include/dt-bindings/clock/qcom,gcc-monaco.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gcc-monaco.h
+include/dt-bindings/clock/qcom,gcc-monaco_auto.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gcc-monaco_auto.h
+include/dt-bindings/clock/qcom,gcc-pineapple.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gcc-pineapple.h
+include/dt-bindings/clock/qcom,gcc-qcm2290.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gcc-qcm2290.h
+include/dt-bindings/clock/qcom,gcc-sc7280.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gcc-sc7280.h
+include/dt-bindings/clock/qcom,gcc-seraph.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gcc-seraph.h
+include/dt-bindings/clock/qcom,gcc-sm6115.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gcc-sm6115.h
+include/dt-bindings/clock/qcom,gcc-sm8350.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gcc-sm8350.h
+include/dt-bindings/clock/qcom,gcc-sm8450.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gcc-sm8450.h
+include/dt-bindings/clock/qcom,gcc-sun.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gcc-sun.h
+include/dt-bindings/clock/qcom,gcc-vienna.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gcc-vienna.h
+include/dt-bindings/clock/qcom,gcc-volcano.h	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) include/dt-bindings/clock/qcom,gcc-volcano.h
+include/dt-bindings/clock/qcom,glymur-camcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,glymur-camcc.h
+include/dt-bindings/clock/qcom,glymur-dispcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,glymur-dispcc.h
+include/dt-bindings/clock/qcom,glymur-evacc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,glymur-evacc.h
+include/dt-bindings/clock/qcom,glymur-gcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,glymur-gcc.h
+include/dt-bindings/clock/qcom,glymur-gpucc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,glymur-gpucc.h
+include/dt-bindings/clock/qcom,glymur-tcsr.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,glymur-tcsr.h
+include/dt-bindings/clock/qcom,glymur-videocc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,glymur-videocc.h
+include/dt-bindings/clock/qcom,gpucc-canoe.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gpucc-canoe.h
+include/dt-bindings/clock/qcom,gpucc-khaje.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gpucc-khaje.h
+include/dt-bindings/clock/qcom,gpucc-monaco.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gpucc-monaco.h
+include/dt-bindings/clock/qcom,gpucc-pineapple.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gpucc-pineapple.h
+include/dt-bindings/clock/qcom,gpucc-sc7280.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gpucc-sc7280.h
+include/dt-bindings/clock/qcom,gpucc-seraph.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gpucc-seraph.h
+include/dt-bindings/clock/qcom,gpucc-sm8150.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gpucc-sm8150.h
+include/dt-bindings/clock/qcom,gpucc-sm8350.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gpucc-sm8350.h
+include/dt-bindings/clock/qcom,gpucc-sun.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gpucc-sun.h
+include/dt-bindings/clock/qcom,gpucc-vienna.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gpucc-vienna.h
+include/dt-bindings/clock/qcom,gpucc-volcano.h	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) include/dt-bindings/clock/qcom,gpucc-volcano.h
+include/dt-bindings/clock/qcom,gxclkctl-canoe.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gxclkctl-canoe.h
+include/dt-bindings/clock/qcom,gxclkctl-sun.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,gxclkctl-sun.h
+include/dt-bindings/clock/qcom,kaanapali-gxclkctl.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,kaanapali-gxclkctl.h
+include/dt-bindings/clock/qcom,lpassaoncc-khaje.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,lpassaoncc-khaje.h
+include/dt-bindings/clock/qcom,lpassaoncc-sm6115.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,lpassaoncc-sm6115.h
+include/dt-bindings/clock/qcom,lpassaudiocc-khaje.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,lpassaudiocc-khaje.h
+include/dt-bindings/clock/qcom,lpassaudiocc-sm6115.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,lpassaudiocc-sm6115.h
+include/dt-bindings/clock/qcom,lsrcc-seraph.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,lsrcc-seraph.h
+include/dt-bindings/clock/qcom,malabar-dispcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,malabar-dispcc.h
+include/dt-bindings/clock/qcom,malabar-gcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,malabar-gcc.h
+include/dt-bindings/clock/qcom,malabar-gpucc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,malabar-gpucc.h
+include/dt-bindings/clock/qcom,npucc-sm8150.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,npucc-sm8150.h
+include/dt-bindings/clock/qcom,pikachu-camcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,pikachu-camcc.h
+include/dt-bindings/clock/qcom,pikachu-evacc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,pikachu-evacc.h
+include/dt-bindings/clock/qcom,pikachu-gcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,pikachu-gcc.h
+include/dt-bindings/clock/qcom,pikachu-gpucc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,pikachu-gpucc.h
+include/dt-bindings/clock/qcom,pikachu-tcsrcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,pikachu-tcsrcc.h
+include/dt-bindings/clock/qcom,pikachu-videocc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,pikachu-videocc.h
+include/dt-bindings/clock/qcom,qcm2290-gpucc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,qcm2290-gpucc.h
+include/dt-bindings/clock/qcom,rpmcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,rpmcc.h
+include/dt-bindings/clock/qcom,rpmh.h	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) include/dt-bindings/clock/qcom,rpmh.h, with SLP_CLK2 moved past the volcano clocks
+include/dt-bindings/clock/qcom,scc-sm8150.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,scc-sm8150.h
+include/dt-bindings/clock/qcom,shikra-audiocorecc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,shikra-audiocorecc.h
+include/dt-bindings/clock/qcom,shikra-dispcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,shikra-dispcc.h
+include/dt-bindings/clock/qcom,shikra-gcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,shikra-gcc.h
+include/dt-bindings/clock/qcom,shikra-gpucc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,shikra-gpucc.h
+include/dt-bindings/clock/qcom,sm4450-camcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,sm4450-camcc.h
+include/dt-bindings/clock/qcom,sm4450-dispcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,sm4450-dispcc.h
+include/dt-bindings/clock/qcom,sm4450-gcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,sm4450-gcc.h
+include/dt-bindings/clock/qcom,sm4450-gpucc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,sm4450-gpucc.h
+include/dt-bindings/clock/qcom,sm6115-dispcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,sm6115-dispcc.h
+include/dt-bindings/clock/qcom,sm6115-gpucc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,sm6115-gpucc.h
+include/dt-bindings/clock/qcom,sm8350-videocc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,sm8350-videocc.h
+include/dt-bindings/clock/qcom,sm8450-camcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,sm8450-camcc.h
+include/dt-bindings/clock/qcom,sm8450-dispcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,sm8450-dispcc.h
+include/dt-bindings/clock/qcom,sm8450-gpucc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,sm8450-gpucc.h
+include/dt-bindings/clock/qcom,sm8450-videocc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,sm8450-videocc.h
+include/dt-bindings/clock/qcom,sm8650-videocc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,sm8650-videocc.h
+include/dt-bindings/clock/qcom,tcsrcc-canoe.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,tcsrcc-canoe.h
+include/dt-bindings/clock/qcom,tcsrcc-pineapple.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,tcsrcc-pineapple.h
+include/dt-bindings/clock/qcom,tcsrcc-seraph.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,tcsrcc-seraph.h
+include/dt-bindings/clock/qcom,tcsrcc-sun.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,tcsrcc-sun.h
+include/dt-bindings/clock/qcom,videocc-canoe.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,videocc-canoe.h
+include/dt-bindings/clock/qcom,videocc-lemans.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,videocc-lemans.h
+include/dt-bindings/clock/qcom,videocc-pineapple.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,videocc-pineapple.h
+include/dt-bindings/clock/qcom,videocc-sc7280.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,videocc-sc7280.h
+include/dt-bindings/clock/qcom,videocc-seraph.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,videocc-seraph.h
+include/dt-bindings/clock/qcom,videocc-sun.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,videocc-sun.h
+include/dt-bindings/clock/qcom,videocc-volcano.h	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) include/dt-bindings/clock/qcom,videocc-volcano.h
+include/dt-bindings/clock/qcom,x1e80100-camcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,x1e80100-camcc.h
+include/dt-bindings/clock/qcom,x1e80100-dispcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,x1e80100-dispcc.h
+include/dt-bindings/clock/qcom,x1e80100-gcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,x1e80100-gcc.h
+include/dt-bindings/clock/qcom,x1e80100-gpucc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,x1e80100-gpucc.h
+include/dt-bindings/clock/qcom,x1e80100-tcsr.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,x1e80100-tcsr.h
+include/dt-bindings/clock/qcom,x1p42100-av1ecc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,x1p42100-av1ecc.h
+include/dt-bindings/clock/qcom,x1p42100-camcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,x1p42100-camcc.h
+include/dt-bindings/clock/qcom,x1p42100-gcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,x1p42100-gcc.h
+include/dt-bindings/clock/qcom,x1p42100-videocc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/clock/qcom,x1p42100-videocc.h
+include/dt-bindings/iio/qcom,spmi-adc5-gen3-pm5100.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc5-gen3-pm5100.h
+include/dt-bindings/iio/qcom,spmi-adc5-gen3-pm7550ba.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc5-gen3-pm7550ba.h
+include/dt-bindings/iio/qcom,spmi-adc5-gen3-pm8550.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc5-gen3-pm8550.h
+include/dt-bindings/iio/qcom,spmi-adc5-gen3-pm8550b.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc5-gen3-pm8550b.h
+include/dt-bindings/iio/qcom,spmi-adc5-gen3-pm8550vx.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc5-gen3-pm8550vx.h
+include/dt-bindings/iio/qcom,spmi-adc5-gen3-pmc8380.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc5-gen3-pmc8380.h
+include/dt-bindings/iio/qcom,spmi-adc5-gen3-pmiv010x.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc5-gen3-pmiv010x.h
+include/dt-bindings/iio/qcom,spmi-adc5-gen3-pmk8550.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc5-gen3-pmk8550.h
+include/dt-bindings/iio/qcom,spmi-adc5-gen3-pmxr2230.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc5-gen3-pmxr2230.h
+include/dt-bindings/iio/qcom,spmi-adc5-gen3-smb139x.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc5-gen3-smb139x.h
+include/dt-bindings/iio/qcom,spmi-adc5-gen4-pmar2230.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc5-gen4-pmar2230.h
+include/dt-bindings/iio/qcom,spmi-adc5-gen4-pmh0101.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc5-gen4-pmh0101.h
+include/dt-bindings/iio/qcom,spmi-adc5-gen4-pmh0110.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc5-gen4-pmh0110.h
+include/dt-bindings/iio/qcom,spmi-adc5-gen4-pmih010x.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc5-gen4-pmih010x.h
+include/dt-bindings/iio/qcom,spmi-adc5-gen4-pmk8850.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc5-gen4-pmk8850.h
+include/dt-bindings/iio/qcom,spmi-adc5-gen4-pmw6100.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc5-gen4-pmw6100.h
+include/dt-bindings/iio/qcom,spmi-adc7-pm6450.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc7-pm6450.h
+include/dt-bindings/iio/qcom,spmi-adc7-pm7325.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc7-pm7325.h
+include/dt-bindings/iio/qcom,spmi-adc7-pm7325b.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc7-pm7325b.h
+include/dt-bindings/iio/qcom,spmi-adc7-pm8350.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc7-pm8350.h
+include/dt-bindings/iio/qcom,spmi-adc7-pm8350b.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc7-pm8350b.h
+include/dt-bindings/iio/qcom,spmi-adc7-pmk8350.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc7-pmk8350.h
+include/dt-bindings/iio/qcom,spmi-adc7-pmr735a.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc7-pmr735a.h
+include/dt-bindings/iio/qcom,spmi-adc7-pmr735b.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc7-pmr735b.h
+include/dt-bindings/iio/qcom,spmi-adc7-smb139x.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-adc7-smb139x.h
+include/dt-bindings/iio/qcom,spmi-vadc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qcom,spmi-vadc.h
+include/dt-bindings/iio/qti_power_supply_iio.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/iio/qti_power_supply_iio.h
+include/dt-bindings/input/qcom,hv-haptics.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/input/qcom,hv-haptics.h
+include/dt-bindings/input/qcom,qpnp-power-on.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/input/qcom,qpnp-power-on.h
+include/dt-bindings/interconnect/qcom,alor.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/interconnect/qcom,alor.h
+include/dt-bindings/interconnect/qcom,bengal.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/interconnect/qcom,bengal.h
+include/dt-bindings/interconnect/qcom,canoe.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/interconnect/qcom,canoe.h
+include/dt-bindings/interconnect/qcom,chora.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/interconnect/qcom,chora.h
+include/dt-bindings/interconnect/qcom,glymur-rpmh.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/interconnect/qcom,glymur-rpmh.h
+include/dt-bindings/interconnect/qcom,lahaina.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/interconnect/qcom,lahaina.h
+include/dt-bindings/interconnect/qcom,lemans.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/interconnect/qcom,lemans.h
+include/dt-bindings/interconnect/qcom,malabar.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/interconnect/qcom,malabar.h
+include/dt-bindings/interconnect/qcom,monaco.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/interconnect/qcom,monaco.h
+include/dt-bindings/interconnect/qcom,monaco_auto.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/interconnect/qcom,monaco_auto.h
+include/dt-bindings/interconnect/qcom,pikachu.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/interconnect/qcom,pikachu.h
+include/dt-bindings/interconnect/qcom,pineapple.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/interconnect/qcom,pineapple.h
+include/dt-bindings/interconnect/qcom,ravelin.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/interconnect/qcom,ravelin.h
+include/dt-bindings/interconnect/qcom,scuba.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/interconnect/qcom,scuba.h
+include/dt-bindings/interconnect/qcom,seraph.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/interconnect/qcom,seraph.h
+include/dt-bindings/interconnect/qcom,shikra.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/interconnect/qcom,shikra.h
+include/dt-bindings/interconnect/qcom,sun.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/interconnect/qcom,sun.h
+include/dt-bindings/interconnect/qcom,vienna.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/interconnect/qcom,vienna.h
+include/dt-bindings/interconnect/qcom,volcano.h	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) include/dt-bindings/interconnect/qcom,volcano.h
+include/dt-bindings/interconnect/qcom,waipio.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/interconnect/qcom,waipio.h
+include/dt-bindings/interconnect/qcom,x1e80100-rpmh.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/interconnect/qcom,x1e80100-rpmh.h
+include/dt-bindings/interconnect/qcom,x1p42100-rpmh.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/interconnect/qcom,x1p42100-rpmh.h
+include/dt-bindings/interconnect/qcom,yupik.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/interconnect/qcom,yupik.h
+include/dt-bindings/mailbox/qcom-ipcc-canoe.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/mailbox/qcom-ipcc-canoe.h
+include/dt-bindings/mailbox/qcom-ipcc-chora.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/mailbox/qcom-ipcc-chora.h
+include/dt-bindings/mailbox/qcom-ipcc-sa8797p.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/mailbox/qcom-ipcc-sa8797p.h
+include/dt-bindings/mailbox/qcom-ipcc-vienna.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/mailbox/qcom-ipcc-vienna.h
+include/dt-bindings/mailbox/qcom-ipcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/mailbox/qcom-ipcc.h
+include/dt-bindings/net/ti-dp83867.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/net/ti-dp83867.h
+include/dt-bindings/phy/qcom,khaje-qmp-usb3.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/phy/qcom,khaje-qmp-usb3.h
+include/dt-bindings/phy/qcom,sm8150-qmp-usb3.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/phy/qcom,sm8150-qmp-usb3.h
+include/dt-bindings/phy/qcom,usb3-11nm-qmp-combo.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/phy/qcom,usb3-11nm-qmp-combo.h
+include/dt-bindings/phy/qcom,usb3-3nm-qmp-combo.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/phy/qcom,usb3-3nm-qmp-combo.h
+include/dt-bindings/phy/qcom,usb3-3nm-qmp-uni.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/phy/qcom,usb3-3nm-qmp-uni.h
+include/dt-bindings/phy/qcom,usb3-4nm-qmp-combo.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/phy/qcom,usb3-4nm-qmp-combo.h
+include/dt-bindings/phy/qcom,usb3-5nm-qmp-combo.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/phy/qcom,usb3-5nm-qmp-combo.h
+include/dt-bindings/phy/qcom,usb3-5nm-qmp-uni.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/phy/qcom,usb3-5nm-qmp-uni.h
+include/dt-bindings/phy/qcom,usb3-6nm-qmp-combo.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/phy/qcom,usb3-6nm-qmp-combo.h
+include/dt-bindings/phy/qcom,usb4-5nm-qmp-combo.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/phy/qcom,usb4-5nm-qmp-combo.h
+include/dt-bindings/power/qcom-aoss-qmp.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/power/qcom-aoss-qmp.h
+include/dt-bindings/regulator/qcom,rpm-smd-regulator.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/regulator/qcom,rpm-smd-regulator.h
+include/dt-bindings/regulator/qcom,rpmh-regulator-levels.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/regulator/qcom,rpmh-regulator-levels.h
+include/dt-bindings/reset/qcom,sm8350-videocc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/reset/qcom,sm8350-videocc.h
+include/dt-bindings/reset/qcom,sm8450-gpucc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/reset/qcom,sm8450-gpucc.h
+include/dt-bindings/soc/qcom,dcc_v2.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/soc/qcom,dcc_v2.h
+include/dt-bindings/soc/qcom,ipcc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/soc/qcom,ipcc.h
+include/dt-bindings/soc/qcom,qpt-gen1-channels.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/soc/qcom,qpt-gen1-channels.h
+include/dt-bindings/soc/qcom,rpmh-rsc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/soc/qcom,rpmh-rsc.h
+include/dt-bindings/thermal/thermal_qti.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/dt-bindings/thermal/thermal_qti.h
+include/linux/adc-tm-clients.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/adc-tm-clients.h
+include/linux/adreno-smmu-priv.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/adreno-smmu-priv.h
+include/linux/arm_ffa.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/arm_ffa.h
+include/linux/bootmarker_kernel.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/bootmarker_kernel.h
+include/linux/clk/qcom.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/clk/qcom.h
+include/linux/coresight.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/coresight.h
+include/linux/cpu_phys_log_map.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/cpu_phys_log_map.h
+include/linux/crypto-qti-common.h	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) include/linux/crypto-qti-common.h
+include/linux/crypto_qti_virt.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/crypto_qti_virt.h
+include/linux/dma-mapping-fast.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/dma-mapping-fast.h
+include/linux/emac_mdio_fe.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/emac_mdio_fe.h
+include/linux/esoc_client.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/esoc_client.h
+include/linux/firmware/qcom/qcom_scm.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/firmware/qcom/qcom_scm.h
+include/linux/firmware/qcom/qcom_scm_hab.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/firmware/qcom/qcom_scm_hab.h
+include/linux/firmware/qcom/qcom_tzmem.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/firmware/qcom/qcom_tzmem.h
+include/linux/firmware/qcom/si_core_xts.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/firmware/qcom/si_core_xts.h
+include/linux/firmware/qcom/si_object.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/firmware/qcom/si_object.h
+include/linux/gh_cpusys_vm_mem_access.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/gh_cpusys_vm_mem_access.h
+include/linux/guest_shm.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/guest_shm.h
+include/linux/gunyah/gh_common.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/gunyah/gh_common.h
+include/linux/gunyah/gh_ctrl.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/gunyah/gh_ctrl.h
+include/linux/gunyah/gh_dbl.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/gunyah/gh_dbl.h
+include/linux/gunyah/gh_devices.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/gunyah/gh_devices.h
+include/linux/gunyah/gh_errno.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/gunyah/gh_errno.h
+include/linux/gunyah/gh_irq_lend.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/gunyah/gh_irq_lend.h
+include/linux/gunyah/gh_mem_notifier.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/gunyah/gh_mem_notifier.h
+include/linux/gunyah/gh_msgq.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/gunyah/gh_msgq.h
+include/linux/gunyah/gh_panic_notifier.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/gunyah/gh_panic_notifier.h
+include/linux/gunyah/gh_res_request.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/gunyah/gh_res_request.h
+include/linux/gunyah/gh_rm_drv.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/gunyah/gh_rm_drv.h
+include/linux/gunyah/gh_rm_heap_manager.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/gunyah/gh_rm_heap_manager.h
+include/linux/gunyah/gh_vm.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/gunyah/gh_vm.h
+include/linux/gunyah/hcall_common.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/gunyah/hcall_common.h
+include/linux/habmm.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/habmm.h
+include/linux/hdcp_qseecom.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/hdcp_qseecom.h
+include/linux/hwkm.h	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) include/linux/hwkm.h
+include/linux/iio/adc/qcom-vadc-common.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/iio/adc/qcom-vadc-common.h
+include/linux/io-pgtable-arm.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/io-pgtable-arm.h
+include/linux/io-pgtable-fast.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/io-pgtable-fast.h
+include/linux/ipa_usb.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/ipa_usb.h
+include/linux/ipc_logging.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/ipc_logging.h
+include/linux/leds-qpnp-flash.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/leds-qpnp-flash.h
+include/linux/leds-qti-flash.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/leds-qti-flash.h
+include/linux/mailbox/qmp.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/mailbox/qmp.h
+include/linux/mem-buf-altmap.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/mem-buf-altmap.h
+include/linux/mem-buf-exporter.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/mem-buf-exporter.h
+include/linux/mem-buf.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/mem-buf.h
+include/linux/mem-prot.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/mem-prot.h
+include/linux/mhi.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/mhi.h
+include/linux/mhi_misc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/mhi_misc.h
+include/linux/msm-sps.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/msm-sps.h
+include/linux/msm_dma_iommu_mapping.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/msm_dma_iommu_mapping.h
+include/linux/msm_gpi.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/msm_gpi.h
+include/linux/msm_pcie.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/msm_pcie.h
+include/linux/msm_sysstats.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/msm_sysstats.h
+include/linux/pcs-xpcs-qcom.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/pcs-xpcs-qcom.h
+include/linux/phy/phy-qcom-ufs.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/phy/phy-qcom-ufs.h
+include/linux/phy_core.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/phy_core.h
+include/linux/pinctrl/qcom-pinctrl.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/pinctrl/qcom-pinctrl.h
+include/linux/pmic-voter.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/pmic-voter.h
+include/linux/power_mode.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/power_mode.h
+include/linux/qcom-cpufreq-hw.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/qcom-cpufreq-hw.h
+include/linux/qcom-dma-mapping.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/qcom-dma-mapping.h
+include/linux/qcom-geni-se-common.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/qcom-geni-se-common.h
+include/linux/qcom-io-pgtable.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/qcom-io-pgtable.h
+include/linux/qcom-iommu-util.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/qcom-iommu-util.h
+include/linux/qcom_dma_heap.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/qcom_dma_heap.h
+include/linux/qcom_dma_heap_dt_constants.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/qcom_dma_heap_dt_constants.h
+include/linux/qcom_dpd_proxy.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/qcom_dpd_proxy.h
+include/linux/qcom_scmi_vendor.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/qcom_scmi_vendor.h
+include/linux/qcom_tvm_heap.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/qcom_tvm_heap.h
+include/linux/qpnp/qpnp-pbs.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/qpnp/qpnp-pbs.h
+include/linux/qpnp/qpnp-revid.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/qpnp/qpnp-revid.h
+include/linux/qseecom_kernel.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/qseecom_kernel.h
+include/linux/qtee_shmbridge.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/qtee_shmbridge.h
+include/linux/qti-lcp-ppddr.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/qti-lcp-ppddr.h
+include/linux/qti-regmap-debugfs.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/qti-regmap-debugfs.h
+include/linux/qti-smmu-proxy-callbacks.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/qti-smmu-proxy-callbacks.h
+include/linux/qti_power_supply.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/qti_power_supply.h
+include/linux/regulator/debug-regulator.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/regulator/debug-regulator.h
+include/linux/regulator/proxy-consumer.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/regulator/proxy-consumer.h
+include/linux/regulator/rpm-smd-regulator.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/regulator/rpm-smd-regulator.h
+include/linux/remoteproc/qcom_rproc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/remoteproc/qcom_rproc.h
+include/linux/remoteproc/qcom_spss.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/remoteproc/qcom_spss.h
+include/linux/rpmsg/qcom_glink.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/rpmsg/qcom_glink.h
+include/linux/sched/walt.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/sched/walt.h
+include/linux/scmi_c1dcvs.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/scmi_c1dcvs.h
+include/linux/scmi_plh.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/scmi_plh.h
+include/linux/scmi_pmu.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/scmi_pmu.h
+include/linux/slimbus.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/slimbus.h
+include/linux/soc/qcom/adsp_sleepmon_stats.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/adsp_sleepmon_stats.h
+include/linux/soc/qcom/altmode-glink.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/altmode-glink.h
+include/linux/soc/qcom/battery_charger.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/battery_charger.h
+include/linux/soc/qcom/cdsprm.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/cdsprm.h
+include/linux/soc/qcom/cdsprm_cxlimit.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/cdsprm_cxlimit.h
+include/linux/soc/qcom/cdsprm_dcvs_clients_votes.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/cdsprm_dcvs_clients_votes.h
+include/linux/soc/qcom/fsa4480-i2c.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/fsa4480-i2c.h
+include/linux/soc/qcom/leds-qcom-flash.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/leds-qcom-flash.h
+include/linux/soc/qcom/llcc-qcom.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/llcc-qcom.h
+include/linux/soc/qcom/mdt_loader.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/mdt_loader.h
+include/linux/soc/qcom/msm_adreno_devfreq.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/msm_adreno_devfreq.h
+include/linux/soc/qcom/msm_mmrm.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/msm_mmrm.h
+include/linux/soc/qcom/panel_event_notifier.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/panel_event_notifier.h
+include/linux/soc/qcom/pdr.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/pdr.h
+include/linux/soc/qcom/qcom_dbl.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/qcom_dbl.h
+include/linux/soc/qcom/qcom_hv_haptics.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/qcom_hv_haptics.h
+include/linux/soc/qcom/qcom_sdei.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/qcom_sdei.h
+include/linux/soc/qcom/qmi.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/qmi.h
+include/linux/soc/qcom/qptf.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/qptf.h
+include/linux/soc/qcom/qti_pmic_glink.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/qti_pmic_glink.h
+include/linux/soc/qcom/sc_tcm.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/sc_tcm.h
+include/linux/soc/qcom/slate_events_bridge_intf.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/slate_events_bridge_intf.h
+include/linux/soc/qcom/slatecom_interface.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/slatecom_interface.h
+include/linux/soc/qcom/slatecom_intf.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/slatecom_intf.h
+include/linux/soc/qcom/smem.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/smem.h
+include/linux/soc/qcom/socinfo.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/socinfo.h
+include/linux/soc/qcom/spmi-pmic-arb.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/spmi-pmic-arb.h
+include/linux/soc/qcom/sysmon_subsystem_stats.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/sysmon_subsystem_stats.h
+include/linux/soc/qcom/wcd939x-i2c.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/soc/qcom/wcd939x-i2c.h
+include/linux/stmmac.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/stmmac.h
+include/linux/thermal_pause.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/thermal_pause.h
+include/linux/tme_hwkm_master.h	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) include/linux/tme_hwkm_master.h
+include/linux/tme_hwkm_master_defs.h	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) include/linux/tme_hwkm_master_defs.h
+include/linux/tmelog.h	kernel_qcom-6.1 d7053a6 (kernel_platform/msm-kernel) include/linux/tmelog.h
+include/linux/ubwcp_dma_heap.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/ubwcp_dma_heap.h
+include/linux/usb/ccid_desc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/usb/ccid_desc.h
+include/linux/usb/dwc3-msm.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/usb/dwc3-msm.h
+include/linux/usb/redriver.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/usb/redriver.h
+include/linux/usb/repeater.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/usb/repeater.h
+include/linux/usb/usb_qdss.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/usb/usb_qdss.h
+include/linux/usb/usbpd.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/usb/usbpd.h
+include/linux/usb_bam.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/usb_bam.h
+include/linux/virtio-iommu.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/virtio-iommu.h
+include/linux/virtio_clk.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/virtio_clk.h
+include/linux/virtio_regulator.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/virtio_regulator.h
+include/linux/virtio_spmi.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/virtio_spmi.h
+include/linux/zsmalloc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/linux/zsmalloc.h
+include/misc/isl97900_led.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/misc/isl97900_led.h
+include/soc/qcom/bam_dmux.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/bam_dmux.h
+include/soc/qcom/cmd-db.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/cmd-db.h
+include/soc/qcom/cpuss_telemetry.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/cpuss_telemetry.h
+include/soc/qcom/crm.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/crm.h
+include/soc/qcom/cx_ipeak.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/cx_ipeak.h
+include/soc/qcom/dcvs.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/dcvs.h
+include/soc/qcom/ice.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/ice.h
+include/soc/qcom/llcc_heuristics.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/llcc_heuristics.h
+include/soc/qcom/memory_dump.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/memory_dump.h
+include/soc/qcom/minidump.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/minidump.h
+include/soc/qcom/mpam.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/mpam.h
+include/soc/qcom/mpam_msc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/mpam_msc.h
+include/soc/qcom/mpam_slc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/mpam_slc.h
+include/soc/qcom/mpm.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/mpm.h
+include/soc/qcom/msm_performance.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/msm_performance.h
+include/soc/qcom/of_common.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/of_common.h
+include/soc/qcom/pcie-pdc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/pcie-pdc.h
+include/soc/qcom/pmu_lib.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/pmu_lib.h
+include/soc/qcom/qcom_hibernation.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/qcom_hibernation.h
+include/soc/qcom/qcom_llcc_pmu.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/qcom_llcc_pmu.h
+include/soc/qcom/qcom_lpm_monitor.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/qcom_lpm_monitor.h
+include/soc/qcom/qcom_ramdump.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/qcom_ramdump.h
+include/soc/qcom/qcom_stats.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/qcom_stats.h
+include/soc/qcom/qcom_voltage_adj.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/qcom_voltage_adj.h
+include/soc/qcom/qseecom_scm.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/qseecom_scm.h
+include/soc/qcom/rpm-smd.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/rpm-smd.h
+include/soc/qcom/rpmh.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/rpmh.h
+include/soc/qcom/sdhci-msm.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/sdhci-msm.h
+include/soc/qcom/secure_buffer.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/secure_buffer.h
+include/soc/qcom/slc_perfmon_scmi.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/slc_perfmon_scmi.h
+include/soc/qcom/socinfo.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/socinfo.h
+include/soc/qcom/watchdog.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/soc/qcom/watchdog.h
+include/trace/events/dcvsh.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/trace/events/dcvsh.h
+include/trace/events/gh_virtio_backend.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/trace/events/gh_virtio_backend.h
+include/trace/events/gh_virtio_frontend.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/trace/events/gh_virtio_frontend.h
+include/trace/events/gunyah.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/trace/events/gunyah.h
+include/trace/events/mpm.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/trace/events/mpm.h
+include/trace/events/qcom_haptics.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/trace/events/qcom_haptics.h
+include/trace/events/qpace.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/trace/events/qpace.h
+include/trace/events/qup_i2c_trace.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/trace/events/qup_i2c_trace.h
+include/trace/events/qup_serial_trace.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/trace/events/qup_serial_trace.h
+include/trace/events/qup_spi_trace.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/trace/events/qup_spi_trace.h
+include/trace/events/qup_trace_common.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/trace/events/qup_trace_common.h
+include/trace/events/rproc_qcom.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/trace/events/rproc_qcom.h
+include/trace/events/trace_rpm_smd.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/trace/events/trace_rpm_smd.h
+include/uapi/linux/dhms_ioctl.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/dhms_ioctl.h
+include/uapi/linux/eom_ioctl.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/eom_ioctl.h
+include/uapi/linux/esoc_ctrl.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/esoc_ctrl.h
+include/uapi/linux/gh_virtio_backend.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/gh_virtio_backend.h
+include/uapi/linux/gunyah_deprecated.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/gunyah_deprecated.h
+include/uapi/linux/hab_ioctl.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/hab_ioctl.h
+include/uapi/linux/habmmid.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/habmmid.h
+include/uapi/linux/ion.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/ion.h
+include/uapi/linux/mem-buf.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/mem-buf.h
+include/uapi/linux/msm_geni_serial.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/msm_geni_serial.h
+include/uapi/linux/msm_ion.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/msm_ion.h
+include/uapi/linux/msm_ion_ids.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/msm_ion_ids.h
+include/uapi/linux/msm_rmnet.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/msm_rmnet.h
+include/uapi/linux/msm_sysstats.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/msm_sysstats.h
+include/uapi/linux/power_state.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/power_state.h
+include/uapi/linux/q2spi/q2spi.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/q2spi/q2spi.h
+include/uapi/linux/qbg-profile.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/qbg-profile.h
+include/uapi/linux/qbg.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/qbg.h
+include/uapi/linux/qg-profile.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/qg-profile.h
+include/uapi/linux/qg.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/qg.h
+include/uapi/linux/qrtr.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/qrtr.h
+include/uapi/linux/qti_virtio_mem.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/qti_virtio_mem.h
+include/uapi/linux/slatecom_interface.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/slatecom_interface.h
+include/uapi/linux/usb/usb_ctrl_qti.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/usb/usb_ctrl_qti.h
+include/uapi/linux/virtio_iommu.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/linux/virtio_iommu.h
+include/uapi/misc/adsp_sleepmon.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/misc/adsp_sleepmon.h
+include/uapi/misc/fastrpc.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/misc/fastrpc.h
+include/uapi/misc/sysmon_subsystem_stats_ioctl.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/uapi/misc/sysmon_subsystem_stats_ioctl.h
+include/ufs/ufshcd-crypto-qti.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/ufs/ufshcd-crypto-qti.h
+include/ufs/ufshcd-crypto.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 include/ufs/ufshcd-crypto.h
+kernel/sched/cpudeadline.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) kernel/sched/cpudeadline.h, kept identical (core-headers.json)
+kernel/sched/cpupri.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) kernel/sched/cpupri.h, kept identical (core-headers.json)
+kernel/sched/ext.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) kernel/sched/ext.h, kept identical (core-headers.json)
+kernel/sched/features.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) kernel/sched/features.h, kept identical (core-headers.json)
+kernel/sched/sched.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) kernel/sched/sched.h, kept identical (core-headers.json)
+kernel/sched/stats.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) kernel/sched/stats.h, kept identical (core-headers.json)
+kernel/time/tick-internal.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) kernel/time/tick-internal.h, kept identical (core-headers.json)
+kernel/time/tick-sched.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) kernel/time/tick-sched.h, kept identical (core-headers.json)
+kernel/time/timekeeping.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) kernel/time/timekeeping.h, kept identical (core-headers.json)
+kernel/trace/ipc_logging.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 kernel/trace/ipc_logging.c
+kernel/trace/ipc_logging_cdev.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 kernel/trace/ipc_logging_cdev.c
+kernel/trace/ipc_logging_debug.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 kernel/trace/ipc_logging_debug.c
+kernel/trace/ipc_logging_private.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 kernel/trace/ipc_logging.c
+kernel/workqueue_internal.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) kernel/workqueue_internal.h, kept identical (core-headers.json)
+net/qrtr/af_qrtr.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 net/qrtr/af_qrtr.c
+net/qrtr/ns.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 net/qrtr/ns.c
+net/qrtr/qrtr.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 net/qrtr/af_qrtr.c
+net/qrtr/smd.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 net/qrtr/smd.c
+vendor/securemsm-kernel/include/linux/CTrustedCameraDriver.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/linux/CTrustedCameraDriver.h
+vendor/securemsm-kernel/include/linux/IClientEnv.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/linux/IClientEnv.h
+vendor/securemsm-kernel/include/linux/ITrustedCameraDriver.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/linux/ITrustedCameraDriver.h
+vendor/securemsm-kernel/include/linux/ctrusted_camera_driver.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/linux/ctrusted_camera_driver.h
+vendor/securemsm-kernel/include/linux/hibernate_tzdata_mgr.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/linux/hibernate_tzdata_mgr.h
+vendor/securemsm-kernel/include/linux/smci_clientenv.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/linux/smci_clientenv.h
+vendor/securemsm-kernel/include/linux/smci_object.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/linux/smci_object.h
+vendor/securemsm-kernel/include/linux/smcinvoke.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/linux/smcinvoke.h
+vendor/securemsm-kernel/include/linux/smcinvoke_object.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/linux/smcinvoke_object.h
+vendor/securemsm-kernel/include/linux/tmelog.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/linux/tmelog.h
+vendor/securemsm-kernel/include/linux/trusted_camera_driver.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/linux/trusted_camera_driver.h
+vendor/securemsm-kernel/include/smci/interface/IAppClient.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/smci/interface/IAppClient.h
+vendor/securemsm-kernel/include/smci/interface/IAppController.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/smci/interface/IAppController.h
+vendor/securemsm-kernel/include/smci/interface/IAppLoader.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/smci/interface/IAppLoader.h
+vendor/securemsm-kernel/include/smci/interface/IOpener.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/smci/interface/IOpener.h
+vendor/securemsm-kernel/include/smci/interface/smci_appclient.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/smci/interface/smci_appclient.h
+vendor/securemsm-kernel/include/smci/interface/smci_appcontroller.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/smci/interface/smci_appcontroller.h
+vendor/securemsm-kernel/include/smci/interface/smci_apploader.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/smci/interface/smci_apploader.h
+vendor/securemsm-kernel/include/smci/interface/smci_opener.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/smci/interface/smci_opener.h
+vendor/securemsm-kernel/include/smci/uid/CAppClient.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/smci/uid/CAppClient.h
+vendor/securemsm-kernel/include/smci/uid/CAppLoader.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/smci/uid/CAppLoader.h
+vendor/securemsm-kernel/include/uapi/linux/compat_qcedev.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/uapi/linux/compat_qcedev.h
+vendor/securemsm-kernel/include/uapi/linux/qcedev.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/uapi/linux/qcedev.h
+vendor/securemsm-kernel/include/uapi/linux/qcota.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/uapi/linux/qcota.h
+vendor/securemsm-kernel/include/uapi/linux/qrng.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/uapi/linux/qrng.h
+vendor/securemsm-kernel/include/uapi/linux/qseecom.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/uapi/linux/qseecom.h
+vendor/securemsm-kernel/include/uapi/linux/qseecom_32bit_impl.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/uapi/linux/qseecom_32bit_impl.h
+vendor/securemsm-kernel/include/uapi/linux/qseecom_api.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/uapi/linux/qseecom_api.h
+vendor/securemsm-kernel/include/uapi/linux/smcinvoke.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) include/uapi/linux/smcinvoke.h
+vendor/securemsm-kernel/linux/misc/qseecom_kernel.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) linux/misc/qseecom_kernel.h
+vendor/securemsm-kernel/linux/misc/qseecom_priv.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) linux/misc/qseecom_priv.h
+vendor/securemsm-kernel/linux/misc/qseecomi.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) linux/misc/qseecomi.h
+vendor/securemsm-kernel/smcinvoke/IQSEEComCompat.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) smcinvoke/IQSEEComCompat.h
+vendor/securemsm-kernel/smcinvoke/IQSEEComCompatAppLoader.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) smcinvoke/IQSEEComCompatAppLoader.h
+vendor/securemsm-kernel/smcinvoke/compat/smcinvoke.c	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) smcinvoke/compat/smcinvoke.c
+vendor/securemsm-kernel/smcinvoke/compat/smcinvoke_kernel.c	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) smcinvoke/compat/smcinvoke_kernel.c
+vendor/securemsm-kernel/smcinvoke/compat/trace_smcinvoke.h	securemsm-kernel LA.VENDOR.16.2.6.r1-10900-kaanapali.0 (e023c66e475a) smcinvoke/compat/trace_smcinvoke.h

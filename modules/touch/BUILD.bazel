@@ -1,0 +1,44 @@
+# The FP6 touch controller (ESWIN EPH861x, Fairphone driver from kernel_qcom-6.1) as a DDK module
+# against the 6.18 GKI kernel. Sources and their origin: sources.tsv.
+
+load("//build/kernel/kleaf:kernel.bzl", "ddk_config", "ddk_headers", "ddk_module")
+
+package(default_visibility = ["//visibility:public"])
+
+BASE = "//devices/fairphone/fp6/modules/base"
+DISPLAY = "//devices/fairphone/fp6/modules/display"
+
+ddk_config(
+    name = "config",
+    defconfig = "defconfig",
+    kconfigs = ["Kconfig"],
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    # The display set's configuration (itself on the base set's), so modules that link
+    # display modules build with one combined configuration.
+    deps = [DISPLAY + ":config"],
+)
+
+ddk_headers(
+    name = "eswin_headers",
+    hdrs = glob(["touch-drivers/eswin_touch/*.h"]),
+    includes = ["touch-drivers/eswin_touch"],
+)
+
+ddk_module(
+    name = "eswin_ts",
+    out = "eswin_ts.ko",
+    srcs = ["touch-drivers/eswin_touch/" + s for s in [
+        "eswin_eph861x.c", "eswin_eph861x_bootloader.c", "eswin_eph861x_comms.c", "eswin_eph861x_eswin.c",
+        "eswin_eph861x_i2c.c", "eswin_eph861x_spi.c", "eswin_eph861x_tlv_command.c", "eswin_eph861x_tlv_report.c",
+    ]],
+    copts = ["-DCONFIG_MSM_TOUCH", "-DCONFIG_TOUCHSCREEN_EPHTouch", "-DTOUCH_DLKM_ENABLE", "-fstrict-flex-arrays=0"],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":eswin_headers",
+        DISPLAY + ":headers",
+        DISPLAY + ":emkit_info",
+        BASE + ":headers",
+        BASE + ":panel_event_notifier",
+    ],
+)

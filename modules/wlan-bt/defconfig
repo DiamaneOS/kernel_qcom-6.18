@@ -1,0 +1,7 @@
+# Vendor Kconfig values of modules/wlan-bt, from gen_config.py: the modules' own symbols and the
+# 6.1 vendor values of the other symbols their sources test. The base layer's values come from
+# modules/base.
+CONFIG_CNSS_OUT_OF_TREE=y
+CONFIG_CNSS_PLAT_IPC_QMI_SVC=m
+CONFIG_ICNSS2_QMI=y
+CONFIG_WCNSS_MEM_PRE_ALLOC=m

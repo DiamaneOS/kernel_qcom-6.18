@@ -1,0 +1,229 @@
+# FP6 display modules as DDK modules against the 6.18 GKI kernel: the Fairphone board information
+# module, the panel backlight and bias regulators, the mm-drivers fences and external display,
+# MMRM and msm_drm (the 6.1 "fps" target without DisplayPort, which the FP6 device tree disables).
+# Sources and their origin: sources.tsv. Base-layer modules and headers come from
+# //devices/fairphone/fp6/modules/base (phase 3).
+
+load("//build/kernel/kleaf:kernel.bzl", "ddk_config", "ddk_headers", "ddk_module")
+
+package(default_visibility = ["//visibility:public"])
+
+BASE = "//devices/fairphone/fp6/modules/base"
+
+ddk_config(
+    name = "config",
+    defconfig = "defconfig",
+    kconfigs = ["Kconfig"],
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [BASE + ":config"],
+)
+
+# Vendor headers other modules include: emkit and msm_ext_display.
+ddk_headers(
+    name = "headers",
+    hdrs = glob(["include/**/*.h"]),
+    linux_includes = ["include"],
+)
+
+ddk_headers(
+    name = "sync_fence_headers",
+    hdrs = glob(["mm-drivers/sync_fence/include/**/*.h"]),
+    includes = ["mm-drivers/sync_fence/include"],
+)
+
+ddk_headers(
+    name = "hw_fence_headers",
+    hdrs = glob(["mm-drivers/hw_fence/include/*.h"]),
+    includes = ["mm-drivers/hw_fence/include"],
+)
+
+ddk_headers(
+    name = "display_uapi_headers",
+    hdrs = glob(["display-drivers/include/uapi/display/**/*.h"]),
+    includes = ["display-drivers/include/uapi/display"],
+)
+
+ddk_module(
+    name = "emkit_info",
+    out = "emkit_info.ko",
+    srcs = ["drivers/emkit/emkit_info.c"],
+    copts = ["-fstrict-flex-arrays=0"],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [":headers", BASE + ":headers", BASE + ":socinfo"],
+)
+
+ddk_module(
+    name = "qcom-spmi-wled",
+    out = "qcom-spmi-wled.ko",
+    srcs = ["drivers/video/backlight/qcom-spmi-wled.c"],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [BASE + ":headers", BASE + ":qti_battery_charger"],
+)
+
+ddk_module(
+    name = "qpnp-lcdb-regulator",
+    out = "qpnp-lcdb-regulator.ko",
+    srcs = ["drivers/regulator/qpnp-lcdb-regulator.c"],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [BASE + ":headers"],
+)
+
+ddk_module(
+    name = "msm_ext_display",
+    out = "msm_ext_display.ko",
+    srcs = ["mm-drivers/msm_ext_display/src/msm_ext_display.c"],
+    copts = ["-DCONFIG_MSM_EXT_DISPLAY", "-fstrict-flex-arrays=0"],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [":headers", BASE + ":headers"],
+)
+
+ddk_module(
+    name = "sync_fence",
+    out = "sync_fence.ko",
+    srcs = ["mm-drivers/sync_fence/src/qcom_sync_file.c"],
+    copts = ["-DCONFIG_QCOM_SPEC_SYNC"],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [":sync_fence_headers", BASE + ":headers"],
+)
+
+ddk_headers(
+    name = "hw_fence_private_headers",
+    hdrs = glob([
+        "synx-kernel/**/*.h",
+        "mm-drivers/hw_fence/include/*.h",
+    ]),
+    includes = [
+        "synx-kernel/include/uapi/synx",
+        "synx-kernel/include/uapi/synx/media",
+        "synx-kernel/msm/synx",
+    ],
+)
+
+ddk_module(
+    name = "msm_hw_fence",
+    out = "msm_hw_fence.ko",
+    srcs = [
+        "mm-drivers/hw_fence/src/hw_fence_drv_debug.c",
+        "mm-drivers/hw_fence/src/hw_fence_drv_ipc.c",
+        "mm-drivers/hw_fence/src/hw_fence_drv_priv.c",
+        "mm-drivers/hw_fence/src/hw_fence_drv_utils.c",
+        "mm-drivers/hw_fence/src/hw_fence_ioctl.c",
+        "mm-drivers/hw_fence/src/msm_hw_fence.c",
+        "mm-drivers/hw_fence/src/msm_hw_fence_synx_translation.c",
+    ],
+    copts = ["-DCONFIG_QTI_HW_FENCE", "-fstrict-flex-arrays=0"],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":hw_fence_headers",
+        ":hw_fence_private_headers",
+        ":sync_fence_headers",
+        BASE + ":headers",
+        BASE + ":qcom-scm",
+        BASE + ":gh_rm_drv",
+        BASE + ":gh_dbl",
+        BASE + ":gh_cpusys_vm_mem_access",
+    ],
+)
+
+ddk_headers(
+    name = "mmrm_private_headers",
+    hdrs = glob(["mmrm-driver/driver/src/*.h"]),
+    includes = ["mmrm-driver/driver/src"],
+)
+
+ddk_module(
+    name = "msm-mmrm",
+    out = "msm-mmrm.ko",
+    srcs = [
+        "mmrm-driver/driver/src/mmrm_clk_rsrc_mgr.c",
+        "mmrm-driver/driver/src/mmrm_clk_rsrc_mgr_sw.c",
+        "mmrm-driver/driver/src/mmrm_debug.c",
+        "mmrm-driver/driver/src/mmrm_internal.c",
+        "mmrm-driver/driver/src/mmrm_res_parse.c",
+        "mmrm-driver/driver/src/msm_mmrm.c",
+    ],
+    copts = ["-DCONFIG_MSM_MMRM"],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [":mmrm_private_headers", BASE + ":headers", BASE + ":clk-qcom"],
+)
+
+DD = "display-drivers/"
+
+ddk_headers(
+    name = "msm_drm_private_headers",
+    hdrs = glob([
+        DD + "include/**/*.h",
+        DD + "msm/**/*.h",
+        DD + "rotator/**/*.h",
+    ]),
+    includes = [DD + d for d in ["include", "include/uapi/display", "msm", "msm/dp", "msm/dsi", "msm/sde", "rotator"]],
+)
+
+MSM_DRM_SRCS = [DD + s for s in [
+    "msm/sde/sde_vm_common.c", "msm/sde/sde_vm_primary.c", "msm/sde/sde_vm_trusted.c", "msm/sde/sde_vm_msgq.c",
+    "msm/sde/sde_crtc.c", "msm/sde/sde_encoder.c", "msm/sde/sde_encoder_dce.c", "msm/sde/sde_encoder_phys_vid.c",
+    "msm/sde/sde_encoder_phys_cmd.c", "msm/sde/sde_irq.c", "msm/sde/sde_core_irq.c", "msm/sde/sde_core_perf.c",
+    "msm/sde/sde_rm.c", "msm/sde/sde_kms_utils.c", "msm/sde/sde_kms.c", "msm/sde/sde_plane.c", "msm/sde/sde_connector.c",
+    "msm/sde/sde_color_processing.c", "msm/sde/sde_vbif.c", "msm/sde_dbg.c", "msm/sde_dbg_evtlog.c", "msm/sde_io_util.c",
+    "msm/sde_vm_event.c", "msm/sde/sde_hw_reg_dma_v1_color_proc.c", "msm/sde/sde_hw_color_proc_v4.c",
+    "msm/sde/sde_hw_ad4.c", "msm/sde/sde_hw_uidle.c", "msm/sde_edid_parser.c", "msm/sde/sde_hw_catalog.c",
+    "msm/sde/sde_hw_cdm.c", "msm/sde/sde_hw_dspp.c", "msm/sde/sde_hw_intf.c", "msm/sde/sde_hw_lm.c", "msm/sde/sde_hw_ctl.c",
+    "msm/sde/sde_hw_util.c", "msm/sde/sde_hw_sspp.c", "msm/sde/sde_hw_wb.c", "msm/sde/sde_hw_pingpong.c",
+    "msm/sde/sde_hw_top.c", "msm/sde/sde_hw_interrupts.c", "msm/sde/sde_hw_vbif.c", "msm/sde/sde_formats.c",
+    "msm/sde_power_handle.c", "msm/sde/sde_hw_color_processing_v1_7.c", "msm/sde/sde_reg_dma.c",
+    "msm/sde/sde_hw_reg_dma_v1.c", "msm/sde/sde_hw_dsc.c", "msm/sde/sde_hw_dsc_1_2.c", "msm/sde/sde_hw_vdc.c",
+    "msm/sde/sde_hw_ds.c", "msm/sde/sde_fence.c", "msm/sde/sde_hw_qdss.c", "msm/sde_dsc_helper.c", "msm/sde_vdc_helper.c",
+    "msm/sde/sde_hw_dnsc_blur.c", "msm/sde/sde_hw_rc.c", "msm/sde/sde_wb.c", "msm/sde/sde_encoder_phys_wb.c",
+    "msm/sde_rsc.c", "msm/sde_rsc_hw.c", "msm/sde_rsc_hw_v3.c", "msm/dsi/dsi_phy.c", "msm/dsi/dsi_pwr.c",
+    "msm/dsi/dsi_phy_hw_v3_0.c", "msm/dsi/dsi_phy_hw_v4_0.c", "msm/dsi/dsi_phy_hw_v5_0.c", "msm/dsi/dsi_phy_timing_calc.c",
+    "msm/dsi/dsi_phy_timing_v3_0.c", "msm/dsi/dsi_phy_timing_v4_0.c", "msm/dsi/dsi_pll.c", "msm/dsi/dsi_pll_5nm.c",
+    "msm/dsi/dsi_pll_4nm.c", "msm/dsi/dsi_ctrl_hw_cmn.c", "msm/dsi/dsi_ctrl_hw_2_2.c", "msm/dsi/dsi_ctrl.c",
+    "msm/dsi/dsi_catalog.c", "msm/dsi/dsi_drm.c", "msm/dsi/dsi_display.c", "msm/dsi/dsi_panel.c", "msm/dsi/dsi_clk_manager.c",
+    "msm/dsi/dsi_display_test.c", "msm/dsi/dsi_parser.c", "msm/msm_cooling_device.c", "msm/msm_atomic.c", "msm/msm_fb.c",
+    "msm/msm_drv.c", "msm/msm_gem.c", "msm/msm_gem_prime.c", "msm/msm_gem_vma.c", "msm/msm_smmu.c", "msm/msm_prop.c",
+    "rotator/sde_rotator_sync.c", "rotator/sde_rotator_debug.c", "rotator/sde_rotator_r1_debug.c",
+    "rotator/sde_rotator_r3_debug.c",
+]]
+
+ddk_module(
+    name = "msm_drm",
+    out = "msm_drm.ko",
+    srcs = MSM_DRM_SRCS,
+    copts = ["-D" + c for c in [
+        "CONFIG_DEBUG_FS", "CONFIG_DRM_MSM", "CONFIG_DRM_MSM_DSI", "CONFIG_DRM_MSM_REGISTER_LOGGING",
+        "CONFIG_DRM_MSM_SDE", "CONFIG_DRM_SDE_RSC", "CONFIG_DRM_SDE_VM", "CONFIG_DRM_SDE_WB", "CONFIG_DSI_PARSER",
+        "CONFIG_QCOM_MDSS_PLL", "CONFIG_QCOM_SPEC_SYNC", "CONFIG_SYNC_FILE", "CONFIG_THERMAL_OF",
+    ]] + ["-fstrict-flex-arrays=0"],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":msm_drm_private_headers",
+        ":headers",
+        ":hw_fence_headers",
+        ":sync_fence_headers",
+        ":emkit_info",
+        ":sync_fence",
+        BASE + ":headers",
+        BASE + ":panel_event_notifier",
+        BASE + ":qcom-scm",
+        BASE + ":qcom_rpmh",
+        BASE + ":qcom_iommu_util",
+        BASE + ":msm_dma_iommu_mapping",
+        BASE + ":pinctrl-msm",
+        BASE + ":spmi-pmic-arb",
+        BASE + ":llcc-qcom",
+        BASE + ":mem_buf_dev",
+        BASE + ":qcom_va_minidump",
+        BASE + ":gh_rm_drv",
+        BASE + ":gh_irq_lend",
+        BASE + ":gh_mem_notifier",
+        BASE + ":gh_msgq",
+    ],
+)

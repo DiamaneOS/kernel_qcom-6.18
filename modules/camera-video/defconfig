@@ -1,0 +1,11 @@
+# Vendor Kconfig values of modules/camera-video, from gen_config.py: the modules' own symbols and the
+# 6.1 vendor values of the other symbols their sources test. The base layer's values come from
+# modules/base.
+CONFIG_LEDS_QTI_FLASH=m
+CONFIG_OIS_DW9784=y
+CONFIG_SPECTRA_CRE=y
+CONFIG_SPECTRA_ICP=y
+CONFIG_SPECTRA_ISP=y
+CONFIG_SPECTRA_SENSOR=y
+CONFIG_SPECTRA_TFE=y
+CONFIG_STMVL53L1=m

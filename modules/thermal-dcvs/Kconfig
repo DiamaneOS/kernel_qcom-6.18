@@ -1,0 +1,110 @@
+# Vendor Kconfig symbols of modules/thermal-dcvs that 6.18 Kconfig and modules/base lack. Types as in
+# KERNEL.PLATFORM.5.0 or our 6.1 tree, values in defconfig.
+
+config MSM_PERFORMANCE
+	tristate "MSM_PERFORMANCE"
+
+config MSM_SYSSTATS
+	tristate "MSM_SYSSTATS"
+
+config MSM_SYSSTATS_STUB_NONEXPORTED_SYMBOLS
+	bool "MSM_SYSSTATS_STUB_NONEXPORTED_SYMBOLS"
+
+config QCOM_BWMON
+	tristate "QCOM_BWMON"
+
+config QCOM_BWPROF
+	tristate "QCOM_BWPROF"
+
+config QCOM_CPUCP
+	tristate "QCOM_CPUCP"
+
+config QCOM_CPU_PHYS_LOG_MAP
+	tristate "QCOM_CPU_PHYS_LOG_MAP"
+
+config QCOM_DCVS
+	tristate "QCOM_DCVS"
+
+config QCOM_DCVS_FP
+	tristate "QCOM_DCVS_FP"
+
+config QCOM_LLCC_PERFMON
+	tristate "QCOM_LLCC_PERFMON"
+
+config QCOM_LLCC_PMU
+	tristate "QCOM_LLCC_PMU"
+
+config QCOM_MEMLAT
+	tristate "QCOM_MEMLAT"
+
+config QCOM_PMU_LIB
+	tristate "QCOM_PMU_LIB"
+
+config QTI_BCL_PMIC5
+	tristate "QTI_BCL_PMIC5"
+
+config QTI_BCL_SOC_DRIVER
+	tristate "QTI_BCL_SOC_DRIVER"
+
+config QTI_C1DCVS_SCMI_V2
+	tristate "QTI_C1DCVS_SCMI_V2"
+
+config QTI_CPUCP_LOG
+	tristate "QTI_CPUCP_LOG"
+
+config QTI_CPUFREQ_CDEV
+	tristate "QTI_CPUFREQ_CDEV"
+
+config QTI_CPUFREQ_STATS_SCMI_V2
+	tristate "QTI_CPUFREQ_STATS_SCMI_V2"
+
+config QTI_CPU_HOTPLUG_COOLING_DEVICE
+	tristate "QTI_CPU_HOTPLUG_COOLING_DEVICE"
+
+config QTI_CPU_VOLTAGE_COOLING_DEVICE
+	tristate "QTI_CPU_VOLTAGE_COOLING_DEVICE"
+
+config QTI_DDR_COOLING_DEVICE
+	tristate "QTI_DDR_COOLING_DEVICE"
+
+config QTI_DEVFREQ_CDEV
+	tristate "QTI_DEVFREQ_CDEV"
+
+config QTI_DYNPF_SCMI
+	tristate "QTI_DYNPF_SCMI"
+
+config QTI_MPAM
+	tristate "QTI_MPAM"
+
+config QTI_PLH
+	bool "QTI_PLH"
+
+config QTI_QCOM_SCMI_CLIENT
+	tristate "QTI_QCOM_SCMI_CLIENT"
+
+config QTI_QMI_COOLING_DEVICE
+	tristate "QTI_QMI_COOLING_DEVICE"
+
+config QTI_QMI_SENSOR_V2
+	tristate "QTI_QMI_SENSOR_V2"
+
+config QTI_SCMI_VENDOR_PROTOCOL
+	tristate "QTI_SCMI_VENDOR_PROTOCOL"
+
+config QTI_SYS_PM_VX
+	tristate "QTI_SYS_PM_VX"
+
+config QTI_THERMALZONE_CONFIG_DEBUG
+	tristate "QTI_THERMALZONE_CONFIG_DEBUG"
+
+config QTI_THERMAL_LIMITS_DCVS
+	tristate "QTI_THERMAL_LIMITS_DCVS"
+
+config QTI_THERMAL_MINIDUMP
+	tristate "QTI_THERMAL_MINIDUMP"
+
+config QTI_THERMAL_VENDOR_HOOK
+	tristate "QTI_THERMAL_VENDOR_HOOK"
+
+config QTI_USERSPACE_CDEV
+	tristate "QTI_USERSPACE_CDEV"

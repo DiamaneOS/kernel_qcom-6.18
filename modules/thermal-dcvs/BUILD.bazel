@@ -1,0 +1,787 @@
+# FP6 phase 5 vendor modules (thermal-dcvs) as DDK modules against the FP6 device kernel build. Sources
+# and their origin: fp6/sources.tsv. Generated from modules.bzl (scripts gen_ddk.py). The headers
+# that core-headers.json names are 6.18's own, kept identical. The base layer comes from
+# modules/base.
+
+load("//build/kernel/kleaf:kernel.bzl", "ddk_config", "ddk_headers", "ddk_module")
+
+package(default_visibility = ["//visibility:public"])
+
+ddk_config(
+    name = "config",
+    defconfig = "defconfig",
+    kconfigs = ["Kconfig"],
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        "//devices/fairphone/fp6/modules/base:config",
+    ],
+)
+
+ddk_headers(
+    name = "headers",
+    hdrs = glob([
+        "drivers/**/*.h",
+        "include/**/*.h",
+    ]),
+    includes = ["."],
+    # Before the kernel's own include directories, as Qualcomm's DDK headers do.
+    linux_includes = [
+        "include",
+    ],
+)
+
+ddk_module(
+    name = "qcom_tsens",
+    out = "qcom_tsens.ko",
+    srcs = [
+        "drivers/thermal/qcom/thermal_zone_internal.h",
+        "drivers/thermal/qcom/tsens-8960.c",
+        "drivers/thermal/qcom/tsens-v0_1.c",
+        "drivers/thermal/qcom/tsens-v1.c",
+        "drivers/thermal/qcom/tsens-v2.c",
+        "drivers/thermal/qcom/tsens.c",
+        "drivers/thermal/qcom/tsens.h",
+    ],
+    includes = [
+        "drivers/thermal/qcom",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        "//devices/fairphone/fp6/modules/base:qcom_ipc_logging",
+    ],
+)
+
+ddk_module(
+    name = "bcl_pmic5",
+    out = "bcl_pmic5.ko",
+    srcs = [
+        "drivers/thermal/qcom/qti_bcl_pmic5.c",
+        "drivers/thermal/qcom/qti_bcl_stats.c",
+        "drivers/thermal/qcom/qti_bcl_common.h",
+        "drivers/thermal/qcom/thermal_zone_internal.h",
+    ],
+    includes = [
+        "drivers/thermal/qcom",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        "//devices/fairphone/fp6/modules/base:qcom_ipc_logging",
+    ],
+)
+
+ddk_module(
+    name = "bcl_soc",
+    out = "bcl_soc.ko",
+    srcs = [
+        "drivers/thermal/qcom/bcl_soc.c",
+        "drivers/thermal/qcom/thermal_zone_internal.h",
+    ],
+    includes = [
+        "drivers/thermal/qcom",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "qcom-spmi-temp-alarm",
+    out = "qcom-spmi-temp-alarm.ko",
+    srcs = [
+        "drivers/thermal/qcom/qcom-spmi-temp-alarm.c",
+    ],
+    includes = [
+        "drivers/thermal/qcom",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "cpu_voltage_cooling",
+    out = "cpu_voltage_cooling.ko",
+    srcs = [
+        "drivers/thermal/qcom/cpu_voltage_cooling.c",
+    ],
+    includes = [
+        "drivers/thermal/qcom",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "ddr_cdev",
+    out = "ddr_cdev.ko",
+    srcs = [
+        "drivers/thermal/qcom/ddr_cdev.c",
+    ],
+    includes = [
+        "drivers/thermal/qcom",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "msm_lmh_dcvs",
+    out = "msm_lmh_dcvs.ko",
+    srcs = [
+        "drivers/thermal/qcom/msm_lmh_dcvs.c",
+    ],
+    includes = [
+        "drivers/thermal/qcom",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "qti_cpufreq_cdev",
+    out = "qti_cpufreq_cdev.ko",
+    srcs = [
+        "drivers/thermal/qcom/qti_cpufreq_cdev.c",
+    ],
+    includes = [
+        "drivers/thermal/qcom",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "qti_devfreq_cdev",
+    out = "qti_devfreq_cdev.ko",
+    srcs = [
+        "drivers/thermal/qcom/qti_devfreq_cdev.c",
+    ],
+    includes = [
+        "drivers/thermal/qcom",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "qti_qmi_cdev",
+    out = "qti_qmi_cdev.ko",
+    srcs = [
+        "drivers/thermal/qcom/qmi_cooling.c",
+        "drivers/thermal/qcom/thermal_mitigation_device_service_v01.c",
+        "drivers/thermal/qcom/thermal_mitigation_device_service_v01.h",
+    ],
+    includes = [
+        "drivers/thermal/qcom",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        "//devices/fairphone/fp6/modules/base:qmi_helpers",
+    ],
+)
+
+ddk_module(
+    name = "qti_qmi_sensor_v2",
+    out = "qti_qmi_sensor_v2.ko",
+    srcs = [
+        "drivers/thermal/qcom/qmi_sensors.h",
+        "drivers/thermal/qcom/qmi_sensors_v2.c",
+        "drivers/thermal/qcom/thermal_sensor_service_v02.c",
+        "drivers/thermal/qcom/thermal_sensor_service_v02.h",
+        "drivers/thermal/qcom/thermal_zone_internal.h",
+    ],
+    includes = [
+        "drivers/thermal/qcom",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        "//devices/fairphone/fp6/modules/base:qmi_helpers",
+    ],
+)
+
+ddk_module(
+    name = "qti_userspace_cdev",
+    out = "qti_userspace_cdev.ko",
+    srcs = [
+        "drivers/thermal/qcom/qti_userspace_cdev.c",
+    ],
+    includes = [
+        "drivers/thermal/qcom",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "thermal_config",
+    out = "thermal_config.ko",
+    srcs = [
+        "drivers/thermal/qcom/thermal_config.c",
+    ],
+    includes = [
+        "drivers/thermal/qcom",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "qti_thermal_vendor_hooks",
+    out = "qti_thermal_vendor_hooks.ko",
+    srcs = [
+        "drivers/thermal/qcom/qti_thermal_vendor_hooks.c",
+    ],
+    includes = [
+        "drivers/thermal/qcom",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "cpu_hotplug",
+    out = "cpu_hotplug.ko",
+    srcs = [
+        "drivers/thermal/qcom/cpu_hotplug.c",
+    ],
+    includes = [
+        "drivers/thermal/qcom",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "thermal_minidump",
+    out = "thermal_minidump.ko",
+    srcs = [
+        "drivers/thermal/qcom/thermal_minidump.c",
+    ],
+    includes = [
+        "drivers/thermal/qcom",
+    ],
+    copts = [
+        "-fstrict-flex-arrays=0",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        "//devices/fairphone/fp6/modules/base:minidump",
+    ],
+)
+
+ddk_module(
+    name = "qcom_scmi_vendor",
+    out = "qcom_scmi_vendor.ko",
+    srcs = [
+        "drivers/firmware/arm_scmi/qcom_scmi_vendor.c",
+    ],
+    includes = [
+        "drivers/firmware/arm_scmi",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "qcom_scmi_client",
+    out = "qcom_scmi_client.ko",
+    srcs = [
+        "drivers/soc/qcom/dcvs/qcom_scmi_client.c",
+    ],
+    includes = [
+        "drivers/soc/qcom/dcvs",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "cpu_phys_log_map",
+    out = "cpu_phys_log_map.ko",
+    srcs = [
+        "drivers/soc/qcom/cpu_phys_log_map.c",
+    ],
+    includes = [
+        "drivers/soc/qcom",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "qcom_llcc_pmu",
+    out = "qcom_llcc_pmu.ko",
+    srcs = [
+        "drivers/perf/qcom_llcc_pmu.c",
+    ],
+    includes = [
+        "drivers/perf",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        ":cpu_phys_log_map",
+    ],
+)
+
+ddk_module(
+    name = "qcom-pmu-lib",
+    out = "qcom-pmu-lib.ko",
+    srcs = [
+        "drivers/soc/qcom/dcvs/pmu_lib.c",
+    ],
+    includes = [
+        "drivers/soc/qcom/dcvs",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        ":cpu_phys_log_map",
+        ":qcom_llcc_pmu",
+        ":qcom_scmi_client",
+    ],
+)
+
+ddk_module(
+    name = "dcvs_fp",
+    out = "dcvs_fp.ko",
+    srcs = [
+        "drivers/soc/qcom/dcvs/dcvs_fp.c",
+        "drivers/soc/qcom/dcvs/dcvs_private.h",
+    ],
+    includes = [
+        "drivers/soc/qcom/dcvs",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        "//devices/fairphone/fp6/modules/base:cmd-db",
+        "//devices/fairphone/fp6/modules/base:qcom_rpmh",
+    ],
+)
+
+ddk_module(
+    name = "qcom-dcvs",
+    out = "qcom-dcvs.ko",
+    srcs = [
+        "drivers/soc/qcom/dcvs/dcvs.c",
+        "drivers/soc/qcom/dcvs/dcvs_epss.c",
+        "drivers/soc/qcom/dcvs/dcvs_icc.c",
+        "drivers/soc/qcom/dcvs/dcvs_private.h",
+        "drivers/soc/qcom/dcvs/trace-dcvs.c",
+        "drivers/soc/qcom/dcvs/trace-dcvs.h",
+    ],
+    includes = [
+        "drivers/soc/qcom/dcvs",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        ":dcvs_fp",
+    ],
+)
+
+ddk_module(
+    name = "msm_performance",
+    out = "msm_performance.ko",
+    srcs = [
+        "drivers/soc/qcom/msm_performance.c",
+    ],
+    includes = [
+        "drivers/soc/qcom",
+    ],
+    copts = [
+        "-fstrict-flex-arrays=0",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        ":qcom-pmu-lib",
+        ":qcom_scmi_client",
+    ],
+)
+
+ddk_module(
+    name = "msm_sysstats",
+    out = "msm_sysstats.ko",
+    srcs = [
+        "kernel/msm_sysstats.c",
+    ],
+    includes = [
+        "kernel",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "bwmon",
+    out = "bwmon.ko",
+    srcs = [
+        "drivers/soc/qcom/dcvs/bwmon.c",
+        "drivers/soc/qcom/dcvs/bwmon.h",
+        "drivers/soc/qcom/dcvs/trace-dcvs.h",
+    ],
+    includes = [
+        "drivers/soc/qcom/dcvs",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        ":qcom-dcvs",
+    ],
+)
+
+ddk_module(
+    name = "memlat",
+    out = "memlat.ko",
+    srcs = [
+        "drivers/soc/qcom/dcvs/memlat.c",
+        "drivers/soc/qcom/dcvs/trace-dcvs.h",
+    ],
+    includes = [
+        "drivers/soc/qcom/dcvs",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        ":cpu_phys_log_map",
+        ":qcom-dcvs",
+        ":qcom-pmu-lib",
+        ":qcom_scmi_client",
+    ],
+)
+
+ddk_module(
+    name = "cpufreq_stats_scmi_v2",
+    out = "cpufreq_stats_scmi_v2.ko",
+    srcs = [
+        "drivers/soc/qcom/dcvs/cpufreq_stats_scmi_v2.c",
+    ],
+    includes = [
+        "drivers/soc/qcom/dcvs",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        ":qcom_scmi_client",
+    ],
+)
+
+ddk_module(
+    name = "mpam",
+    out = "mpam.ko",
+    srcs = [
+        "drivers/soc/qcom/mpam/mpam.c",
+        "drivers/soc/qcom/mpam/mpam_rpmsg.c",
+        "drivers/soc/qcom/mpam/mpam_dsp.h",
+    ],
+    includes = [
+        "drivers/soc/qcom/mpam",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        ":qcom_scmi_client",
+    ],
+)
+
+ddk_module(
+    name = "bwprof",
+    out = "bwprof.ko",
+    srcs = [
+        "drivers/soc/qcom/dcvs/bwprof.c",
+    ],
+    includes = [
+        "drivers/soc/qcom/dcvs",
+    ],
+    copts = [
+        "-fstrict-flex-arrays=0",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        ":qcom-dcvs",
+    ],
+)
+
+ddk_module(
+    name = "c1dcvs_scmi_v2",
+    out = "c1dcvs_scmi_v2.ko",
+    srcs = [
+        "drivers/soc/qcom/dcvs/c1dcvs_scmi_v2.c",
+    ],
+    includes = [
+        "drivers/soc/qcom/dcvs",
+    ],
+    copts = [
+        "-fstrict-flex-arrays=0",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        ":qcom_scmi_client",
+    ],
+)
+
+ddk_module(
+    name = "dynpf_scmi",
+    out = "dynpf_scmi.ko",
+    srcs = [
+        "drivers/soc/qcom/dcvs/dynpf_scmi.c",
+    ],
+    includes = [
+        "drivers/soc/qcom/dcvs",
+    ],
+    copts = [
+        "-fstrict-flex-arrays=0",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        ":qcom_scmi_client",
+    ],
+)
+
+ddk_module(
+    name = "qcom-cpufreq-hw",
+    out = "qcom-cpufreq-hw.ko",
+    srcs = [
+        "drivers/cpufreq/qcom-cpufreq-hw.c",
+    ],
+    includes = [
+        "drivers/cpufreq",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "llcc_perfmon",
+    out = "llcc_perfmon.ko",
+    srcs = [
+        "drivers/soc/qcom/llcc_events.h",
+        "drivers/soc/qcom/llcc_perfmon.c",
+        "drivers/soc/qcom/llcc_perfmon.h",
+    ],
+    includes = [
+        "drivers/soc/qcom",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "cpucp_log",
+    out = "cpucp_log.ko",
+    srcs = [
+        "drivers/soc/qcom/cpucp_log.c",
+        "drivers/soc/qcom/trace_cpucp.h",
+    ],
+    includes = [
+        "drivers/soc/qcom",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        ":qcom_scmi_client",
+    ],
+)
+
+ddk_module(
+    name = "qcom_cpucp",
+    out = "qcom_cpucp.ko",
+    srcs = [
+        "drivers/soc/qcom/qcom_cpucp.c",
+    ],
+    includes = [
+        "drivers/soc/qcom",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "sys_pm_vx",
+    out = "sys_pm_vx.ko",
+    srcs = [
+        "drivers/soc/qcom/sys_pm_vx.c",
+    ],
+    includes = [
+        "drivers/soc/qcom",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        "//devices/fairphone/fp6/modules/base:qcom_aoss",
+        "//devices/fairphone/fp6/modules/base:qcom_stats",
+    ],
+)
+
+ddk_module(
+    name = "qcom_edac",
+    out = "qcom_edac.ko",
+    srcs = [
+        "drivers/edac/qcom_edac.c",
+    ],
+    includes = [
+        "drivers/edac",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)

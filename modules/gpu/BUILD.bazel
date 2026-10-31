@@ -1,0 +1,84 @@
+# FP6 GPU module as a DDK module against the 6.18 GKI kernel: msm_kgsl from GRAPHICS.LA.16.1
+# with the FP6 configuration (defconfig). The volcano GPU clock controller is in modules/base.
+# msm_hw_fence for hardware fences, the devfreq governors built in, no CoreSight.
+# Sources and their origin: sources.tsv. drivers/devfreq/governor.h is 6.18's own (core-headers.json).
+
+load("//build/kernel/kleaf:kernel.bzl", "ddk_config", "ddk_headers", "ddk_module")
+
+package(default_visibility = ["//visibility:public"])
+
+BASE = "//devices/fairphone/fp6/modules/base"
+DISPLAY = "//devices/fairphone/fp6/modules/display"
+DCVS = "//devices/fairphone/fp6/modules/thermal-dcvs"
+
+ddk_config(
+    name = "config",
+    defconfig = "defconfig",
+    kconfigs = ["graphics-kernel/Kconfig"],
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    # The display set's configuration (itself on the base set's), so modules that link
+    # display modules build with one combined configuration. kgsl also links the DCVS set.
+    deps = [DISPLAY + ":config", DCVS + ":config"],
+)
+
+ddk_headers(
+    name = "kgsl_headers",
+    hdrs = glob([
+        "graphics-kernel/*.h",
+        "graphics-kernel/include/**/*.h",
+        "drivers/devfreq/governor.h",
+    ]),
+    includes = ["graphics-kernel/include", "graphics-kernel", "drivers/devfreq"],
+)
+
+GK = "graphics-kernel/"
+
+ddk_module(
+    name = "msm_kgsl",
+    out = "msm_kgsl.ko",
+    srcs = [GK + s for s in [
+        "adreno.c", "adreno_a5xx.c", "adreno_a5xx_perfcounter.c", "adreno_a5xx_preempt.c",
+        "adreno_a5xx_ringbuffer.c", "adreno_a5xx_snapshot.c", "adreno_a6xx.c", "adreno_a6xx_gmu.c",
+        "adreno_a6xx_gmu_snapshot.c", "adreno_a6xx_hfi.c", "adreno_a6xx_hwsched.c", "adreno_a6xx_hwsched_hfi.c",
+        "adreno_a6xx_perfcounter.c", "adreno_a6xx_preempt.c", "adreno_a6xx_rgmu.c", "adreno_a6xx_ringbuffer.c",
+        "adreno_a6xx_rpmh.c", "adreno_a6xx_snapshot.c", "adreno_cp_parser.c", "adreno_dispatch.c",
+        "adreno_drawctxt.c", "adreno_gen7.c", "adreno_gen7_gmu.c", "adreno_gen7_gmu_snapshot.c", "adreno_gen7_hfi.c",
+        "adreno_gen7_hwsched.c", "adreno_gen7_hwsched_hfi.c", "adreno_gen7_perfcounter.c", "adreno_gen7_preempt.c",
+        "adreno_gen7_ringbuffer.c", "adreno_gen7_rpmh.c", "adreno_gen7_snapshot.c", "adreno_gen8.c",
+        "adreno_gen8_gmu.c", "adreno_gen8_gmu_snapshot.c", "adreno_gen8_hfi.c", "adreno_gen8_hwsched.c",
+        "adreno_gen8_hwsched_hfi.c", "adreno_gen8_perfcounter.c", "adreno_gen8_preempt.c", "adreno_gen8_ringbuffer.c",
+        "adreno_gen8_rpmh.c", "adreno_gen8_snapshot.c", "adreno_rpmh.c", "adreno_hwsched.c",
+        "adreno_hwsched_snapshot.c", "adreno_ioctl.c", "adreno_perfcounter.c", "adreno_ringbuffer.c",
+        "adreno_snapshot.c", "adreno_sysfs.c", "adreno_trace.c", "kgsl.c", "kgsl_bus.c", "kgsl_drawobj.c",
+        "kgsl_events.c", "kgsl_eventlog.c", "kgsl_gmu_core.c", "kgsl_ioctl.c", "kgsl_mmu.c", "kgsl_pwrctrl.c",
+        "kgsl_pwrscale.c", "kgsl_regmap.c", "kgsl_sharedmem.c", "kgsl_snapshot.c", "kgsl_timeline.c",
+        "kgsl_trace.c", "kgsl_util.c", "kgsl_vbo.c",
+        # conditional sources of kgsl_defs.bzl that the FP6 configuration selects
+        "kgsl_iommu.c", "kgsl_compat.c", "adreno_compat.c", "kgsl_debugfs.c", "adreno_debugfs.c",
+        "adreno_profile.c", "kgsl_reclaim.c", "kgsl_sync.c", "governor_msm_adreno_tz.c", "governor_gpubw_mon.c",
+    ]],
+    copts = ["-DCONFIG_QTI_HW_FENCE"],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":kgsl_headers",
+        DISPLAY + ":hw_fence_headers",
+        DISPLAY + ":msm_hw_fence",
+        BASE + ":headers",
+        BASE + ":clk-qcom",
+        BASE + ":cmd-db",
+        BASE + ":mdt_loader",
+        BASE + ":minidump",
+        BASE + ":qcom-scm",
+        BASE + ":qcom_aoss",
+        BASE + ":qcom_iommu_util",
+        BASE + ":secure_buffer",
+        BASE + ":socinfo",
+        BASE + ":llcc-qcom",
+        DCVS + ":qcom-dcvs",
+        BASE + ":mem_buf_dev",
+        DCVS + ":msm_performance",
+        DCVS + ":msm_sysstats",
+        BASE + ":qcom_va_minidump",
+    ],
+)

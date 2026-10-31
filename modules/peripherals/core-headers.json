@@ -1,0 +1,5 @@
+{
+  "drivers/dma/dmaengine.h": "drivers/dma/dmaengine.h",
+  "drivers/dma/virt-dma.h": "drivers/dma/virt-dma.h",
+  "drivers/regulator/internal.h": "drivers/regulator/internal.h"
+}

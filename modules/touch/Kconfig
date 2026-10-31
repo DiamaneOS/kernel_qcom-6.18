@@ -1,0 +1,2 @@
+config TOUCHSCREEN_EPHTouch
+	tristate "ESWIN EPH861x touch controller"

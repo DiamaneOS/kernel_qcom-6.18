@@ -1,0 +1,24 @@
+module	partition	stream	position_6.1	set	6.18
+emkit_info.ko	vendor_boot	-	vendor_ramdisk 105	display	keep (msm_drm and eswin_ts use it)
+dispcc-volcano.ko	vendor_boot	-	vendor_ramdisk 18	base	phase 3
+dispcc-pineapple.ko	vendor_boot	-	vendor_ramdisk 17	-	drop: other SoC, no FP6 node
+gpucc-pineapple.ko	vendor_boot	-	vendor_ramdisk 24	-	drop: other SoC, no FP6 node
+qcom-spmi-wled.ko	vendor_dlkm	platform	vendor_dlkm 8	display	keep
+gpucc-cliffs.ko	vendor_dlkm	platform	vendor_dlkm 10	-	drop: other SoC, no FP6 node
+gpucc-volcano.ko	vendor_dlkm	platform	vendor_dlkm 11	base	phase 3, next to dispcc-volcano
+panel_event_notifier.ko	vendor_dlkm	platform	vendor_dlkm 51	base	phase 3
+qpnp-lcdb-regulator.ko	vendor_dlkm	platform	vendor_dlkm 56	display	keep
+qpnp-amoled-regulator.ko	vendor_dlkm	platform	vendor_dlkm 57	-	drop: no FP6 node
+drm_dp_aux_bus.ko	vendor_dlkm	platform	vendor_dlkm 61	-	drop: no user (no DisplayPort, no eDP)
+drm_display_helper.ko	vendor_dlkm	platform	vendor_dlkm 62	-	drop: only DisplayPort used it
+hwmon.ko	vendor_dlkm	platform	vendor_dlkm 125	-	drop: only qti_amoled_ecm used it
+qti_amoled_ecm.ko	vendor_dlkm	platform	vendor_dlkm 126	-	drop: no FP6 node
+msm_drm.ko	vendor_dlkm	display	vendor_dlkm 201	display	keep (no DisplayPort)
+msm_ext_display.ko	vendor_dlkm	display	vendor_dlkm 202	display	keep (the audio card may name its codec)
+sync_fence.ko	vendor_dlkm	display	vendor_dlkm 203	display	keep
+msm_hw_fence.ko	vendor_dlkm	display	vendor_dlkm 204	display	keep (no FP6 node, msm_kgsl links it)
+msm-mmrm.ko	vendor_dlkm	media	vendor_dlkm 205	display	keep (no FP6 node, video and camera link it)
+goodix_ts.ko	vendor_dlkm	touch	vendor_dlkm 206	-	drop: no FP6 SKU has a Goodix controller
+eswin_ts.ko	vendor_dlkm	touch	vendor_dlkm 207	touch	keep
+qts.ko	vendor_dlkm	touch	vendor_dlkm 208	-	drop: no FP6 node (Qualcomm trusted touch for Goodix)
+msm_kgsl.ko	vendor_dlkm	media	vendor_dlkm 210	gpu	keep

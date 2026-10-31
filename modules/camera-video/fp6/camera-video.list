@@ -1,0 +1,4 @@
+drivers/leds/leds-qti-flash
+drivers/input/misc/vl53L1/stmvl53l1
+vendor/qcom/opensource/camera-kernel/camera:camera
+vendor/qcom/opensource/video-driver/video_driver_modules:msm_video

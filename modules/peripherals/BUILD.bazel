@@ -1,0 +1,395 @@
+# FP6 phase 5 vendor modules (peripherals) as DDK modules against the FP6 device kernel build. Sources
+# and their origin: fp6/sources.tsv. Generated from modules.bzl (scripts gen_ddk.py). The headers
+# that core-headers.json names are 6.18's own, kept identical. The base layer comes from
+# modules/base.
+
+load("//build/kernel/kleaf:kernel.bzl", "ddk_config", "ddk_headers", "ddk_module")
+
+package(default_visibility = ["//visibility:public"])
+
+ddk_config(
+    name = "config",
+    defconfig = "defconfig",
+    kconfigs = ["Kconfig"],
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        "//devices/fairphone/fp6/modules/base:config",
+    ],
+)
+
+ddk_headers(
+    name = "headers",
+    hdrs = glob([
+        "drivers/**/*.h",
+        "include/**/*.h",
+        "nfc/**/*.h",
+    ]),
+    includes = ["."],
+    # Before the kernel's own include directories, as Qualcomm's DDK headers do.
+    linux_includes = [
+        "include",
+        "securemsm-kernel/include",
+        "securemsm-kernel/include/linux",
+        "securemsm-kernel/include/uapi/linux",
+    ],
+)
+
+ddk_module(
+    name = "msm_gpi",
+    out = "msm_gpi.ko",
+    srcs = [
+        "drivers/dma/qcom/msm_gpi.c",
+        "drivers/dma/qcom/msm_gpi_mmio.h",
+    ],
+    includes = [
+        "drivers/dma/qcom",
+    ],
+    copts = [
+        "-Wno-error=missing-prototypes",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        "//devices/fairphone/fp6/modules/base:qcom_ipc_logging",
+        "//devices/fairphone/fp6/modules/base:smem",
+    ],
+)
+
+ddk_module(
+    name = "i2c-msm-geni",
+    out = "i2c-msm-geni.ko",
+    srcs = [
+        "drivers/i2c/busses/i2c-msm-geni.c",
+        "drivers/i2c/busses/i2c-qup-trace.h",
+    ],
+    includes = [
+        "drivers/i2c/busses",
+    ],
+    copts = [
+        "-Wno-error=missing-prototypes",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        "//devices/fairphone/fp6/modules/base:qcom_ipc_logging",
+        ":msm_gpi",
+    ],
+)
+
+ddk_module(
+    name = "spi-msm-geni",
+    out = "spi-msm-geni.ko",
+    srcs = [
+        "drivers/spi/spi-msm-geni.c",
+        "drivers/spi/spi-qup-trace.h",
+    ],
+    includes = [
+        "drivers/spi",
+    ],
+    copts = [
+        "-Wno-error=missing-prototypes",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        "//devices/fairphone/fp6/modules/base:qcom_ipc_logging",
+    ],
+)
+
+ddk_module(
+    name = "msm_geni_serial",
+    out = "msm_geni_serial.ko",
+    srcs = [
+        "drivers/tty/serial/msm_geni_serial.c",
+        "drivers/tty/serial/serial_trace.h",
+    ],
+    includes = [
+        "drivers/tty/serial",
+    ],
+    copts = [
+        "-Wno-error=missing-prototypes",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        "//devices/fairphone/fp6/modules/base:qcom_ipc_logging",
+        ":msm_gpi",
+    ],
+)
+
+ddk_module(
+    name = "qcom-vadc-common",
+    out = "qcom-vadc-common.ko",
+    srcs = [
+        "drivers/iio/adc/qcom-vadc-common.c",
+    ],
+    includes = [
+        "drivers/iio/adc",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "qcom-spmi-adc5-gen3",
+    out = "qcom-spmi-adc5-gen3.ko",
+    srcs = [
+        "drivers/iio/adc/qcom-spmi-adc5-gen3.c",
+    ],
+    includes = [
+        "drivers/iio/adc",
+    ],
+    copts = [
+        "-Wno-error=missing-prototypes",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        "//devices/fairphone/fp6/modules/base:qcom_ipc_logging",
+        ":qcom-vadc-common",
+    ],
+)
+
+ddk_module(
+    name = "qti-glink-adc",
+    out = "qti-glink-adc.ko",
+    srcs = [
+        "drivers/iio/adc/qti-glink-adc.c",
+    ],
+    includes = [
+        "drivers/iio/adc",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        "//devices/fairphone/fp6/modules/base:qti_pmic_glink",
+    ],
+)
+
+ddk_module(
+    name = "qcom-i2c-pmic",
+    out = "qcom-i2c-pmic.ko",
+    srcs = [
+        "drivers/mfd/qcom-i2c-pmic.c",
+    ],
+    includes = [
+        "drivers/mfd",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "charger-ulog-glink",
+    out = "charger-ulog-glink.ko",
+    srcs = [
+        "drivers/soc/qcom/charger-ulog-glink.c",
+    ],
+    includes = [
+        "drivers/soc/qcom",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        "//devices/fairphone/fp6/modules/base:qcom_ipc_logging",
+        "//devices/fairphone/fp6/modules/base:qti_pmic_glink",
+    ],
+)
+
+ddk_module(
+    name = "qti-ocp-notifier",
+    out = "qti-ocp-notifier.ko",
+    srcs = [
+        "drivers/regulator/qti-ocp-notifier.c",
+    ],
+    includes = [
+        "drivers/regulator",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        "//devices/fairphone/fp6/modules/base:qcom_ipc_logging",
+    ],
+)
+
+ddk_module(
+    name = "hall_det",
+    out = "hall_det.ko",
+    srcs = [
+        "drivers/input/hall_kernel/hall_det.c",
+    ],
+    includes = [
+        "drivers/input/hall_kernel",
+    ],
+    copts = [
+        "-fstrict-flex-arrays=0",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "qcom-hv-haptics",
+    out = "qcom-hv-haptics.ko",
+    srcs = [
+        "drivers/input/misc/qcom-hv-haptics.c",
+        "drivers/input/misc/qcom-hv-haptics-debugfs.h",
+    ],
+    includes = [
+        "drivers/input/misc",
+    ],
+    copts = [
+        "-Wno-error=missing-prototypes",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        "//devices/fairphone/fp6/modules/base:qti_battery_charger",
+        "//devices/fairphone/fp6/modules/base:rproc_qcom_common",
+    ],
+)
+
+ddk_module(
+    name = "leds-qpnp-vibrator-ldo",
+    out = "leds-qpnp-vibrator-ldo.ko",
+    srcs = [
+        "drivers/leds/leds-qpnp-vibrator-ldo.c",
+    ],
+    includes = [
+        "drivers/leds",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "haptic",
+    out = "haptic.ko",
+    srcs = [
+        "drivers/misc/haptic_hv/aw869x.c",
+        "drivers/misc/haptic_hv/aw869xx.c",
+        "drivers/misc/haptic_hv/aw8671x.c",
+        "drivers/misc/haptic_hv/aw8672x.c",
+        "drivers/misc/haptic_hv/aw8692x.c",
+        "drivers/misc/haptic_hv/aw8693x.c",
+        "drivers/misc/haptic_hv/aw8693xs.c",
+        "drivers/misc/haptic_hv/haptic_hv.c",
+    ],
+    includes = [
+        "drivers/misc/haptic_hv",
+    ],
+    copts = [
+        "-fstrict-flex-arrays=0",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "focaltech_fp",
+    out = "focaltech_fp.ko",
+    srcs = [
+        "drivers/input/finger/focal_finger/ff_core.c",
+    ],
+    includes = [
+        "drivers/input/finger/focal_finger",
+    ],
+    copts = [
+        "-fstrict-flex-arrays=0",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+    ],
+)
+
+ddk_module(
+    name = "sec_nfc",
+    out = "sec_nfc.ko",
+    srcs = [
+        "nfc/driver/samsung/sec_nfc.c",
+    ],
+    includes = [
+        "nfc/driver",
+        "nfc/driver/linux",
+        "nfc/driver/nfc",
+        "securemsm-kernel/include",
+        "securemsm-kernel/include/linux",
+        "securemsm-kernel/linux",
+        "securemsm-kernel/include/uapi/linux",
+        "nfc/driver/samsung",
+    ],
+    local_defines = [
+        "CONFIG_SEC_NFC_IF_I2C",
+        "CONFIG_SEC_NFC_PRODUCT_N5",
+        "CONFIG_SEC_NFC_GPIO_CLK_AWAKE",
+    ],
+    copts = [
+        "-fstrict-flex-arrays=0",
+        "-Wno-error=missing-prototypes",
+        "-Wno-error=format",
+    ],
+    config = ":config",
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [
+        ":headers",
+        "//devices/fairphone/fp6/modules/hw-common:headers",
+        "//devices/fairphone/fp6/modules/base:headers",
+        "//devices/fairphone/fp6/modules/base:pinctrl-msm",
+    ],
+)

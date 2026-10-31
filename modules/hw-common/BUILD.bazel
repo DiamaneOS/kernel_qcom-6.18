@@ -1,0 +1,13 @@
+# Headers shared by the phase 5 vendor module packages: small compatibility headers for vendor
+# sources written for 6.1 (paths 6.18 moved). They map to the 6.18 or base layer headers and
+# declare nothing of their own.
+
+load("//build/kernel/kleaf:kernel.bzl", "ddk_headers")
+
+package(default_visibility = ["//visibility:public"])
+
+ddk_headers(
+    name = "headers",
+    hdrs = glob(["include/**/*.h"]),
+    linux_includes = ["include"],
+)

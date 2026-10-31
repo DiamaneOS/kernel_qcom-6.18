@@ -1,0 +1,12 @@
+{
+  "drivers/edac/edac_device.h": "drivers/edac/edac_device.h",
+  "drivers/edac/edac_mc.h": "drivers/edac/edac_mc.h",
+  "drivers/firmware/arm_scmi/common.h": "drivers/firmware/arm_scmi/common.h",
+  "drivers/firmware/arm_scmi/notify.h": "drivers/firmware/arm_scmi/notify.h",
+  "drivers/firmware/arm_scmi/protocols.h": "drivers/firmware/arm_scmi/protocols.h",
+  "drivers/thermal/thermal_core.h": "drivers/thermal/thermal_core.h",
+  "drivers/thermal/thermal_debugfs.h": "drivers/thermal/thermal_debugfs.h",
+  "drivers/thermal/thermal_hwmon.h": "drivers/thermal/thermal_hwmon.h",
+  "drivers/thermal/thermal_netlink.h": "drivers/thermal/thermal_netlink.h",
+  "drivers/thermal/thermal_thresholds.h": "drivers/thermal/thermal_thresholds.h"
+}

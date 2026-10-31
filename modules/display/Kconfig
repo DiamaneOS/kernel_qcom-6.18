@@ -1,0 +1,8 @@
+config EMKIT_INFO
+	tristate "Fairphone board information (EMKIT)"
+
+config BACKLIGHT_QCOM_SPMI_WLED
+	tristate "Qualcomm PMIC WLED backlight"
+
+config REGULATOR_QPNP_LCDB
+	tristate "Qualcomm PMIC LCD bias (LCDB) regulator"

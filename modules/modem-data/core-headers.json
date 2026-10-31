@@ -1,0 +1,4 @@
+{
+  "drivers/rpmsg/rpmsg_internal.h": "drivers/rpmsg/rpmsg_internal.h",
+  "drivers/usb/gadget/function/u_ether.h": "drivers/usb/gadget/function/u_ether.h"
+}

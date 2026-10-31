@@ -1,0 +1,32 @@
+# qcacld-3.0's own Kconfig and the 6.1 FP6 defconfig, on top of the package configuration, as the
+# 6.1 build had them (wlan_qcacld3_modules.bzl, the gki variant).
+ddk_config(
+    name = "qcacld_config",
+    defconfig = "wlan/qcacld-3.0/configs/fps_gki_qca6750_defconfig",
+    kconfigs = ["wlan/qcacld-3.0/Kconfig"],
+    kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
+    deps = [":config"],
+)
+
+# The cfg80211 features qcacld-3.0 tests for, read from the common sources as the 6.1 build does
+# (feature_grep_map). 6.18 has all of them but CFG80211_RU_PUNCT_NOTIFY.
+genrule(
+    name = "qcacld_grep_defines",
+    srcs = [
+        "//common:include/net/cfg80211.h",
+        "//common:include/uapi/linux/nl80211.h",
+        "//common:net/wireless/nl80211.c",
+    ],
+    outs = ["wlan/qcacld-3.0/configs/grep_defines_fps_gki_qca6750.h"],
+    cmd = """
+        probe() {
+            if grep -qF "$$1" $$2; then echo "#define $$3 (1)" >> $@; fi
+        }
+        : > $@
+        probe "nl80211_validate_key_link_id" $(location //common:net/wireless/nl80211.c) CFG80211_MLO_KEY_OPERATION_SUPPORT
+        probe "struct link_station_parameters" $(location //common:include/net/cfg80211.h) CFG80211_LINK_STA_PARAMS_PRESENT
+        probe "NL80211_EXT_FEATURE_PUNCT" $(location //common:include/uapi/linux/nl80211.h) NL80211_EXT_FEATURE_PUNCT_SUPPORT
+        probe "unsigned int link_id, u16 punct_bitmap" $(location //common:include/net/cfg80211.h) CFG80211_RU_PUNCT_NOTIFY
+        probe "NL80211_EXT_FEATURE_AUTH_AND_DEAUTH_RANDOM_TA" $(location //common:include/uapi/linux/nl80211.h) CFG80211_EXT_FEATURE_AUTH_AND_DEAUTH_RANDOM_TA
+    """,
+)

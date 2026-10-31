@@ -1,0 +1,14 @@
+# Vendor Kconfig symbols of modules/wlan-bt that 6.18 Kconfig and modules/base lack. Types as in
+# KERNEL.PLATFORM.5.0 or our 6.1 tree, values in defconfig.
+
+config CNSS_OUT_OF_TREE
+	bool "CNSS_OUT_OF_TREE"
+
+config CNSS_PLAT_IPC_QMI_SVC
+	tristate "CNSS_PLAT_IPC_QMI_SVC"
+
+config ICNSS2_QMI
+	bool "ICNSS2_QMI"
+
+config WCNSS_MEM_PRE_ALLOC
+	tristate "WCNSS_MEM_PRE_ALLOC"

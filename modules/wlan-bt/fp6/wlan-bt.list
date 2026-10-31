@@ -1,0 +1,11 @@
+vendor/qcom/opensource/wlan/platform/cnss_prealloc:cnss_prealloc
+vendor/qcom/opensource/wlan/platform/cnss_utils:cnss_utils
+vendor/qcom/opensource/wlan/platform/wlan_firmware_service:wlan_firmware_service
+vendor/qcom/opensource/wlan/platform/cnss_plat_ipc_qmi_svc:cnss_plat_ipc_qmi_svc
+vendor/qcom/opensource/wlan/platform/cnss_nl:cnss_nl
+vendor/qcom/opensource/wlan/platform/icnss2:icnss2
+vendor/qcom/opensource/bt-kernel/btpower:btpower
+vendor/qcom/opensource/bt-kernel/btfmcodec:btfmcodec
+vendor/qcom/opensource/bt-kernel/bt_fm_slim:bt_fm_slim
+vendor/qcom/opensource/bt-kernel/bt_fm_swr:bt_fm_swr
+vendor/qcom/opensource/wlan/qcacld-3.0/qca_cld_qca6750:qca_cld3_qca6750
