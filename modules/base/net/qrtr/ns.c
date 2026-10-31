@@ -26,15 +26,23 @@
 static void *ns_ilc;
 #define NS_INFO(x, ...) ipc_log_string(ns_ilc, x, ##__VA_ARGS__)
 
-/* One client port may not take the whole lookup table */
+/* The limits of the common tree's name service, except the lookups: 128 as in
+ * the 6.1 base that this userspace runs on. One client port may not take the
+ * whole lookup table.
+ */
+#define QRTR_NS_MAX_SERVERS 256
+#define QRTR_NS_MAX_LOOKUPS 128
+#define QRTR_NS_MAX_NODES 64
 #define QRTR_NS_MAX_CLIENT_LOOKUPS 32
 
 static DEFINE_XARRAY(nodes);
+static unsigned int node_count;
 
 static struct {
 	struct socket *sock;
 	struct sockaddr_qrtr bcast_sq;
 	struct list_head lookups;
+	u32 lookup_count;
 	struct kthread_worker kworker;
 	struct kthread_work work;
 	struct task_struct *task;
@@ -81,6 +89,7 @@ struct qrtr_server {
 struct qrtr_node {
 	unsigned int id;
 	struct xarray servers;
+	u32 server_count;
 };
 
 static struct qrtr_node *node_get(unsigned int node_id)
@@ -90,6 +99,11 @@ static struct qrtr_node *node_get(unsigned int node_id)
 	node = xa_load(&nodes, node_id);
 	if (node)
 		return node;
+
+	if (node_count >= QRTR_NS_MAX_NODES) {
+		pr_err_ratelimited("QRTR clients exceed max node limit!\n");
+		return NULL;
+	}
 
 	/* If node didn't exist, allocate and insert it to the tree */
 	node = kzalloc(sizeof(*node), GFP_ATOMIC);
@@ -103,6 +117,8 @@ static struct qrtr_node *node_get(unsigned int node_id)
 		kfree(node);
 		return NULL;
 	}
+
+	node_count++;
 
 	return node;
 }
@@ -290,6 +306,12 @@ static struct qrtr_server *server_add(unsigned int service,
 	if (!node)
 		goto err;
 
+	/* A new port on a full node is refused, a port that is there is replaced */
+	if (!xa_load(&node->servers, port) && node->server_count >= QRTR_NS_MAX_SERVERS) {
+		pr_err_ratelimited("QRTR client node %u exceeds max server limit!\n", node_id);
+		goto err;
+	}
+
 	/* Delete the old server on the same port */
 	old = xa_store_irq(&node->servers, port, srv, GFP_ATOMIC);
 	if (old) {
@@ -300,6 +322,8 @@ static struct qrtr_server *server_add(unsigned int service,
 		} else {
 			kfree(old);
 		}
+	} else {
+		node->server_count++;
 	}
 
 	trace_qrtr_ns_server_add(srv->service, srv->instance,
@@ -326,6 +350,7 @@ static int server_del(struct qrtr_node *node, unsigned int port, bool bcast)
 		return 0;
 
 	xa_erase_irq(&node->servers, port);
+	node->server_count--;
 
 	/* Broadcast the removal of local servers */
 	if (srv->node == qrtr_ns.local_node && bcast)
@@ -475,6 +500,7 @@ static int ctrl_cmd_del_client(struct sockaddr_qrtr *from,
 
 		list_del(&lookup->li);
 		kfree(lookup);
+		qrtr_ns.lookup_count--;
 	}
 
 	/* Remove the server belonging to this port but don't broadcast
@@ -628,6 +654,11 @@ static int ctrl_cmd_new_lookup(struct sockaddr_qrtr *from,
 	if (from->sq_node != qrtr_ns.local_node)
 		return -EINVAL;
 
+	if (qrtr_ns.lookup_count >= QRTR_NS_MAX_LOOKUPS) {
+		pr_err_ratelimited("QRTR client node exceeds max lookup limit!\n");
+		return -ENOSPC;
+	}
+
 	list_for_each_entry(lookup, &qrtr_ns.lookups, li) {
 		if (lookup->sq.sq_node == from->sq_node &&
 		    lookup->sq.sq_port == from->sq_port &&
@@ -646,6 +677,7 @@ static int ctrl_cmd_new_lookup(struct sockaddr_qrtr *from,
 	lookup->service = service;
 	lookup->instance = instance;
 	list_add_tail(&lookup->li, &qrtr_ns.lookups);
+	qrtr_ns.lookup_count++;
 
 	memset(&filter, 0, sizeof(filter));
 	filter.service = service;
@@ -686,6 +718,7 @@ static void ctrl_cmd_del_lookup(struct sockaddr_qrtr *from,
 
 		list_del(&lookup->li);
 		kfree(lookup);
+		qrtr_ns.lookup_count--;
 	}
 }
 
@@ -854,6 +887,12 @@ int qrtr_ns_init(void)
 
 	sq.sq_port = QRTR_PORT_CTRL;
 	qrtr_ns.local_node = sq.sq_node;
+
+	/* The local node first, so full node slots cannot stop local services from being announced */
+	if (!node_get(qrtr_ns.local_node)) {
+		ret = -ENOMEM;
+		goto err_wq;
+	}
 
 	ret = kernel_bind(qrtr_ns.sock, (struct sockaddr *)&sq, sizeof(sq));
 	if (ret < 0) {
