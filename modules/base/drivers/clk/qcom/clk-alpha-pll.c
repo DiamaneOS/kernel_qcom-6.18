@@ -3744,7 +3744,7 @@ const struct clk_ops clk_alpha_pll_reset_lucid_evo_ops = {
 };
 EXPORT_SYMBOL_GPL(clk_alpha_pll_reset_lucid_evo_ops);
 
-unsigned long lucid_evo_calc_pll(struct clk_hw *hw, u32 l, u64 a)
+static unsigned long lucid_evo_calc_pll(struct clk_hw *hw, u32 l, u64 a)
 {
 	struct clk_hw *p;
 	unsigned long prate;
@@ -3762,7 +3762,7 @@ static struct clk_regmap_ops clk_lucid_evo_pll_crm_regmap_ops = {
 	.calc_pll = lucid_evo_calc_pll,
 };
 
-unsigned long lucid_evo_calc_pll_out(struct clk_hw *hw, u32 l, u64 a)
+static unsigned long lucid_evo_calc_pll_out(struct clk_hw *hw, u32 l, u64 a)
 {
 	struct clk_hw *p;
 	unsigned long parent_rate;

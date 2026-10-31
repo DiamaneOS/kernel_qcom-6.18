@@ -401,7 +401,7 @@ static int video_cc_volcano_probe(struct platform_device *pdev)
 	regmap_update_bits(regmap, 0x8140, BIT(0), BIT(0));
 	regmap_update_bits(regmap, 0x8124, BIT(0), BIT(0));
 
-	ret = qcom_cc_really_probe(pdev, &video_cc_volcano_desc, regmap);
+	ret = qcom_cc_really_probe(&pdev->dev, &video_cc_volcano_desc, regmap);
 	if (ret) {
 		dev_err(&pdev->dev, "Failed to register VIDEO CC clocks\n");
 		return ret;

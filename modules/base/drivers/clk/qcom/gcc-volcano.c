@@ -3464,7 +3464,7 @@ static int gcc_volcano_probe(struct platform_device *pdev)
 	regmap_update_bits(regmap, 0x32004, BIT(0), BIT(0));
 	regmap_update_bits(regmap, 0x32024, BIT(0), BIT(0));
 
-	ret = qcom_cc_really_probe(pdev, &gcc_volcano_desc, regmap);
+	ret = qcom_cc_really_probe(&pdev->dev, &gcc_volcano_desc, regmap);
 	if (ret) {
 		dev_err(&pdev->dev, "Failed to register GCC clocks\n");
 		return ret;

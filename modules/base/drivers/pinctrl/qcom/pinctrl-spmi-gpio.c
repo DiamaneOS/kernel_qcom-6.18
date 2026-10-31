@@ -443,7 +443,7 @@ static int pmic_gpio_config_get(struct pinctrl_dev *pctldev,
 	case PIN_CONFIG_OUTPUT_ENABLE:
 		arg = pad->output_enabled;
 		break;
-	case PIN_CONFIG_OUTPUT:
+	case PIN_CONFIG_LEVEL:
 		arg = pad->out_value;
 		break;
 	case PMIC_GPIO_CONF_PULL_UP:
@@ -536,7 +536,7 @@ static int pmic_gpio_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
 		case PIN_CONFIG_OUTPUT_ENABLE:
 			pad->output_enabled = arg ? true : false;
 			break;
-		case PIN_CONFIG_OUTPUT:
+		case PIN_CONFIG_LEVEL:
 			pad->output_enabled = true;
 			pad->out_value = arg;
 			break;
@@ -743,7 +743,7 @@ static int pmic_gpio_direction_output(struct gpio_chip *chip,
 	struct pmic_gpio_state *state = gpiochip_get_data(chip);
 	unsigned long config;
 
-	config = pinconf_to_config_packed(PIN_CONFIG_OUTPUT, val);
+	config = pinconf_to_config_packed(PIN_CONFIG_LEVEL, val);
 
 	return pmic_gpio_config_set(state->ctrl, pin, &config, 1);
 }
@@ -770,14 +770,14 @@ static int pmic_gpio_get(struct gpio_chip *chip, unsigned pin)
 	return !!pad->out_value;
 }
 
-static void pmic_gpio_set(struct gpio_chip *chip, unsigned pin, int value)
+static int pmic_gpio_set(struct gpio_chip *chip, unsigned int pin, int value)
 {
 	struct pmic_gpio_state *state = gpiochip_get_data(chip);
 	unsigned long config;
 
-	config = pinconf_to_config_packed(PIN_CONFIG_OUTPUT, value);
+	config = pinconf_to_config_packed(PIN_CONFIG_LEVEL, value);
 
-	pmic_gpio_config_set(state->ctrl, pin, &config, 1);
+	return pmic_gpio_config_set(state->ctrl, pin, &config, 1);
 }
 
 static int pmic_gpio_of_xlate(struct gpio_chip *chip,
@@ -1296,6 +1296,8 @@ static const struct of_device_id pmic_gpio_of_match[] = {
 	{ .compatible = "qcom,pmi8998-gpio", .data = (void *) 14 },
 	{ .compatible = "qcom,pmih0108-gpio", .data = (void *) 18 },
 	{ .compatible = "qcom,pmih010x-gpio", .data = (void *) 18 },
+	/* the FP6 device tree name of the PMIV010x GPIOs (6.1) */
+	{ .compatible = "qcom,pmiv0104-gpio", .data = (void *) 10 },
 	{ .compatible = "qcom,pmiv010x-gpio", .data = (void *) 10 },
 	{ .compatible = "qcom,pmk8350-gpio", .data = (void *) 4 },
 	{ .compatible = "qcom,pmk8550-gpio", .data = (void *) 6 },
@@ -1329,7 +1331,7 @@ static struct platform_driver pmic_gpio_driver = {
 		   .pm = pm_ptr(&pmic_gpio_pm_ops),
 	},
 	.probe	= pmic_gpio_probe,
-	.remove_new = pmic_gpio_remove,
+	.remove = pmic_gpio_remove,
 };
 
 module_platform_driver(pmic_gpio_driver);

@@ -166,7 +166,7 @@ static int tcsr_cc_pineapple_probe(struct platform_device *pdev)
 	if (ret)
 		return ret;
 
-	ret = qcom_cc_really_probe(pdev, &tcsr_cc_pineapple_desc, regmap);
+	ret = qcom_cc_really_probe(&pdev->dev, &tcsr_cc_pineapple_desc, regmap);
 	if (ret) {
 		dev_err(&pdev->dev, "Failed to register TCSR CC clocks\n");
 		return ret;

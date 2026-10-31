@@ -2124,7 +2124,7 @@ static int clk_rcg2_crmc_populate_freq(struct clk_hw *hw, unsigned int l,
 	return 0;
 }
 
-int clk_rcg2_crmc_populate_freq_table(struct clk_rcg2 *rcg)
+static int clk_rcg2_crmc_populate_freq_table(struct clk_rcg2 *rcg)
 {
 	struct freq_tbl *freq_tbl, *curr_freq_tbl;
 	struct clk_crm *crm = rcg->clkr.crm;
@@ -2263,7 +2263,7 @@ static int clk_rcg2_crmc_set_rate(struct clk_hw *hw, unsigned long rate,
  *
  * Returns 0 on success, -EERROR otherwise.
  */
-int clk_rcg2_crmc_prepare(struct clk_hw *hw)
+static int clk_rcg2_crmc_prepare(struct clk_hw *hw)
 {
 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
 
@@ -2281,7 +2281,7 @@ int clk_rcg2_crmc_prepare(struct clk_hw *hw)
  * Unprepare the clock by removing the outstanding perf_level vote.
  *
  */
-void clk_rcg2_crmc_unprepare(struct clk_hw *hw)
+static void clk_rcg2_crmc_unprepare(struct clk_hw *hw)
 {
 	int ret;
 
@@ -2293,7 +2293,7 @@ void clk_rcg2_crmc_unprepare(struct clk_hw *hw)
 		pr_err("%s rcg name=%s ret=%d\n", __func__, qcom_clk_hw_get_name(hw), ret);
 }
 
-unsigned long clk_rcg2_crmc_hw_set_rate(struct clk_hw *hw,
+static unsigned long clk_rcg2_crmc_hw_set_rate(struct clk_hw *hw,
 					enum crm_drv_type client_type, u32 client_idx,
 					u32 pwr_st, unsigned long rate)
 {
@@ -2415,7 +2415,7 @@ static int clk_rcg2_vote_bw(struct clk_hw *hw, unsigned long rate)
  *
  * Returns 0 on success, -EERROR otherwise.
  */
-int clk_rcg2_crmb_prepare(struct clk_hw *hw)
+static int clk_rcg2_crmb_prepare(struct clk_hw *hw)
 {
 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
 	struct clk_crm *crm = rcg->clkr.crm;
@@ -2434,7 +2434,7 @@ int clk_rcg2_crmb_prepare(struct clk_hw *hw)
  * Unprepare the clock by removing the outstanding perf_level vote.
  *
  */
-void clk_rcg2_crmb_unprepare(struct clk_hw *hw)
+static void clk_rcg2_crmb_unprepare(struct clk_hw *hw)
 {
 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
 	struct clk_crm *crm = rcg->clkr.crm;
@@ -2475,7 +2475,7 @@ static int clk_rcg2_crmb_set_rate(struct clk_hw *hw, unsigned long rate,
 	return -EINVAL;
 }
 
-unsigned long clk_rcg2_crmb_set_crmb_rate(struct clk_hw *hw,
+static unsigned long clk_rcg2_crmb_set_crmb_rate(struct clk_hw *hw,
 					enum crm_drv_type client_type, u32 client_idx,
 					u32 nd_idx, u32 pwr_st, u32 ab_rate, u32 ib_rate)
 {
@@ -2508,7 +2508,7 @@ unsigned long clk_rcg2_crmb_set_crmb_rate(struct clk_hw *hw,
 	return ret;
 }
 
-unsigned long clk_rcg2_crmb_set_crm_rate(struct clk_hw *hw,
+static unsigned long clk_rcg2_crmb_set_crm_rate(struct clk_hw *hw,
 				       enum crm_drv_type client_type, u32 client_idx,
 				       u32 pwr_st, unsigned long rate)
 {

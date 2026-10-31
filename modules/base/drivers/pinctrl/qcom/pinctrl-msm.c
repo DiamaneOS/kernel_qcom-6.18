@@ -23,7 +23,7 @@
 #include <linux/reboot.h>
 #include <linux/pm.h>
 #include <linux/log2.h>
-#include <linux/qcom_scm.h>
+#include <linux/firmware/qcom/qcom_scm.h>
 #include <linux/soc/qcom/irq.h>
 #include <linux/bitmap.h>
 #include <linux/sizes.h>
@@ -379,7 +379,7 @@ static int msm_config_reg(struct msm_pinctrl *pctrl,
 		*bit = g->drv_bit;
 		*mask = 7;
 		break;
-	case PIN_CONFIG_OUTPUT:
+	case PIN_CONFIG_LEVEL:
 	case PIN_CONFIG_INPUT_ENABLE:
 		*bit = g->oe_bit;
 		*mask = 1;
@@ -473,7 +473,7 @@ static int msm_config_group_get(struct pinctrl_dev *pctldev,
 	case PIN_CONFIG_DRIVE_STRENGTH:
 		arg = msm_regval_to_drive(arg);
 		break;
-	case PIN_CONFIG_OUTPUT:
+	case PIN_CONFIG_LEVEL:
 		/* Pin is not output */
 		if (!arg)
 			return -EINVAL;
@@ -570,7 +570,7 @@ static int msm_config_group_set(struct pinctrl_dev *pctldev,
 			else
 				arg = (arg / 2) - 1;
 			break;
-		case PIN_CONFIG_OUTPUT:
+		case PIN_CONFIG_LEVEL:
 			/* set output value */
 			raw_spin_lock_irqsave(&pctrl->lock, flags);
 			val = msm_readl_io(pctrl, g);
@@ -720,7 +720,7 @@ static int msm_gpio_get(struct gpio_chip *chip, unsigned offset)
 	return !!(val & BIT(g->in_bit));
 }
 
-static void msm_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+static int msm_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
 {
 	const struct msm_pingroup *g;
 	struct msm_pinctrl *pctrl = gpiochip_get_data(chip);
@@ -739,6 +739,8 @@ static void msm_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
 	msm_writel_io(val, pctrl, g);
 
 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+
+	return 0;
 }
 
 static void msm_gpio_pin_status_get(struct msm_pinctrl *pctrl, const struct msm_pingroup *g,
@@ -858,8 +860,6 @@ static int msm_gpio_init_valid_mask(struct gpio_chip *gc,
 	int ret;
 	unsigned int len, i;
 	const int *reserved = pctrl->soc->reserved_gpios;
-	struct property *prop;
-	const __be32 *p;
 	u16 *tmp;
 
 	/* Driver provided reserved list overrides DT and ACPI */
@@ -878,7 +878,7 @@ static int msm_gpio_init_valid_mask(struct gpio_chip *gc,
 
 	if (of_property_count_u32_elems(pctrl->dev->of_node, "qcom,gpios-reserved") > 0) {
 		bitmap_fill(valid_mask, ngpios);
-		of_property_for_each_u32(pctrl->dev->of_node, "qcom,gpios-reserved", prop, p, i) {
+		of_property_for_each_u32(pctrl->dev->of_node, "qcom,gpios-reserved", i) {
 			if (i >= ngpios) {
 				dev_err(pctrl->dev, "invalid list of reserved GPIOs\n");
 				return -EINVAL;
@@ -2303,15 +2303,13 @@ int msm_pinctrl_probe(struct platform_device *pdev,
 }
 EXPORT_SYMBOL(msm_pinctrl_probe);
 
-int msm_pinctrl_remove(struct platform_device *pdev)
+void msm_pinctrl_remove(struct platform_device *pdev)
 {
 	struct msm_pinctrl *pctrl = platform_get_drvdata(pdev);
 
 	gpiochip_remove(&pctrl->chip);
 
 	unregister_restart_handler(&pctrl->restart_nb);
-
-	return 0;
 }
 EXPORT_SYMBOL(msm_pinctrl_remove);
 

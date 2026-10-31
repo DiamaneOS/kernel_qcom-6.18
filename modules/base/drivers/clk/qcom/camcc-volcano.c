@@ -2455,7 +2455,7 @@ static int cam_cc_volcano_probe(struct platform_device *pdev)
 	regmap_update_bits(regmap, 0x25038, BIT(0), BIT(0));
 	regmap_update_bits(regmap, 0x2505c, BIT(0), BIT(0));
 
-	ret = qcom_cc_really_probe(pdev, &cam_cc_volcano_desc, regmap);
+	ret = qcom_cc_really_probe(&pdev->dev, &cam_cc_volcano_desc, regmap);
 	if (ret) {
 		dev_err(&pdev->dev, "Failed to register CAM CC clocks\n");
 		return ret;

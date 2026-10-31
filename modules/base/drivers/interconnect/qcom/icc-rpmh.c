@@ -179,7 +179,7 @@ int qcom_icc_get_bw_stub(struct icc_node *node, u32 *avg, u32 *peak)
 }
 EXPORT_SYMBOL(qcom_icc_get_bw_stub);
 
-int qcom_icc_get_bw(struct icc_node *node, u32 *avg, u32 *peak)
+static int qcom_icc_get_bw(struct icc_node *node, u32 *avg, u32 *peak)
 {
 	struct qcom_icc_node *qn = node->data;
 

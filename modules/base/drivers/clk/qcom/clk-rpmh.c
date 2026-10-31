@@ -915,6 +915,40 @@ static const struct clk_rpmh_desc clk_rpmh_pineapple = {
 	.num_clks = ARRAY_SIZE(pineapple_rpmh_clocks),
 };
 
+/*
+ * Volcano (FP6), the table of our 6.1 tree (kernel_qcom-6.1 d7053a6) in the
+ * 5.0 naming: XO pad and CXO as pineapple, LN_BB 2 to 4 on clka7 to clka9,
+ * RF 1 to 3 on clka1 to clka3.
+ */
+DEFINE_CLK_RPMH_VRM(clk7, _a4, "clka7", 4);
+DEFINE_CLK_RPMH_VRM(clk8, _a4, "clka8", 4);
+DEFINE_CLK_RPMH_VRM(clk9, _a2, "clka9", 2);
+
+static struct clk_hw *volcano_rpmh_clocks[] = {
+	[RPMH_CXO_PAD_CLK]	= &clk_rpmh_xo_pad_div2.hw,
+	[RPMH_CXO_PAD_CLK_A]	= &clk_rpmh_xo_pad_div2_ao.hw,
+	[RPMH_CXO_CLK]		= &pineapple_bi_tcxo.hw,
+	[RPMH_CXO_CLK_A]	= &pineapple_bi_tcxo_ao.hw,
+	[RPMH_LN_BB_CLK2]	= &clk_rpmh_clk7_a4.hw,
+	[RPMH_LN_BB_CLK2_A]	= &clk_rpmh_clk7_a4_ao.hw,
+	[RPMH_LN_BB_CLK3]	= &clk_rpmh_clk8_a4.hw,
+	[RPMH_LN_BB_CLK3_A]	= &clk_rpmh_clk8_a4_ao.hw,
+	[RPMH_LN_BB_CLK4]	= &clk_rpmh_clk9_a2.hw,
+	[RPMH_LN_BB_CLK4_A]	= &clk_rpmh_clk9_a2_ao.hw,
+	[RPMH_RF_CLK1]		= &clk_rpmh_clk1_a1.hw,
+	[RPMH_RF_CLK1_A]	= &clk_rpmh_clk1_a1_ao.hw,
+	[RPMH_RF_CLK2]		= &clk_rpmh_clk2_a1.hw,
+	[RPMH_RF_CLK2_A]	= &clk_rpmh_clk2_a1_ao.hw,
+	[RPMH_RF_CLK3]		= &clk_rpmh_clk3_a1.hw,
+	[RPMH_RF_CLK3_A]	= &clk_rpmh_clk3_a1_ao.hw,
+	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
+};
+
+static const struct clk_rpmh_desc clk_rpmh_volcano = {
+	.clks = volcano_rpmh_clocks,
+	.num_clks = ARRAY_SIZE(volcano_rpmh_clocks),
+};
+
 static struct clk_hw *glymur_rpmh_clocks[] = {
 	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div2.hw,
 	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div2_ao.hw,
@@ -1173,6 +1207,7 @@ static const struct of_device_id clk_rpmh_match_table[] = {
 	{ .compatible = "qcom,sm8650-rpmh-clk", .data = &clk_rpmh_sm8650},
 	{ .compatible = "qcom,sc7280-rpmh-clk", .data = &clk_rpmh_sc7280},
 	{ .compatible = "qcom,pineapple-rpmh-clk", .data = &clk_rpmh_pineapple},
+	{ .compatible = "qcom,volcano-rpmh-clk", .data = &clk_rpmh_volcano},
 	{ .compatible = "qcom,sun-rpmh-clk", .data = &clk_rpmh_pineapple},
 	{ .compatible = "qcom,x1e80100-rpmh-clk", .data = &clk_rpmh_x1e80100},
 	{ .compatible = "qcom,canoe-rpmh-clk", .data = &clk_rpmh_canoe},

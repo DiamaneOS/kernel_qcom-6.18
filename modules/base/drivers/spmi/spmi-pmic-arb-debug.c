@@ -449,5 +449,6 @@ static struct platform_driver spmi_pmic_arb_debug_driver = {
 
 module_platform_driver(spmi_pmic_arb_debug_driver);
 
+MODULE_DESCRIPTION("Qualcomm SPMI PMIC arbiter debug");
 MODULE_LICENSE("GPL");
 MODULE_ALIAS("platform:spmi_pmic_arb_debug");

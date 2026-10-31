@@ -44,4 +44,11 @@
 #define RPMH_LN_BB_CLK9				35
 #define RPMH_LN_BB_CLK9_A			36
 
+/*
+ * The FP6 device tree uses the values above (our 6.1 tree). KERNEL.PLATFORM.5.0
+ * puts SLP_CLK2 at 29 and 30, which volcano uses for LN_BB_CLK4: it moves here.
+ */
+#define RPMH_SLP_CLK2				37
+#define RPMH_SLP_CLK2_A				38
+
 #endif
