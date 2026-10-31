@@ -245,9 +245,9 @@ static int qrtr_bcast_enqueue(struct qrtr_node *node, struct sk_buff *skb,
 static struct qrtr_sock *qrtr_port_lookup(int port);
 static void qrtr_port_put(struct qrtr_sock *ipc);
 static int qrtr_parse_header(struct qrtr_cb *cb, size_t *hdrlen, unsigned int *size,
-			     const void *data);
+			     const void *data, size_t len);
 
-void qrtr_print_wakeup_reason(const void *data)
+void qrtr_print_wakeup_reason(const void *data, size_t len)
 {
 	struct qrtr_cb cb;
 	unsigned int size;
@@ -255,13 +255,16 @@ void qrtr_print_wakeup_reason(const void *data)
 	size_t hdrlen;
 	u64 preview = 0;
 
-	qrtr_parse_header(&cb, &hdrlen, &size, data);
+	if (qrtr_parse_header(&cb, &hdrlen, &size, data, len))
+		return;
 
 	service_id = qrtr_get_service_id(cb.src_node, cb.src_port);
 	if (service_id < 0)
 		service_id = qrtr_get_service_id(cb.dst_node, cb.dst_port);
 
 	size = (sizeof(preview) > size) ? size : sizeof(preview);
+	if (hdrlen + size > len)
+		return;
 	memcpy(&preview, data + hdrlen, size);
 
 	pr_info("%s: src[0x%x:0x%x] dst[0x%x:0x%x] [%08x %08x] service[0x%x]\n",
@@ -273,16 +276,22 @@ void qrtr_print_wakeup_reason(const void *data)
 }
 EXPORT_SYMBOL_GPL(qrtr_print_wakeup_reason);
 
+/* The packet is not trusted: nothing is read before @len covers it */
 static int qrtr_parse_header(struct qrtr_cb *cb, size_t *hdrlen, unsigned int *size,
-			     const void *data)
+			     const void *data, size_t len)
 {
 	const struct qrtr_hdr_v1 *v1;
 	const struct qrtr_hdr_v2 *v2;
 	unsigned int ver;
 
+	if (!len)
+		return -1;
+
 	ver = *(u8 *)data;
 	switch (ver) {
 	case QRTR_PROTO_VER_1:
+		if (len < sizeof(*v1))
+			return -1;
 		v1 = data;
 		*hdrlen = sizeof(*v1);
 		cb->src_node = le32_to_cpu(v1->src_node_id);
@@ -293,8 +302,12 @@ static int qrtr_parse_header(struct qrtr_cb *cb, size_t *hdrlen, unsigned int *s
 		*size = le32_to_cpu(v1->size);
 		break;
 	case QRTR_PROTO_VER_2:
+		if (len < sizeof(*v2))
+			return -1;
 		v2 = data;
 		*hdrlen = sizeof(*v2) + v2->optlen;
+		if (*hdrlen > len)
+			return -1;
 		cb->src_node = le16_to_cpu(v2->src_node_id);
 		cb->src_port = le16_to_cpu(v2->src_port_id);
 		cb->dst_node = le16_to_cpu(v2->dst_node_id);

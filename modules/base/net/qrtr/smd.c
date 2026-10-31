@@ -39,7 +39,7 @@ static int qcom_smd_qrtr_callback(struct rpmsg_device *rpdev,
 	}
 
 	if (qcom_glink_is_wakeup(true))
-		qrtr_print_wakeup_reason(data);
+		qrtr_print_wakeup_reason(data, len);
 
 	return rc;
 }
