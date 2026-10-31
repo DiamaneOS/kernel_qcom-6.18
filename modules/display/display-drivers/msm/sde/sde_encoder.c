@@ -3989,7 +3989,7 @@ static enum sde_wb sde_encoder_get_wb(struct sde_mdss_cfg *catalog,
 	return WB_MAX;
 }
 
-void sde_encoder_hw_fence_status(struct sde_kms *sde_kms,
+static void sde_encoder_hw_fence_status(struct sde_kms *sde_kms,
 	struct drm_crtc *crtc, struct sde_hw_ctl *hw_ctl)
 {
 	u64 start_timestamp, end_timestamp;
@@ -4018,7 +4018,7 @@ void sde_encoder_hw_fence_status(struct sde_kms *sde_kms,
 	}
 }
 
-void sde_encoder_perf_uidle_status(struct sde_kms *sde_kms,
+static void sde_encoder_perf_uidle_status(struct sde_kms *sde_kms,
 	struct drm_crtc *crtc)
 {
 	struct sde_hw_uidle *uidle;
@@ -5192,7 +5192,7 @@ static int _sde_encoder_prepare_for_kickoff_processing(struct drm_encoder *drm_e
 	return ret;
 }
 
-void _sde_encoder_delay_kickoff_processing(struct sde_encoder_virt *sde_enc)
+static void _sde_encoder_delay_kickoff_processing(struct sde_encoder_virt *sde_enc)
 {
 	ktime_t current_ts, ept_ts;
 	u32 avr_step_fps, min_fps = 0, qsync_mode, fps;
@@ -5269,7 +5269,8 @@ void _sde_encoder_delay_kickoff_processing(struct sde_encoder_virt *sde_enc)
 
 	snprintf(atrace_buf, sizeof(atrace_buf), "schedule_timeout_%llu", ept);
 	SDE_ATRACE_BEGIN(atrace_buf);
-	usleep_range((timeout_us - USEC_PER_MSEC), timeout_us);
+	/* up to 1 ms early, and never below 0 for a wait under 1 ms */
+	usleep_range(timeout_us - min_t(u64, timeout_us, USEC_PER_MSEC), timeout_us);
 	SDE_ATRACE_END(atrace_buf);
 
 	SDE_EVT32(DRMID(&sde_enc->base), qsync_mode, avr_step_fps, min_fps, fps,
@@ -6665,7 +6666,7 @@ int sde_encoder_update_caps_for_cont_splash(struct drm_encoder *encoder,
 			drm_mode->hdisplay, drm_mode->vdisplay);
 	drm_set_preferred_mode(conn, drm_mode->hdisplay, drm_mode->vdisplay);
 
-	bridge = drm_bridge_chain_get_first_bridge(encoder);
+	bridge = msm_encoder_first_bridge(encoder);
 	if (bridge) {
 		SDE_DEBUG_ENC(sde_enc, "Bridge mapped to encoder\n");
 		/*

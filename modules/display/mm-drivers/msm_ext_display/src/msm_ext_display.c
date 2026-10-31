@@ -638,7 +638,7 @@ end:
 	return ret;
 }
 
-static int msm_ext_disp_remove(struct platform_device *pdev)
+static void msm_ext_disp_remove(struct platform_device *pdev)
 {
 	int ret = 0, id;
 	struct msm_ext_disp *ext_disp = NULL;
@@ -667,7 +667,7 @@ static int msm_ext_disp_remove(struct platform_device *pdev)
 	devm_kfree(&ext_disp->pdev->dev, ext_disp);
 
 end:
-	return ret;
+	return;
 }
 
 static const struct of_device_id msm_ext_dt_match[] = {

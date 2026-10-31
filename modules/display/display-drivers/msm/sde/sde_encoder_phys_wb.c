@@ -1176,7 +1176,7 @@ static int _sde_encoder_phys_wb_validate_output_fmt(struct sde_encoder_phys *phy
 
 	fmt = sde_get_sde_format_ext(fb->format->format, fb->modifier);
 	if (!fmt) {
-		SDE_ERROR("[enc:%d wb:%d] invalid output pixel format:0x%x mod:0x%x\n",
+		SDE_ERROR("[enc:%d wb:%d] invalid output pixel format:0x%x mod:0x%llx\n",
 				DRMID(phys_enc->parent), WBID(wb_enc),
 				fb->format->format, fb->modifier);
 		return -EINVAL;
@@ -1188,7 +1188,7 @@ static int _sde_encoder_phys_wb_validate_output_fmt(struct sde_encoder_phys *phy
 
 	ret = sde_format_validate_fmt(&sde_kms->base, fmt, format_list);
 	if (ret) {
-		SDE_ERROR("[enc:%d wb:%d] unsupported format for wb rotate:%d fmt:0x%x mod:0x%x\n",
+		SDE_ERROR("[enc:%d wb:%d] unsupported format for wb rotate:%d fmt:0x%x mod:0x%llx\n",
 				DRMID(phys_enc->parent), WBID(wb_enc), rotation_type,
 				fb->format->format, fb->modifier);
 		return ret;
@@ -1278,7 +1278,7 @@ static int sde_encoder_phys_wb_atomic_check(struct sde_encoder_phys *phys_enc,
 
 	fmt = sde_get_sde_format_ext(fb->format->format, fb->modifier);
 	if (!fmt) {
-		SDE_ERROR("[enc:%d wb:%d] invalid output pixel format:0x%x mod:0x%x\n",
+		SDE_ERROR("[enc:%d wb:%d] invalid output pixel format:0x%x mod:0x%llx\n",
 				DRMID(phys_enc->parent), WBID(wb_enc),
 				fb->format->format, fb->modifier);
 		return -EINVAL;
@@ -1291,7 +1291,7 @@ static int sde_encoder_phys_wb_atomic_check(struct sde_encoder_phys *phys_enc,
 
         rc = _sde_encoder_phys_wb_validate_output_fmt(phys_enc, fb, rotation_type);
 	if (rc) {
-		SDE_ERROR("[enc:%d wb:%d] output fmt failed fb:%u fmt:0x%x mod:0x%x rot:%d",
+		SDE_ERROR("[enc:%d wb:%d] output fmt failed fb:%u fmt:0x%x mod:0x%llx rot:%d",
 				 DRMID(phys_enc->parent), WBID(wb_enc), fb->base.id,
 				 fb->format->format, fb->modifier, rotation_type);
 		return rc;
@@ -2467,7 +2467,7 @@ static int _sde_encoder_phys_wb_init_internal_fb(struct sde_encoder_phys_wb *wb_
 	}
 
 	/* allocate gem tracking object */
-	info = drm_get_format_info(dev, &mode_cmd);
+	info = drm_get_format_info(dev, mode_cmd.pixel_format, mode_cmd.modifier[0]);
 	nplanes = info->num_planes;
 	if (nplanes >= SDE_MAX_PLANES) {
 		SDE_ERROR("[enc:%d wb:%d] requested format has too many planes:%d\n",
@@ -2747,7 +2747,7 @@ static void sde_encoder_phys_wb_destroy(struct sde_encoder_phys *phys_enc)
 	kfree(wb_enc);
 }
 
-void sde_encoder_phys_wb_add_enc_to_minidump(struct sde_encoder_phys *phys_enc)
+static void sde_encoder_phys_wb_add_enc_to_minidump(struct sde_encoder_phys *phys_enc)
 {
 	struct sde_encoder_phys_wb *wb_enc = to_sde_encoder_phys_wb(phys_enc);
 

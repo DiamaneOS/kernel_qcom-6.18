@@ -10,7 +10,7 @@
 #include <linux/kernel.h>
 #include <linux/errno.h>
 #include <linux/mutex.h>
-#include <linux/soc/qcom/msm_hw_fence.h>
+#include <msm_hw_fence.h>
 
 #ifndef CHAR_BIT
 #define CHAR_BIT 8 /* define this if limits.h not available */

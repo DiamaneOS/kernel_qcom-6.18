@@ -686,15 +686,16 @@ int dp_drm_bridge_init(void *data, struct drm_encoder *encoder,
 	struct dp_display *display = data;
 	struct msm_drm_private *priv = NULL;
 
-	bridge = kzalloc(sizeof(*bridge), GFP_KERNEL);
-	if (!bridge) {
-		rc = -ENOMEM;
+	dev = display->drm_dev;
+
+	/* 6.18 DRM bridges are refcounted: the last drm_bridge_put() frees it */
+	bridge = devm_drm_bridge_alloc(dev->dev, struct dp_bridge, base, &dp_bridge_ops);
+	if (IS_ERR(bridge)) {
+		rc = PTR_ERR(bridge);
 		goto error;
 	}
 
-	dev = display->drm_dev;
 	bridge->display = display;
-	bridge->base.funcs = &dp_bridge_ops;
 	bridge->base.encoder = encoder;
 
 	priv = dev->dev_private;
@@ -702,13 +703,13 @@ int dp_drm_bridge_init(void *data, struct drm_encoder *encoder,
 	rc = drm_bridge_attach(encoder, &bridge->base, NULL, 0);
 	if (rc) {
 		DP_ERR("failed to attach bridge, rc=%d\n", rc);
-		goto error_free_bridge;
+		goto error;
 	}
 
 	rc = display->request_irq(display);
 	if (rc) {
 		DP_ERR("request_irq failed, rc=%d\n", rc);
-		goto error_free_bridge;
+		goto error;
 	}
 
 	priv->bridges[priv->num_bridges++] = &bridge->base;
@@ -717,8 +718,6 @@ int dp_drm_bridge_init(void *data, struct drm_encoder *encoder,
 	display->max_dsc_count = max_dsc_count;
 
 	return 0;
-error_free_bridge:
-	kfree(bridge);
 error:
 	return rc;
 }
@@ -726,9 +725,9 @@ error:
 void dp_drm_bridge_deinit(void *data)
 {
 	struct dp_display *display = data;
-	struct dp_bridge *bridge = display->bridge;
 
-	kfree(bridge);
+	/* the bridge is freed with its last reference, see dp_drm_bridge_init() */
+	display->bridge = NULL;
 }
 
 enum drm_mode_status dp_connector_mode_valid(struct drm_connector *connector,

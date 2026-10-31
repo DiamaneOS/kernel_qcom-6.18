@@ -193,7 +193,7 @@ static int msm_smmu_one_to_one_map(struct msm_mmu *mmu, uint32_t iova,
 		return -ENODEV;
 
 	ret = iommu_map(client->domain, iova, dest_address,
-			size, prot);
+			size, prot, GFP_ATOMIC);
 	if (ret)
 		pr_err("smmu map failed\n");
 
@@ -209,7 +209,7 @@ static int msm_smmu_map(struct msm_mmu *mmu, uint64_t iova,
 
 	if (sgt && sgt->sgl) {
 		ret = iommu_map_sg(client->domain, iova, sgt->sgl,
-				sgt->orig_nents, prot);
+				sgt->orig_nents, prot, GFP_ATOMIC);
 		WARN_ON((int)ret < 0);
 		DRM_DEBUG("%pad/0x%x/0x%x/\n", &sgt->sgl->dma_address,
 				sgt->sgl->dma_length, prot);
@@ -241,7 +241,7 @@ static void msm_smmu_destroy(struct msm_mmu *mmu)
 	kfree(smmu);
 }
 
-struct device *msm_smmu_get_dev(struct msm_mmu *mmu)
+static struct device *msm_smmu_get_dev(struct msm_mmu *mmu)
 {
 	struct msm_smmu *smmu = to_msm_smmu(mmu);
 
@@ -550,7 +550,7 @@ static int msm_smmu_probe(struct platform_device *pdev)
 	dma_set_max_seg_size(client->dev, DMA_BIT_MASK(32));
 	dma_set_seg_boundary(client->dev, (unsigned long)DMA_BIT_MASK(64));
 
-	iommu_set_fault_handler(client->domain,
+	qcom_iommu_set_fault_handler(client->domain,
 			msm_smmu_fault_handler, (void *)client);
 
 	DRM_INFO("Created domain %s, secure=%d\n",
@@ -569,7 +569,7 @@ static int msm_smmu_probe(struct platform_device *pdev)
 	return ret;
 }
 
-static int msm_smmu_remove(struct platform_device *pdev)
+static void msm_smmu_remove(struct platform_device *pdev)
 {
 	struct msm_smmu_client *client;
 	struct msm_smmu_client *curr, *next;
@@ -585,8 +585,6 @@ static int msm_smmu_remove(struct platform_device *pdev)
 		}
 	}
 	mutex_unlock(&smmu_list_lock);
-
-	return 0;
 }
 
 static struct platform_driver msm_smmu_driver = {
@@ -618,5 +616,5 @@ void __exit msm_smmu_driver_cleanup(void)
 MODULE_LICENSE("GPL v2");
 MODULE_DESCRIPTION("MSM SMMU driver");
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 19, 0))
-MODULE_IMPORT_NS(DMA_BUF);
+MODULE_IMPORT_NS("DMA_BUF");
 #endif

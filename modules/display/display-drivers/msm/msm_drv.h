@@ -1031,9 +1031,24 @@ struct msm_fence_error_client_entry {
 	struct list_head list;
 };
 
+/**
+ * enum msm_iommu_status - whether an IOMMU is present, cached at first use
+ */
+enum msm_iommu_status {
+	MSM_IOMMU_UNKNOWN = 0,
+	MSM_IOMMU_PRESENT,
+	MSM_IOMMU_NOT_PRESENT,
+};
+
 struct msm_drm_private {
 
 	struct drm_device *dev;
+
+	/* What drm_device.struct_mutex guarded before 6.18 removed it */
+	struct mutex struct_mutex;
+
+	/* Whether a platform device sits behind an IOMMU (mdss_iommu_present) */
+	enum msm_iommu_status iommu_status;
 
 	struct msm_kms *kms;
 
@@ -1162,6 +1177,25 @@ struct msm_drm_private {
 	struct list_head fence_error_client_list;
 };
 
+bool mdss_iommu_present(struct drm_device *dev);
+
+/*
+ * The first bridge of the encoder chain without taking a reference (6.17 made
+ * drm_bridge_chain_get_first_bridge() take one): for callers that use the bridge
+ * only while the encoder holds it, as before.
+ */
+static inline struct drm_bridge *msm_encoder_first_bridge(struct drm_encoder *encoder)
+{
+	return list_first_entry_or_null(&encoder->bridge_chain, struct drm_bridge, chain_node);
+}
+
+static inline struct mutex *msm_struct_mutex(struct drm_device *dev)
+{
+	struct msm_drm_private *priv = dev->dev_private;
+
+	return &priv->struct_mutex;
+}
+
 /* get struct msm_kms * from drm_device * */
 #define ddev_to_msm_kms(D) ((D) && (D)->dev_private ? \
 		((struct msm_drm_private *)((D)->dev_private))->kms : NULL)
@@ -1284,6 +1318,8 @@ int msm_gem_address_space_unregister_cb(
 		void *cb_data);
 
 void msm_gem_submit_free(struct msm_gem_submit *submit);
+int msm_ioctl_rmfb2(struct drm_device *dev, void *data,
+		struct drm_file *file_priv);
 int msm_ioctl_gem_submit(struct drm_device *dev, void *data,
 		struct drm_file *file);
 
@@ -1364,7 +1400,8 @@ struct drm_framebuffer *msm_framebuffer_init(struct drm_device *dev,
 		const struct drm_mode_fb_cmd2 *mode_cmd,
 		struct drm_gem_object **bos);
 struct drm_framebuffer *msm_framebuffer_create(struct drm_device *dev,
-		struct drm_file *file, const struct drm_mode_fb_cmd2 *mode_cmd);
+		struct drm_file *file, const struct drm_format_info *info,
+		const struct drm_mode_fb_cmd2 *mode_cmd);
 int msm_framebuffer_set_cache_hint(struct drm_framebuffer *fb,
 		u32 flags, u32 rd_type, u32 wr_type);
 int msm_framebuffer_get_cache_hint(struct drm_framebuffer *fb,

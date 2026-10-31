@@ -242,7 +242,7 @@ msm_disable_outputs(struct drm_device *dev, struct drm_atomic_state *old_state)
 		 * it away), so we won't call disable hooks twice.
 		 */
 		bridge = drm_bridge_chain_get_first_bridge(encoder);
-		drm_bridge_chain_disable(bridge);
+		drm_atomic_bridge_chain_disable(bridge, old_state);
 
 		/* Right function depends upon target state. */
 		if (connector->state->crtc && funcs->prepare)
@@ -252,7 +252,8 @@ msm_disable_outputs(struct drm_device *dev, struct drm_atomic_state *old_state)
 		else
 			funcs->dpms(encoder, DRM_MODE_DPMS_OFF);
 
-		drm_bridge_chain_post_disable(bridge);
+		drm_atomic_bridge_chain_post_disable(bridge, old_state);
+		drm_bridge_put(bridge);
 	}
 
 	for_each_old_crtc_in_state(old_state, crtc, old_crtc_state, i) {
@@ -355,6 +356,7 @@ msm_crtc_set_mode(struct drm_device *dev, struct drm_atomic_state *old_state)
 
 		bridge = drm_bridge_chain_get_first_bridge(encoder);
 		drm_bridge_chain_mode_set(bridge, mode, adjusted_mode);
+		drm_bridge_put(bridge);
 		SDE_ATRACE_END("msm_set_mode");
 	}
 }
@@ -373,7 +375,7 @@ msm_crtc_set_mode(struct drm_device *dev, struct drm_atomic_state *old_state)
  * and do the plane commits at the end. This is useful for drivers doing runtime
  * PM since planes updates then only happen when the CRTC is actually enabled.
  */
-void msm_atomic_helper_commit_modeset_disables(struct drm_device *dev,
+static void msm_atomic_helper_commit_modeset_disables(struct drm_device *dev,
 		struct drm_atomic_state *old_state)
 {
 	msm_disable_outputs(dev, old_state);
@@ -488,7 +490,8 @@ static void msm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
 		 * it away), so we won't call enable hooks twice.
 		 */
 		bridge = drm_bridge_chain_get_first_bridge(encoder);
-		drm_bridge_chain_pre_enable(bridge);
+		drm_atomic_bridge_chain_pre_enable(bridge, old_state);
+		drm_bridge_put(bridge);
 		++bridge_enable_count;
 
 		if (funcs->enable)
@@ -533,13 +536,14 @@ static void msm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
 				 encoder->base.id, encoder->name);
 
 		bridge = drm_bridge_chain_get_first_bridge(encoder);
-		drm_bridge_chain_enable(bridge);
+		drm_atomic_bridge_chain_enable(bridge, old_state);
+		drm_bridge_put(bridge);
 	}
 	SDE_ATRACE_END("msm_enable");
 }
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 19, 0))
-struct dma_fence *msm_dma_resv_get_excl(struct drm_plane_state *new_plane_state,
+static struct dma_fence *msm_dma_resv_get_excl(struct drm_plane_state *new_plane_state,
 		struct msm_gem_object *msm_obj)
 {
 	enum dma_resv_usage usage;

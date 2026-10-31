@@ -279,6 +279,8 @@ err_exit:
 }
 EXPORT_SYMBOL(mmrm_client_get_value);
 
+/* Used by the VM back end (vm/be), not built here. */
+int mmrm_client_get_clk_count(void);
 int mmrm_client_get_clk_count(void)
 {
 	struct mmrm_sw_clk_mgr_info *sinfo;

@@ -166,7 +166,7 @@ static void dsi_convert_to_msm_mode(const struct dsi_display_mode *dsi_mode,
 		msm_mode->private_flags |= MSM_MODE_FLAG_NONDSC_BPP_SWITCH;
 }
 
-static int dsi_bridge_attach(struct drm_bridge *bridge,
+static int dsi_bridge_attach(struct drm_bridge *bridge, struct drm_encoder *encoder,
 			enum drm_bridge_attach_flags flags)
 {
 	struct dsi_bridge *c_bridge = to_dsi_bridge(bridge);
@@ -589,7 +589,7 @@ static bool dsi_bridge_mode_fixup(struct drm_bridge *bridge,
 	return true;
 }
 
-u32 dsi_drm_get_dfps_maxfps(void *display)
+static u32 dsi_drm_get_dfps_maxfps(void *display)
 {
 	u32 dfps_maxfps = 0;
 	struct dsi_display *dsi_display = display;
@@ -1344,7 +1344,7 @@ int dsi_conn_post_kickoff(struct drm_connector *connector,
 		return 0;
 	}
 
-	bridge = drm_bridge_chain_get_first_bridge(encoder);
+	bridge = msm_encoder_first_bridge(encoder);
 	if (!bridge) {
 		DSI_DEBUG("bridge is not available\n");
 		return 0;
@@ -1424,33 +1424,26 @@ struct dsi_bridge *dsi_drm_bridge_init(struct dsi_display *display,
 	int rc = 0;
 	struct dsi_bridge *bridge;
 
-	bridge = kzalloc(sizeof(*bridge), GFP_KERNEL);
-	if (!bridge) {
-		rc = -ENOMEM;
+	/* 6.18 DRM bridges are refcounted: the last drm_bridge_put() frees it */
+	bridge = devm_drm_bridge_alloc(dev->dev, struct dsi_bridge, base, &dsi_bridge_ops);
+	if (IS_ERR(bridge)) {
+		rc = PTR_ERR(bridge);
 		goto error;
 	}
 
 	bridge->display = display;
-	bridge->base.funcs = &dsi_bridge_ops;
 	bridge->base.encoder = encoder;
 
 	rc = drm_bridge_attach(encoder, &bridge->base, NULL,
 				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
 	if (rc) {
 		DSI_ERR("failed to attach bridge, rc=%d\n", rc);
-		goto error_free_bridge;
+		goto error;
 	}
 
 	return bridge;
-error_free_bridge:
-	kfree(bridge);
 error:
 	return ERR_PTR(rc);
-}
-
-void dsi_drm_bridge_cleanup(struct dsi_bridge *bridge)
-{
-	kfree(bridge);
 }
 
 static bool is_valid_poms_switch(struct dsi_display_mode *mode_a,
@@ -1570,7 +1563,7 @@ int dsi_conn_set_dyn_bit_clk(struct drm_connector *connector, uint64_t value)
 	display->dyn_bit_clk_pending = true;
 
 	SDE_EVT32(display->dyn_bit_clk);
-	DSI_DEBUG("update dynamic bit clock rate to %llu\n", display->dyn_bit_clk);
+	DSI_DEBUG("update dynamic bit clock rate to %u\n", display->dyn_bit_clk);
 
 	return 0;
 }

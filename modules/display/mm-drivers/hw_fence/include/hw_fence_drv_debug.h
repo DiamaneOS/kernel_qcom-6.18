@@ -69,6 +69,9 @@ extern u32 msm_hw_fence_debug_level;
 
 int hw_fence_debug_debugfs_register(struct hw_fence_driver_data *drv_data);
 
+/* Exported for simulation (doorbell test clients) */
+int msm_hw_fence_driver_doorbell_sim(u64 db_mask);
+
 #if IS_ENABLED(CONFIG_DEBUG_FS)
 
 int process_validation_client_loopback(struct hw_fence_driver_data *drv_data, int client_id);

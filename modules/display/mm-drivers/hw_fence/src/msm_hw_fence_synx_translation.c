@@ -5,7 +5,7 @@
 
 #include <linux/types.h>
 #include <linux/slab.h>
-#include <linux/soc/qcom/msm_hw_fence.h>
+#include <msm_hw_fence.h>
 #include "msm_hw_fence_synx_translation.h"
 #include "hw_fence_drv_priv.h"
 #include "hw_fence_drv_debug.h"
@@ -124,7 +124,7 @@ struct synx_session *synx_hwfence_initialize(struct synx_initialization_params *
 		(struct msm_hw_fence_mem_addr *)params->ptr);
 	if (IS_ERR_OR_NULL(client_handle)) {
 		kfree(session);
-		HWFNC_ERR("failed to initialize synx_id:%d ret:%d\n", params->id,
+		HWFNC_ERR("failed to initialize synx_id:%d ret:%ld\n", params->id,
 			PTR_ERR(client_handle));
 		return ERR_PTR(to_synx_status(PTR_ERR(client_handle)));
 	}

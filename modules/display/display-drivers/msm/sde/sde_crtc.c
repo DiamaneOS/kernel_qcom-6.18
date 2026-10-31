@@ -28,8 +28,9 @@
 #include <drm/drm_flip_work.h>
 #include <soc/qcom/of_common.h>
 #include <linux/version.h>
-#include <linux/soc/qcom/qcom_sync_file.h>
+#include <qcom_sync_file.h>
 #include <linux/file.h>
+#include <linux/vmalloc.h>
 
 #include "sde_kms.h"
 #include "sde_hw_lm.h"
@@ -605,7 +606,7 @@ static void sde_crtc_event_notify(struct drm_crtc *crtc, uint32_t type, void *pa
 
 	SDE_EVT32(DRMID(crtc), type, len, *data,
 			((uint64_t)payload) >> 32, ((uint64_t)payload) & 0xFFFFFFFF);
-	SDE_DEBUG("crtc:%d event(%lu) ptr(%pK) value(%lu) notified\n",
+	SDE_DEBUG("crtc:%d event(%u) ptr(%pK) value(%u) notified\n",
 			DRMID(crtc), type, payload, *data);
 }
 
@@ -636,23 +637,6 @@ static void sde_crtc_destroy(struct drm_crtc *crtc)
 	drm_crtc_cleanup(crtc);
 	mutex_destroy(&sde_crtc->crtc_lock);
 	kfree(sde_crtc);
-}
-
-struct sde_connector_state *_sde_crtc_get_sde_connector_state(struct drm_crtc *crtc,
-		struct drm_atomic_state *state)
-{
-	struct drm_connector *conn;
-	struct drm_connector_state *conn_state;
-	int i;
-
-	for_each_new_connector_in_state(state, conn, conn_state, i) {
-		if (!conn_state || conn_state->crtc != crtc)
-			continue;
-
-		return to_sde_connector_state(conn_state);
-	}
-
-	return NULL;
 }
 
 struct msm_display_mode *sde_crtc_get_msm_mode(struct drm_crtc_state *c_state)
@@ -2799,7 +2783,7 @@ static void _sde_crtc_frame_data_notify(struct drm_crtc *crtc,
 	sde_crtc->frame_data.idx = ++sde_crtc->frame_data.idx % sde_crtc->frame_data.cnt;
 }
 
-void sde_crtc_get_frame_data(struct drm_crtc *crtc)
+static void sde_crtc_get_frame_data(struct drm_crtc *crtc)
 {
 	struct sde_crtc *sde_crtc;
 	struct drm_plane *plane;
@@ -3152,7 +3136,7 @@ static void _sde_crtc_retire_event(struct drm_connector *connector,
 	SDE_ATRACE_END("signal_retire_fence");
 }
 
-void sde_crtc_opr_event_notify(struct drm_crtc *crtc)
+static void sde_crtc_opr_event_notify(struct drm_crtc *crtc)
 {
 	struct sde_crtc *sde_crtc;
 	uint32_t current_opr_value[MAX_DSI_DISPLAYS] = {0};
@@ -3912,7 +3896,7 @@ exit:
  *
  * return 0 if success non-zero otherwise
  */
-int sde_crtc_sw_fence_error_handle(struct drm_crtc *crtc, int err_status)
+static int sde_crtc_sw_fence_error_handle(struct drm_crtc *crtc, int err_status)
 {
 	struct sde_crtc *sde_crtc = NULL;
 	struct drm_encoder *drm_encoder;
@@ -5095,7 +5079,7 @@ static void _sde_crtc_reserve_resource(struct drm_crtc *crtc, struct drm_connect
 	mode_clock_hz = mult_frac(crtc->mode.htotal * crtc->mode.vtotal * updated_fps,
 				inf_factor, 100);
 	mode_clock_hz = div_u64(mode_clock_hz, lm_count);
-	SDE_DEBUG("[%s] h=%d v=%d fps=%d lm=%d mode_clk=%u inf_factor=%u\n",
+	SDE_DEBUG("[%s] h=%d v=%d fps=%llu lm=%d mode_clk=%llu inf_factor=%u\n",
 			crtc->mode.name, crtc->mode.htotal, crtc->mode.vtotal,
 			updated_fps, lm_count, mode_clock_hz, inf_factor);
 
@@ -5271,7 +5255,7 @@ static void sde_crtc_mmrm_cb_notification(struct drm_crtc *crtc)
 	/* notify user space the reduced clk rate */
 	sde_crtc_event_notify(crtc, DRM_EVENT_MMRM_CB, &requested_clk, sizeof(unsigned long));
 
-	SDE_DEBUG("crtc[%d]: MMRM cb notified clk:%d\n",
+	SDE_DEBUG("crtc[%d]: MMRM cb notified clk:%lu\n",
 		crtc->base.id, requested_clk);
 }
 
@@ -8171,7 +8155,7 @@ void sde_crtc_static_img_control(struct drm_crtc *crtc,
 /*
  * __sde_crtc_static_cache_read_work - transition to cache read
  */
-void __sde_crtc_static_cache_read_work(struct kthread_work *work)
+static void __sde_crtc_static_cache_read_work(struct kthread_work *work)
 {
 	struct sde_crtc *sde_crtc = container_of(work, struct sde_crtc,
 			static_cache_read_work.work);

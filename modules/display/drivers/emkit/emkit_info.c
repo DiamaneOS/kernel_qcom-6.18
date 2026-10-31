@@ -437,7 +437,7 @@ err_create_sysfs:
 //[FPS-38] end
 
 
-static int emkit_info_remove(struct platform_device *pdev)
+static void emkit_info_remove(struct platform_device *pdev)
 {
 	 int i;
 
@@ -445,9 +445,6 @@ static int emkit_info_remove(struct platform_device *pdev)
         sysfs_remove_file(g_emkit_info.kobj, &emkit_attrs[i].attr);
 	
     kobject_put(g_emkit_info.kobj);
-
-	
-    return 0;
 }
 
 static const struct dev_pm_ops emkit_info_pm_ops = {
