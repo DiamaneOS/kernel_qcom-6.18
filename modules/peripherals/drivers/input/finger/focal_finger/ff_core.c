@@ -18,6 +18,7 @@
 /*****************************************************************************
 * Included header files
 *****************************************************************************/
+#include <linux/pinctrl/consumer.h>
 #include <linux/module.h>
 #include <linux/of.h>
 #include <linux/of_device.h>
@@ -1235,7 +1236,7 @@ static int ff_register_device(ff_context_t *ff_ctx)
     }
     FF_LOGD("ff devno:%x, %x", (int)ff_devno, (int)ff_ctx->ff_cdev.dev);
 
-    ff_ctx->ff_class = class_create(THIS_MODULE, FF_DRV_NAME);
+    ff_ctx->ff_class = class_create(FF_DRV_NAME);
     if (IS_ERR(ff_ctx->ff_class)) {
         ret = PTR_ERR(ff_ctx->ff_class);
         FF_LOGE("create ff class fails,ret=%d", ret);
@@ -1434,7 +1435,7 @@ static void ff_unprobe(ff_context_t *ff_ctx)
     FF_LOGI("'%s' leave.", __func__);
 }
 
-static int ff_remove(struct platform_device *pdev)
+static void ff_remove(struct platform_device *pdev)
 {
     ff_context_t *ff_ctx = platform_get_drvdata(pdev);
 
@@ -1470,7 +1471,6 @@ static int ff_remove(struct platform_device *pdev)
         ff_ctx = NULL;
     }
     FF_LOGI("'%s' leave.", __func__);
-    return 0;
 }
 
 static const struct of_device_id ff_dt_match[] = {

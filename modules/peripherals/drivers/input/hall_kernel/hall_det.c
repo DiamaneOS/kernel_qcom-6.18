@@ -2,6 +2,7 @@
 /* Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
  */
 
+#include <linux/pinctrl/consumer.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/init.h>
@@ -152,7 +153,7 @@ static int hall_probe(struct platform_device *pdev)
     INIT_WORK(&hall->hall_work, do_hall_work);
     enable_irq_wake(hall->irq);
     if (!hall_class)
-        hall_class= class_create(THIS_MODULE, "hall_switch");
+        hall_class= class_create("hall_switch");
     hall_dev = device_create(hall_class, NULL, 0, hall, pdev->name);
     if (IS_ERR(hall_dev))
         pr_err( "Failed to create device(hall_dev)!\n");
@@ -186,7 +187,7 @@ static int hall_probe(struct platform_device *pdev)
     return 0;
 }
 
-int hall_remove(struct platform_device *pdev)
+static void hall_remove(struct platform_device *pdev)
 {
     struct hall_data *hall = platform_get_drvdata(pdev);
 
@@ -199,8 +200,6 @@ int hall_remove(struct platform_device *pdev)
         input_free_device(hall->input);
         hall->input = NULL;
     }
-
-    return 0;
 }
 
 static struct of_device_id hall_of_match[] = {

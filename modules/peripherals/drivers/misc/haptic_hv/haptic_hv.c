@@ -3669,8 +3669,7 @@ static int vibrator_init(struct aw_haptic *aw_haptic)
 		return ret;
 	}
 #endif
-	hrtimer_init(&aw_haptic->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-	aw_haptic->timer.function = vibrator_timer_func;
+	hrtimer_setup(&aw_haptic->timer, vibrator_timer_func, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
 	INIT_WORK(&aw_haptic->vibrator_work, vibrator_work_routine);
 	INIT_WORK(&aw_haptic->rtp_work, rtp_work_routine);
 	mutex_init(&aw_haptic->lock);
@@ -3688,8 +3687,7 @@ static void haptic_init(struct aw_haptic *aw_haptic)
 	aw_haptic->haptic_audio.timer_val = 21318;
 	aw_haptic->rtp_num = sizeof(aw_rtp_name) / sizeof(*aw_rtp_name);
 	INIT_LIST_HEAD(&(aw_haptic->haptic_audio.ctr_list));
-	hrtimer_init(&aw_haptic->haptic_audio.timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-	aw_haptic->haptic_audio.timer.function = audio_timer_func;
+	hrtimer_setup(&aw_haptic->haptic_audio.timer, audio_timer_func, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
 	INIT_WORK(&aw_haptic->haptic_audio.work, audio_work_routine);
 	mutex_init(&aw_haptic->haptic_audio.lock);
 	INIT_LIST_HEAD(&(aw_haptic->haptic_audio.list));
@@ -3713,7 +3711,7 @@ static void haptic_init(struct aw_haptic *aw_haptic)
 	mutex_unlock(&aw_haptic->lock);
 }
 
-static int aw_i2c_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
+static int aw_i2c_probe(struct i2c_client *i2c)
 {
 	int ret = 0;
 	struct aw_haptic *aw_haptic;
@@ -3782,7 +3780,7 @@ static int aw_i2c_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
 	pinctrl_select_state(aw_haptic->pinctrl, aw_haptic->pinctrl_state);
 #endif
 	if (gpio_is_valid(aw_haptic->irq_gpio)) {
-		ret = devm_gpio_request_one(&i2c->dev, aw_haptic->irq_gpio, GPIOF_DIR_IN, "aw_int");
+		ret = devm_gpio_request_one(&i2c->dev, aw_haptic->irq_gpio, GPIOF_IN, "aw_int");
 		if (ret) {
 			aw_err("int request failed");
 			return ret;
