@@ -5,6 +5,7 @@
  */
 
 #include <linux/module.h>
+#include <linux/sysfs.h>
 #include <linux/kernel.h>
 #include <linux/slab.h>
 #include <linux/platform_device.h>
@@ -52,6 +53,7 @@
 #include <linux/usb/typec_dp.h>
 #include <linux/usb/typec_retimer.h>
 #include <linux/soc/qcom/wcd939x-i2c.h>
+#include <linux/soc/qcom/altmode-glink.h>
 #include <linux/usb/repeater.h>
 #include <linux/pm_domain.h>
 
@@ -672,6 +674,11 @@ struct dwc3_msm {
 
 	bool			wcd_usbss;
 	bool			dynamic_disable;
+	/* USB-C port control, one of the DATA_PATH_* values */
+	int			data_path;
+	struct mutex		data_path_mutex;
+	/* The cable of a kept session is gone, so no session counts as kept */
+	bool			data_session_ended;
 	bool			read_u1u2;
 
 	struct dentry		*dbg_dir;
@@ -4947,6 +4954,79 @@ error:
 	return ret;
 }
 
+/*
+ * USB-C port control with the commands of GrapheneOS's data_path_enable on
+ * Pixels. The values written to data_path_enable are:
+ *  1: USB data allowed, started now if a cable is in.
+ *  0: USB data stopped now and refused on later connections.
+ * -1: the current connection stays and later ones are refused.
+ * Unless it is 1, a running alt mode stays and later ones are refused.
+ * -2: as 0, and the running alt mode ends now. Reads back as 0.
+ * Charging is not affected.
+ */
+#define DATA_PATH_END	-2
+#define DATA_PATH_KEEP	-1
+#define DATA_PATH_OFF	0
+#define DATA_PATH_ON	1
+
+/* Lets user builds start with data off until the system enables it */
+static bool disable_usb_data_by_default;
+module_param(disable_usb_data_by_default, bool, 0444);
+MODULE_PARM_DESC(disable_usb_data_by_default,
+		 "USB data and alt modes off until data_path_enable is written");
+
+/* True when the port setting refuses the session the inputs ask for */
+static bool dwc3_msm_data_refused(struct dwc3_msm *mdwc)
+{
+	bool host = !test_bit(ID, &mdwc->inputs);
+	bool device = test_bit(B_SESS_VLD, &mdwc->inputs);
+
+	switch (READ_ONCE(mdwc->data_path)) {
+	case DATA_PATH_ON:
+		return false;
+	case DATA_PATH_KEEP:
+		if (READ_ONCE(mdwc->data_session_ended))
+			return host || device;
+		if (host)
+			return mdwc->drd_state != DRD_STATE_HOST;
+		if (device)
+			return mdwc->drd_state != DRD_STATE_PERIPHERAL &&
+				mdwc->drd_state != DRD_STATE_PERIPHERAL_SUSPEND;
+		return false;
+	default:
+		return host || device;
+	}
+}
+
+/*
+ * The end of a host session adds the gadget again and its driver binds by
+ * itself. While deny_new_usb2 is set that bind fails and nothing retries it,
+ * so retry it here. Unbound, adbd reopens its endpoints every second and a
+ * bind in that gap fails, so a second try follows.
+ */
+static void dwc3_msm_rebind_gadget(struct dwc3_msm *mdwc)
+{
+	struct dwc3 *dwc = mdwc->dwc3 ? platform_get_drvdata(mdwc->dwc3) : NULL;
+	bool bound;
+
+	if (!dwc)
+		return;
+	mutex_lock(&dwc->mutex);
+	if (!dwc->gadget || !dwc->gadget->udc)
+		goto out;
+	if (dwc->gadget->udc->driver)
+		goto out;
+
+	bound = device_attach(&dwc->gadget->dev) > 0;
+	if (!bound) {
+		msleep(100);
+		bound = device_attach(&dwc->gadget->dev) > 0;
+	}
+	dev_info(mdwc->dev, "USB gadget driver %s\n", bound ? "bound again" : "still unbound");
+out:
+	mutex_unlock(&dwc->mutex);
+}
+
 /**
  * dwc3_ext_event_notify - callback to handle events from external transceiver
  *
@@ -5026,6 +5106,14 @@ static void dwc3_ext_event_notify(struct dwc3_msm *mdwc)
 		usb_phy_set_suspend(mdwc->hs_phy, 1);
 		dwc3_msm_clear_usbphy_flags(mdwc->hs_phy, PHY_SUS_OVERRIDE);
 		return;
+	}
+
+	/* A session the port setting refuses looks like no cable */
+	if (dwc3_msm_data_refused(mdwc)) {
+		dev_info(mdwc->dev, "USB %s session refused\n",
+			 test_bit(ID, &mdwc->inputs) ? "device" : "host");
+		set_bit(ID, &mdwc->inputs);
+		clear_bit(B_SESS_VLD, &mdwc->inputs);
 	}
 
 	dbg_log_string("exit: mdwc->inputs:%lx\n", mdwc->inputs);
@@ -5634,7 +5722,8 @@ static int dwc3_msm_set_role(struct dwc3_msm *mdwc, enum usb_role role)
 	 * previous role value to allow resetting USB controller and
 	 * PHYs.
 	 */
-	if (mdwc->drd_state != DRD_STATE_UNDEFINED && cur_role == role) {
+	if (mdwc->drd_state != DRD_STATE_UNDEFINED && cur_role == role &&
+	    !(role != USB_ROLE_NONE && READ_ONCE(mdwc->data_session_ended))) {
 		dbg_log_string("no USB role change");
 		mutex_unlock(&mdwc->role_switch_mutex);
 		return 0;
@@ -5657,6 +5746,8 @@ static int dwc3_msm_set_role(struct dwc3_msm *mdwc, enum usb_role role)
 		break;
 
 	case USB_ROLE_NONE:
+		/* The kept session is over, whatever the DP state does next */
+		WRITE_ONCE(mdwc->data_session_ended, true);
 		if (mdwc->dp_state != DP_NONE) {
 			if (mdwc->refcnt_dp_usb)
 				mdwc->refcnt_dp_usb--;
@@ -5671,6 +5762,8 @@ static int dwc3_msm_set_role(struct dwc3_msm *mdwc, enum usb_role role)
 		mdwc->refcnt_dp_usb = 0;
 		break;
 	}
+	if (role != USB_ROLE_NONE && READ_ONCE(mdwc->data_path) == DATA_PATH_ON)
+		WRITE_ONCE(mdwc->data_session_ended, false);
 	dbg_log_string("new_role:%s refcnt:%d\n",
 		dwc3_msm_usb_role_string(role), mdwc->refcnt_dp_usb);
 	mutex_unlock(&mdwc->role_switch_mutex);
@@ -5951,6 +6044,60 @@ static ssize_t dynamic_disable_store(struct device *dev, struct device_attribute
 }
 static DEVICE_ATTR_WO(dynamic_disable);
 
+static ssize_t data_path_enable_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	struct dwc3_msm *mdwc = dev_get_drvdata(dev);
+
+	return sysfs_emit(buf, "%d\n", READ_ONCE(mdwc->data_path));
+}
+
+static ssize_t data_path_enable_store(struct device *dev,
+		struct device_attribute *attr, const char *buf, size_t count)
+{
+	struct dwc3_msm *mdwc = dev_get_drvdata(dev);
+	int val, i;
+
+	if (kstrtoint(buf, 10, &val) || val < DATA_PATH_END || val > DATA_PATH_ON)
+		return -EINVAL;
+
+	mutex_lock(&mdwc->data_path_mutex);
+	/*
+	 * Serialize policy transitions with physical cable/role events. KEEP
+	 * never reauthorizes a cable that a prior detach or disable revoked.
+	 */
+	mutex_lock(&mdwc->role_switch_mutex);
+	WRITE_ONCE(mdwc->data_path, val == DATA_PATH_END ? DATA_PATH_OFF : val);
+	if (val != DATA_PATH_KEEP)
+		WRITE_ONCE(mdwc->data_session_ended, val != DATA_PATH_ON);
+	mutex_unlock(&mdwc->role_switch_mutex);
+	altmode_set_ignore_alt_modes(val != DATA_PATH_ON);
+	if (val == DATA_PATH_END)
+		altmode_end_alt_modes();
+	dev_info(dev, "USB data path %d\n", val);
+
+	/* -1 leaves the current session alone and before the first event there is none to stop */
+	if (val == DATA_PATH_KEEP ||
+	    (val <= DATA_PATH_OFF && mdwc->drd_state == DRD_STATE_UNDEFINED))
+		goto out;
+
+	dwc3_ext_event_notify(mdwc);
+	flush_work(&mdwc->sm_work);
+	/* Bounded, so a controller that stays awake cannot hold init */
+	for (i = 0; i < 100 && test_bit(WAIT_FOR_LPM, &mdwc->inputs); i++)
+		msleep(20);
+	flush_work(&mdwc->sm_work);
+	/* A kept session may have a gadget that a refused bind left unbound */
+	if (val == DATA_PATH_ON && mdwc->drd_state == DRD_STATE_PERIPHERAL)
+		dwc3_msm_rebind_gadget(mdwc);
+out:
+	mutex_unlock(&mdwc->data_path_mutex);
+	/* Wake read-only policy observers after applying the port state. */
+	sysfs_notify(&dev->kobj, NULL, "data_path_enable");
+	return count;
+}
+static DEVICE_ATTR_RW(data_path_enable);
+
 static struct attribute *dwc3_msm_attrs[] = {
 	&dev_attr_orientation.attr,
 	&dev_attr_mode.attr,
@@ -5958,6 +6105,7 @@ static struct attribute *dwc3_msm_attrs[] = {
 	&dev_attr_bus_vote.attr,
 	&dev_attr_xhci_test.attr,
 	&dev_attr_dynamic_disable.attr,
+	&dev_attr_data_path_enable.attr,
 	NULL
 };
 ATTRIBUTE_GROUPS(dwc3_msm);
@@ -7181,6 +7329,13 @@ static int dwc3_msm_probe(struct platform_device *pdev)
 	mutex_init(&mdwc->role_switch_mutex);
 	mdwc->dis_role_switch = false;
 
+	/* Before the role switch exists, so its first event is checked */
+	mutex_init(&mdwc->data_path_mutex);
+	mdwc->data_path = disable_usb_data_by_default ? DATA_PATH_OFF : DATA_PATH_ON;
+	altmode_set_ignore_alt_modes(mdwc->data_path != DATA_PATH_ON);
+	if (disable_usb_data_by_default)
+		dev_info(dev, "USB data off until data_path_enable is written\n");
+
 	if (of_property_read_bool(node, "usb-role-switch")) {
 		struct usb_role_switch_desc role_desc = {
 			.set = dwc3_msm_usb_role_switch_set_role,
@@ -8030,6 +8185,8 @@ static int dwc3_otg_start_peripheral(struct dwc3_msm *mdwc, int on)
 		usb_role_switch_set_role(mdwc->dwc3_drd_sw, USB_ROLE_DEVICE);
 		clk_set_rate(mdwc->core_clk, mdwc->core_clk_rate);
 
+		dwc3_msm_rebind_gadget(mdwc);
+
 		if (!mdwc->disable_force_pull_up_down_quirk) {
 			/*
 			 * Check udc->driver to find out if we are bound to udc or not.
@@ -8213,6 +8370,16 @@ static void dwc3_otg_sm_work(struct work_struct *w)
 			break;
 		}
 
+		/* Every session starts here, so check the port setting again in case it changed */
+		if ((!test_bit(ID, &mdwc->inputs) ||
+		     test_bit(B_SESS_VLD, &mdwc->inputs)) &&
+		    READ_ONCE(mdwc->data_path) != DATA_PATH_ON) {
+			dev_info(mdwc->dev, "USB %s session refused\n",
+				 test_bit(ID, &mdwc->inputs) ? "device" : "host");
+			pm_request_idle(mdwc->dev);
+			break;
+		}
+
 		if (!test_bit(ID, &mdwc->inputs)) {
 			dev_dbg(mdwc->dev, "!id\n");
 			mdwc->drd_state = DRD_STATE_HOST;
@@ -8223,6 +8390,7 @@ static void dwc3_otg_sm_work(struct work_struct *w)
 				mdwc->drd_state = DRD_STATE_IDLE;
 				goto ret;
 			}
+			dev_info(mdwc->dev, "USB host session started\n");
 		} else if (test_bit(B_SESS_VLD, &mdwc->inputs)) {
 			dev_dbg(mdwc->dev, "b_sess_vld\n");
 			/*
@@ -8240,6 +8408,7 @@ static void dwc3_otg_sm_work(struct work_struct *w)
 			dbg_event(0xFF, "BIDLE gsync",
 				atomic_read(&mdwc->dev->power.usage_count));
 			dwc3_otg_start_peripheral(mdwc, 1);
+			dev_info(mdwc->dev, "USB device session started\n");
 			mdwc->drd_state = DRD_STATE_PERIPHERAL;
 			work = true;
 		}

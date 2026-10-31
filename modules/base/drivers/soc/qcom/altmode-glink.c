@@ -17,12 +17,17 @@
 #include <linux/slab.h>
 #include <linux/soc/qcom/altmode-glink.h>
 #include <linux/soc/qcom/qti_pmic_glink.h>
+#include <linux/usb/typec_dp.h>
 
 #define MSG_OWNER_USBC_PAN	32780
 #define MSG_TYPE_REQ_RESP	1
 
 #define NOTIFY_PAYLOAD_SIZE	16
 #define USBC_WRITE_BUFFER_SIZE	8
+
+/* DisplayPort status byte of a notification: bits 0-5 are the pin assignment, 0 is a detach */
+#define ALTMODE_DP_STATUS	8
+#define ALTMODE_DP_PIN_MASK	0x3f
 
 #define USBC_CMD_WRITE_REQ	0x15
 #define USBC_NOTIFY_IND		0x16
@@ -61,6 +66,9 @@ struct usbc_write_buffer_req_msg {
  * @pgclient:		PMIC GLINK client to talk to remote subsystem
  * @client_idr:		idr list for altmode clients
  * @client_lock:	mutex protecting changes to client_idr
+ * @deliver_lock:	mutex around deciding to deliver a notification and handing it to
+ *			the client, so ending an alt mode and deregistering cannot
+ *			interleave with it
  * @d_node:		Linked list node to string together multiple amdev's
  * @client_list:	Linked list head keeping track of this device's clients
  * @pan_en_sent:	Flag to ensure PAN Enable msg is sent only once
@@ -75,6 +83,7 @@ struct altmode_dev {
 	struct pmic_glink_client	*pgclient;
 	struct idr			client_idr;
 	struct mutex			client_lock;
+	struct mutex			deliver_lock;
 	struct list_head		d_node;
 	struct list_head		client_list;
 	atomic_t			pan_en_sent;
@@ -93,6 +102,7 @@ struct altmode_dev {
  * @data:		Supplied by client driver during registration
  * @c_node:		Linked list node for parent altmode device's client list
  * @port_index:		Type-C port index assigned by remote subystem
+ * @in_session:		An alt mode is running on this client, under deliver_lock
  *
  * Note: The following members are for internal use only, clients should not
  *	 use them.
@@ -105,6 +115,7 @@ struct altmode_client {
 	struct altmode_client_data	data;
 	struct list_head		c_node;
 	u8				port_index;
+	bool				in_session;
 	struct work_struct		client_cb_work;
 	u8				msg[NOTIFY_PAYLOAD_SIZE];
 };
@@ -136,6 +147,95 @@ static DEFINE_MUTEX(notify_lock);
 
 static void altmode_send_pan_ack(struct work_struct *work);
 static void *altmode_ipc_log;
+
+/*
+ * USB-C port control: while set, notifications of an alt mode that is not
+ * running are acked as for a port without a client and reach no client, so
+ * no DisplayPort or other alt mode is set up. A running alt mode keeps its
+ * notifications (attention, HPD and detach) until it ends. The USB controller
+ * driver sets it from data_path_enable. It starts set, so a partner that is
+ * there at boot is not set up before that driver has read its option.
+ */
+static bool ignore_alt_modes = true;
+static LIST_HEAD(altmode_devs);
+static DEFINE_MUTEX(altmode_devs_lock);
+
+void altmode_set_ignore_alt_modes(bool ignore)
+{
+	struct altmode_dev *amdev;
+	bool was;
+
+	mutex_lock(&altmode_devs_lock);
+	was = ignore_alt_modes;
+	WRITE_ONCE(ignore_alt_modes, ignore);
+	/* The firmware sends the port state again, so a partner that was refused is set up now */
+	if (was && !ignore) {
+		list_for_each_entry(amdev, &altmode_devs, d_node) {
+			mutex_lock(&amdev->client_lock);
+			if (!list_empty(&amdev->client_list))
+				schedule_delayed_work(&amdev->send_pan_en_work,
+						msecs_to_jiffies(20));
+			mutex_unlock(&amdev->client_lock);
+		}
+	}
+	mutex_unlock(&altmode_devs_lock);
+}
+EXPORT_SYMBOL(altmode_set_ignore_alt_modes);
+
+bool altmode_alt_modes_ignored(void)
+{
+	return READ_ONCE(ignore_alt_modes);
+}
+EXPORT_SYMBOL(altmode_alt_modes_ignored);
+
+static bool altmode_msg_in_session(u16 svid, const u8 *payload)
+{
+	return svid == USB_TYPEC_DP_SID && (payload[ALTMODE_DP_STATUS] & ALTMODE_DP_PIN_MASK);
+}
+
+static struct altmode_client *altmode_take_session(struct altmode_dev *amdev)
+{
+	struct altmode_client *amclient;
+
+	mutex_lock(&amdev->client_lock);
+	list_for_each_entry(amclient, &amdev->client_list, c_node) {
+		if (amclient->in_session) {
+			amclient->in_session = false;
+			mutex_unlock(&amdev->client_lock);
+			return amclient;
+		}
+	}
+	mutex_unlock(&amdev->client_lock);
+
+	return NULL;
+}
+
+/*
+ * Ends the running alt modes by handing a detach to their clients. It does not
+ * wait for them, as an unplug does not either. The FP6 has no DisplayPort
+ * client, so nothing runs there.
+ */
+void altmode_end_alt_modes(void)
+{
+	struct altmode_dev *amdev;
+	struct altmode_client *amclient;
+
+	mutex_lock(&altmode_devs_lock);
+	list_for_each_entry(amdev, &altmode_devs, d_node) {
+		mutex_lock(&amdev->deliver_lock);
+		while ((amclient = altmode_take_session(amdev))) {
+			cancel_work_sync(&amclient->client_cb_work);
+			/* The last message again, with no pin assignment */
+			amclient->msg[ALTMODE_DP_STATUS] = 0;
+			schedule_work(&amclient->client_cb_work);
+			altmode_dbg("Alt mode of SVID %#x port %u ended\n",
+					amclient->data.svid, amclient->port_index);
+		}
+		mutex_unlock(&amdev->deliver_lock);
+	}
+	mutex_unlock(&altmode_devs_lock);
+}
+EXPORT_SYMBOL(altmode_end_alt_modes);
 
 static struct altmode_dev *to_altmode_device(struct device_node *amdev_node)
 {
@@ -441,6 +541,7 @@ int altmode_deregister_client(struct altmode_client *client)
 
 	amdev = client->amdev;
 
+	mutex_lock(&amdev->deliver_lock);
 	cancel_work_sync(&client->client_cb_work);
 
 	mutex_lock(&amdev->client_lock);
@@ -451,6 +552,7 @@ int altmode_deregister_client(struct altmode_client *client)
 			list_del(&pos->c_node);
 	}
 	mutex_unlock(&amdev->client_lock);
+	mutex_unlock(&amdev->deliver_lock);
 
 	kfree(client->data.name);
 	kfree(client);
@@ -563,15 +665,27 @@ static int altmode_callback(void *priv, void *data, size_t len)
 		notify_msg = data;
 		port_index = notify_msg->payload[0];
 
+		mutex_lock(&amdev->deliver_lock);
 		mutex_lock(&amdev->client_lock);
 		amclient = idr_find(&amdev->client_idr, IDR_KEY_GEN(svid,
 					port_index));
 		mutex_unlock(&amdev->client_lock);
+		if (amclient) {
+			if (altmode_alt_modes_ignored() && !amclient->in_session) {
+				altmode_dbg("Alt modes ignored, SVID %#x port %u\n",
+						svid, port_index);
+				amclient = NULL;
+			} else {
+				amclient->in_session = altmode_msg_in_session(svid,
+						notify_msg->payload);
+			}
+		}
 
 		altmode_dbg("Payload: %*ph\n", NOTIFY_PAYLOAD_SIZE,
 				notify_msg->payload);
 
 		if (!amclient) {
+			mutex_unlock(&amdev->deliver_lock);
 			altmode_dbg("No client associated with SVID %#x port %u\n",
 					svid, port_index);
 			amdev->ack_port_index = port_index;
@@ -584,6 +698,7 @@ static int altmode_callback(void *priv, void *data, size_t len)
 		memcpy(&amclient->msg, notify_msg->payload,
 				sizeof(amclient->msg));
 		schedule_work(&amclient->client_cb_work);
+		mutex_unlock(&amdev->deliver_lock);
 		break;
 	default:
 		break;
@@ -707,6 +822,7 @@ static int altmode_probe(struct platform_device *pdev)
 	amdev->dev = dev;
 
 	mutex_init(&amdev->client_lock);
+	mutex_init(&amdev->deliver_lock);
 	idr_init(&amdev->client_idr);
 	init_completion(&amdev->response_received);
 	INIT_DELAYED_WORK(&amdev->send_pan_en_work, altmode_send_pan_en);
@@ -742,6 +858,10 @@ static int altmode_probe(struct platform_device *pdev)
 	if (!altmode_ipc_log)
 		dev_warn(dev, "Error in creating ipc_log_context\n");
 
+	mutex_lock(&altmode_devs_lock);
+	list_add(&amdev->d_node, &altmode_devs);
+	mutex_unlock(&altmode_devs_lock);
+
 	altmode_notify_clients(amdev);
 
 	return 0;
@@ -759,6 +879,10 @@ static void altmode_remove(struct platform_device *pdev)
 	struct altmode_dev *amdev = platform_get_drvdata(pdev);
 	struct altmode_client *client, *tmp;
 	struct probe_notify_node *npos, *ntmp;
+
+	mutex_lock(&altmode_devs_lock);
+	list_del(&amdev->d_node);
+	mutex_unlock(&altmode_devs_lock);
 
 	debugfs_remove_recursive(amdev->debugfs_dir);
 

@@ -1173,6 +1173,7 @@ def register_modules(registry):
             "drivers/usb/dwc3/dwc3-msm-ops.c",
         ],
         deps = [
+            "drivers/soc/qcom/altmode-glink",
             "drivers/usb/typec/ucsi/ucsi_qti_glink",
             "drivers/usb/repeater/repeater",
             "drivers/soc/qcom/qti_pmic_glink",
@@ -1279,6 +1280,7 @@ def register_modules(registry):
             "drivers/usb/typec/ucsi/ucsi_qti_glink.c",
         ],
         deps = [
+            "drivers/soc/qcom/altmode-glink",
             "drivers/soc/qcom/qti_pmic_glink",
             "drivers/soc/qcom/pdr_interface",
             "drivers/soc/qcom/qmi_helpers",
@@ -1561,10 +1563,10 @@ def register_modules(registry):
         config = "CONFIG_QRTR",
         srcs = [
             "net/qrtr/af_qrtr.c",
-            "net/qrtr/ns.c",
-            "net/qrtr/qrtr.h",
             "net/qrtr/imsdcm.c",
             "net/qrtr/imsdcm.h",
+            "net/qrtr/ns.c",
+            "net/qrtr/qrtr.h",
         ],
         deps = [
             "kernel/trace/qcom_ipc_logging",
