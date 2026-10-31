@@ -1466,7 +1466,7 @@ static void socinfo_populate_sysfs(struct qcom_socinfo *qcom_socinfo)
 	qcom_socinfo->attr.custom_attr_group = &custom_soc_attr_group;
 }
 
-void socinfo_enumerate_partinfo_details(void)
+static void socinfo_enumerate_partinfo_details(void)
 {
 	unsigned int partinfo_array_offset;
 	unsigned int nnum_partname_mapping;
@@ -1881,7 +1881,7 @@ static void qcom_socinfo_remove(struct platform_device *pdev)
 
 static struct platform_driver qcom_socinfo_driver = {
 	.probe = qcom_socinfo_probe,
-	.remove_new = qcom_socinfo_remove,
+	.remove = qcom_socinfo_remove,
 	.driver  = {
 		.name = "qcom-socinfo",
 	},

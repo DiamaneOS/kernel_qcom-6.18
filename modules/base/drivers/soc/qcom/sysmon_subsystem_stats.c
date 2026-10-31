@@ -886,7 +886,7 @@ int sysmon_stats_query_hvx_utlization(u32 *hvx_util)
 }
 EXPORT_SYMBOL_GPL(sysmon_stats_query_hvx_utlization);
 
-int copy_powerstats(struct sysmon_smem_power_stats *out_ptr, enum dsp_id_t dsp_id)
+static int copy_powerstats(struct sysmon_smem_power_stats *out_ptr, enum dsp_id_t dsp_id)
 {
 	const struct sysmon_smem_power_stats_extended *in_ptr = NULL;
 	int ver = 0;
@@ -1204,7 +1204,7 @@ EXPORT_SYMBOL_GPL(sysmon_stats_query_q6_votes);
 /*Checks for DSP power collapse and resets the q6 average
  *load to zero if dsp is power collapsed.
  */
-u32 sysmon_read_q6_load(enum dsp_id_t dsp_id)
+static u32 sysmon_read_q6_load(enum dsp_id_t dsp_id)
 {
 	struct sysmon_smem_q6_load_stats sysmon_q6_load;
 	u64 last_q6load_update_at = 0;

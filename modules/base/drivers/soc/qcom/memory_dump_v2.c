@@ -952,7 +952,7 @@ EXPORT_SYMBOL(msm_dump_data_register_nominidump);
 
 #define MSM_DUMP_TOTAL_SIZE_OFFSET	0x724
 
-static bool is_memdump_imem_area_intact(struct platform_device *pdev,
+static bool __maybe_unused is_memdump_imem_area_intact(struct platform_device *pdev,
 					size_t size)
 {
 	struct device_node *np;

@@ -1295,7 +1295,7 @@ int rpmh_rsc_mode_solver_set(struct rsc_drv *drv, bool enable)
 	return ret;
 }
 
-int rpmh_rsc_is_tcs_completed(struct rsc_drv *drv, int ch)
+static int rpmh_rsc_is_tcs_completed(struct rsc_drv *drv, int ch)
 {
 	u32 sts;
 	int retry = 10, ret = 0;

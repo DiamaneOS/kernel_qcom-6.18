@@ -680,7 +680,7 @@ EXPORT_SYMBOL_GPL(qcom_register_ssr_notifier);
 
 static void ssr_notif_timeout_handler(struct timer_list *t)
 {
-	struct qcom_rproc_ssr *ssr = from_timer(ssr, t, timer);
+	struct qcom_rproc_ssr *ssr = timer_container_of(ssr, t, timer);
 
 	if (IS_ENABLED(CONFIG_QCOM_PANIC_ON_NOTIF_TIMEOUT) &&
 	    system_state != SYSTEM_RESTART &&
@@ -732,7 +732,7 @@ static inline void notify_ssr_clients(struct qcom_rproc_ssr *ssr, struct qcom_ss
 	timeout = jiffies + msecs_to_jiffies(SSR_NOTIF_TIMEOUT);
 	mod_timer(&ssr->timer, timeout);
 	srcu_notifier_call_chain(&ssr->info->notifier_list, ssr->notification, data);
-	del_timer_sync(&ssr->timer);
+	timer_delete_sync(&ssr->timer);
 }
 
 static int ssr_notify_prepare(struct rproc_subdev *subdev)
@@ -951,7 +951,7 @@ static void rproc_recovery_notifier(void *data, struct rproc *rproc)
 }
 #endif
 
-int qcom_common_init(void)
+static int qcom_common_init(void)
 {
 	int ret = 0;
 
@@ -1005,7 +1005,7 @@ remove_kobject:
 }
 module_init(qcom_common_init);
 
-void qcom_common_exit(void)
+static void qcom_common_exit(void)
 {
 	sysfs_remove_file(sysfs_kobject, &both_coredumps_attr.attr);
 	sysfs_remove_file(sysfs_kobject, &shutdown_requested_attr.attr);

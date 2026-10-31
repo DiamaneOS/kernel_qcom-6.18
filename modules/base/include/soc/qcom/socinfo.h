@@ -140,6 +140,7 @@ enum subset_part_type {
 #if IS_ENABLED(CONFIG_QCOM_SOCINFO)
 uint32_t socinfo_get_id(void);
 uint32_t socinfo_get_serial_number(void);
+uint32_t socinfo_get_package_type(void);
 const char *socinfo_get_id_string(void);
 int socinfo_get_feature_code(void);
 int socinfo_get_pcode(void);

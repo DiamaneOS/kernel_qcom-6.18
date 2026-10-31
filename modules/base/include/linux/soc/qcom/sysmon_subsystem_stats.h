@@ -168,6 +168,7 @@ enum dsp_id_t {
  */
 int sysmon_stats_query_power_residency(enum dsp_id_t dsp_id,
 		struct sysmon_smem_power_stats *sysmon_power_stats);
+int sysmon_stats_query_ddr_residency(struct sysmon_smem_ddr_stats *sysmon_ddr_stats);
 /**
  * API to query requested DSP subsystem's Q6 clock, bandwidth
  * and sleep latency votes. On success, updates

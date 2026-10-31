@@ -103,6 +103,8 @@ struct adsp_data {
 	bool uses_elf64;
 	bool auto_boot;
 	bool decrypt_shutdown;
+	/* the firmware may refuse the first shutdown call, retry once after a delay */
+	bool retry_shutdown;
 
 	char **proxy_pd_names;
 
@@ -153,6 +155,7 @@ struct qcom_adsp {
 	int crash_reason_stack;
 	unsigned int smem_host_id;
 	bool decrypt_shutdown;
+	bool retry_shutdown;
 	const char *info_name;
 
 	const struct firmware *firmware;
@@ -263,7 +266,7 @@ custom_segment_dump:
 	return 0;
 }
 
-void adsp_segment_dump(struct rproc *rproc, struct rproc_dump_segment *segment,
+static void adsp_segment_dump(struct rproc *rproc, struct rproc_dump_segment *segment,
 		     void *dest, size_t offset, size_t size)
 {
 	struct qcom_adsp *adsp = rproc->priv;
@@ -1397,7 +1400,10 @@ static int adsp_stop(struct rproc *rproc)
 		dev_err(adsp->dev, "timed out on wait\n");
 
 	qcom_q6v5_pas_set_bw(&adsp->q6v5, UINT_MAX, UINT_MAX);
-	ret = qcom_scm_pas_shutdown(adsp->pas_id);
+	if (adsp->retry_shutdown)
+		ret = qcom_scm_pas_shutdown_retry(adsp->pas_id);
+	else
+		ret = qcom_scm_pas_shutdown(adsp->pas_id);
 	if (ret && adsp->decrypt_shutdown)
 		ret = adsp_shutdown_poll_decrypt(adsp);
 
@@ -1475,7 +1481,7 @@ static unsigned long adsp_panic(struct rproc *rproc)
  *        0 if the value has been read and the state has been set
  *
  */
-void read_early_boot_register(struct timer_list *timer)
+static void read_early_boot_register(struct timer_list *timer)
 {
 	struct qcom_adsp *adsp = NULL;
 	int ret = ENODATA;
@@ -1518,7 +1524,7 @@ static int adsp_attach(struct rproc *rproc)
 		read_early_boot_register(&(adsp->boot_timer));
 
 		wait_for_completion(&adsp->q6v5.subsys_booted);
-		del_timer(&adsp->boot_timer);
+		timer_delete(&adsp->boot_timer);
 
 		ret = ping_subsystem(&adsp->q6v5);
 		if (ret) {
@@ -2165,6 +2171,7 @@ static int adsp_probe(struct platform_device *pdev)
 	adsp->info_name = desc->sysmon_name;
 	adsp->smem_host_id = desc->smem_host_id;
 	adsp->decrypt_shutdown = desc->decrypt_shutdown;
+	adsp->retry_shutdown = desc->retry_shutdown;
 	adsp->both_dumps = desc->both_dumps;
 	adsp->region_assign_idx = desc->region_assign_idx;
 	adsp->region_assign_count = min_t(int, MAX_ASSIGN_COUNT, desc->region_assign_count);
@@ -3053,6 +3060,71 @@ static const struct adsp_data pineapple_adsp_resource = {
 	.auto_boot = true,
 };
 
+/*
+ * Volcano (FP6) from our 6.1 tree (kernel_qcom-6.1 d7053a6), in the 5.0 form:
+ * qmp_name is load_state, aggre2 and the free-after-reset flag are gone.
+ * Every one boots from its loader as on 6.1: the audio adsp_loader picks
+ * the FP6 ADSP variant (adsp2.mdt) when init writes boot_adsp, which an
+ * automatic boot of adsp.mdt would preempt.
+ */
+static const struct adsp_data volcano_adsp_resource = {
+	.crash_reason_smem = 423,
+	.firmware_name = "adsp.mdt",
+	.dtb_firmware_name = "adsp_dtb.mdt",
+	.pas_id = 1,
+	.dtb_pas_id = 0x24,
+	.minidump_id = 5,
+	.uses_elf64 = true,
+	.auto_boot = false,
+	.load_state = "adsp",
+	.ssr_name = "lpass",
+	.sysmon_name = "adsp",
+	.ssctl_id = 0x14,
+};
+
+static const struct adsp_data volcano_cdsp_resource = {
+	.crash_reason_smem = 601,
+	.firmware_name = "cdsp.mdt",
+	.dtb_firmware_name = "cdsp_dtb.mdt",
+	.pas_id = 18,
+	.dtb_pas_id = 0x25,
+	.minidump_id = 7,
+	.uses_elf64 = true,
+	.auto_boot = false,
+	.load_state = "cdsp",
+	.ssr_name = "cdsp",
+	.sysmon_name = "cdsp",
+	.ssctl_id = 0x17,
+};
+
+static const struct adsp_data volcano_mpss_resource = {
+	.crash_reason_smem = 421,
+	.firmware_name = "modem.mdt",
+	.pas_id = 4,
+	.minidump_id = 3,
+	.uses_elf64 = true,
+	.auto_boot = false,
+	.load_state = "modem",
+	.ssr_name = "mpss",
+	.sysmon_name = "modem",
+	.ssctl_id = 0x12,
+	.dma_phys_below_32b = true,
+	.both_dumps = true,
+	.retry_shutdown = true,
+};
+
+static const struct adsp_data volcano_wpss_resource = {
+	.crash_reason_smem = 626,
+	.firmware_name = "wpss.mdt",
+	.pas_id = 6,
+	.minidump_id = 4,
+	.uses_elf64 = true,
+	.load_state = "wpss",
+	.ssr_name = "wpss",
+	.sysmon_name = "wpss",
+	.ssctl_id = 0x19,
+};
+
 static const struct adsp_data pineapple_cdsp_resource = {
 	.crash_reason_smem = 601,
 	.firmware_name = "cdsp.mdt",
@@ -3841,6 +3913,10 @@ static const struct of_device_id adsp_of_match[] = {
 	{ .compatible = "qcom,x1e80100-adsp-pas", .data = &x1e80100_adsp_resource},
 	{ .compatible = "qcom,x1e80100-cdsp-pas", .data = &x1e80100_cdsp_resource},
 	{ .compatible = "qcom,pineapple-adsp-pas", .data = &pineapple_adsp_resource},
+	{ .compatible = "qcom,volcano-adsp-pas", .data = &volcano_adsp_resource},
+	{ .compatible = "qcom,volcano-cdsp-pas", .data = &volcano_cdsp_resource},
+	{ .compatible = "qcom,volcano-modem-pas", .data = &volcano_mpss_resource},
+	{ .compatible = "qcom,volcano-wpss-pas", .data = &volcano_wpss_resource},
 	{ .compatible = "qcom,pineapple-cdsp-pas", .data = &pineapple_cdsp_resource},
 	{ .compatible = "qcom,pineapple-modem-pas", .data = &pineapple_mpss_resource},
 	{ .compatible = "qcom,sun-adsp-pas", .data = &sun_adsp_resource},
@@ -3910,7 +3986,7 @@ MODULE_DEVICE_TABLE(of, adsp_of_match);
 
 static struct platform_driver adsp_driver = {
 	.probe = adsp_probe,
-	.remove_new = adsp_remove,
+	.remove = adsp_remove,
 	.driver = {
 		.name = "qcom_q6v5_pas",
 		.of_match_table = adsp_of_match,

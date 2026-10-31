@@ -16,6 +16,7 @@
 #include <linux/arm-smccc.h>
 #include <linux/delay.h>
 #include <uapi/linux/psci.h>
+#include <linux/soc/qcom/qcom_sdei.h>
 
 #define SDEI_EVENT_STANDARD		0x0
 #define SDEI_EVENT_WDG_BITE		0x40000000

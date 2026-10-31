@@ -27,6 +27,7 @@
 
 #include "drivers/rpmsg/rpmsg_internal.h"
 #include "qcom_glink_native.h"
+#include <linux/rpmsg/qcom_glink.h>
 
 #define GLINK_IRQ_ITERATION_LIMITS 10
 #define GLINK_LOG_PAGE_CNT 32

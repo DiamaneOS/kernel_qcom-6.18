@@ -102,6 +102,7 @@ static bool is_vmap_stack __read_mostly;
 #include <trace/hooks/ftrace_dump.h>
 #include <linux/ring_buffer.h>
 #include <linux/trace_seq.h>
+#include "minidump_private.h"
 
 #define MD_FTRACE_BUF_SIZE	SZ_2M
 #define MD_FTRACE_BUF_MARKER	"==END=="
@@ -736,7 +737,7 @@ static void md_dump_cgroup_state(char *status, struct sched_entity *se_p,
 		md_dump_task_info(task, status, curr);
 		return;
 	}
-	nr_running = my_q->nr_running;
+	nr_running = my_q->nr_queued;
 	md_dump_align();
 	seq_buf_printf(md_runq_seq_buf, "%s: %d process is grouping\n",
 				   status, nr_running);
@@ -996,7 +997,7 @@ static void md_dump_runqueues(void)
 			       cpu, rq->nr_running, cpu_curr(cpu)->pid);
 		seq_buf_printf(md_runq_seq_buf,
 			       "CFS has %d process\n",
-			       cfs->nr_running);
+			       cfs->nr_queued);
 		md_dump_cfs_rq(cfs, cpu_curr(cpu));
 		seq_buf_printf(md_runq_seq_buf,
 			       "RT has %d process\n",

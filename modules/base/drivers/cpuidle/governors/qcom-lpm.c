@@ -131,7 +131,6 @@ static void histtimer_start(s64 time_ns)
 	struct lpm_cpu *cpu_gov = this_cpu_ptr(&lpm_cpu_data);
 	struct hrtimer *cpu_histtimer = &cpu_gov->histtimer;
 
-	cpu_histtimer->function = histtimer_fn;
 	hrtimer_start(cpu_histtimer, time_ns, HRTIMER_MODE_REL_PINNED);
 }
 
@@ -181,7 +180,6 @@ static void biastimer_start(s64 time_ns)
 	struct lpm_cpu *cpu_gov = this_cpu_ptr(&lpm_cpu_data);
 	struct hrtimer *cpu_biastimer = &cpu_gov->biastimer;
 
-	cpu_biastimer->function = biastimer_fn;
 	hrtimer_start(cpu_biastimer, time_ns, HRTIMER_MODE_REL_PINNED);
 }
 
@@ -501,7 +499,7 @@ static void update_cpu_history(struct lpm_cpu *cpu_gov)
 		lpm_history->samples_idx = 0;
 }
 
-void update_ipi_history(int cpu, ktime_t now)
+static void update_ipi_history(int cpu, ktime_t now)
 {
 	struct lpm_cpu *cpu_gov = per_cpu_ptr(&lpm_cpu_data, cpu);
 	struct history_ipi *history = &cpu_gov->ipi_history;
@@ -912,8 +910,8 @@ static int lpm_enable_device(struct cpuidle_driver *drv,
 	int ret;
 
 	spin_lock_init(&cpu_gov->lock);
-	hrtimer_init(cpu_histtimer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-	hrtimer_init(cpu_biastimer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+	hrtimer_setup(cpu_histtimer, histtimer_fn, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+	hrtimer_setup(cpu_biastimer, biastimer_fn, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
 	if (!traces_registered) {
 		ret = register_trace_ipi_raise(ipi_raise, NULL);
 		if (ret)
