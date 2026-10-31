@@ -7,6 +7,7 @@
 #include <linux/module.h>
 #include <linux/platform_device.h>
 #include <linux/of.h>
+#include <linux/cpu_phys_log_map.h>
 
 #define NUM_CLUSTER_CPUS NR_CPUS
 

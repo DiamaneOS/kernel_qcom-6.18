@@ -589,6 +589,10 @@ DEFINE_DEBUGFS_ATTRIBUTE(trigger_dump_enable_fops,
 			trigger_dump_enable_set,
 			"%lld\n");
 
+/* Exported for debug clients, no shared header declares them. */
+void trigger_dump_enable(void);
+void trigger_dump_disable(void);
+
 void trigger_dump_enable(void)
 {
 	mutex_lock(&g_pd->lock);

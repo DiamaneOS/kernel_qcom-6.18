@@ -130,7 +130,7 @@ static ssize_t show_##name(struct kobject *kobj,			\
 	if (ret < 0)							\
 		return ret;						\
 									\
-	return scnprintf(buf, PAGE_SIZE, "%lu\n", le32_to_cpu(var));	\
+	return scnprintf(buf, PAGE_SIZE, "%u\n", le32_to_cpu(var));	\
 }									\
 
 /*
@@ -161,6 +161,12 @@ static ssize_t store_enable_c1dcvs(struct kobject *kobj,
 
 	return ((ret < 0) ? ret : count);
 }
+
+/*
+ * Declared in linux/scmi_c1dcvs.h only for CONFIG_QTI_C1DCVS_SCMI_CLIENT, the 5.0 name of this
+ * driver. Callers that test that symbol get the inline stub instead.
+ */
+int c1dcvs_enable(bool enable);
 
 int c1dcvs_enable(bool enable)
 {
@@ -210,7 +216,7 @@ static ssize_t store_##name(struct kobject *kobj,			\
 		i++;							\
 	}								\
 									\
-	pr_info("Input threshold :%lu for cluster :%lu\n", msg[1], msg[0]);\
+	pr_info("Input threshold :%u for cluster :%u\n", msg[1], msg[0]);\
 	ret = set_##name(msg, sizeof(msg));				\
 out:									\
 	kfree(s_orig);							\
@@ -237,7 +243,7 @@ static ssize_t show_##name(struct kobject *kobj,			\
 		vars[i] = le32_to_cpu(vars[i]);				\
 		if (!vars[i])						\
 			break;						\
-		tot += scnprintf(buf + tot, PAGE_SIZE - tot, "%lu\t", vars[i]);\
+		tot += scnprintf(buf + tot, PAGE_SIZE - tot, "%u\t", vars[i]);\
 	}								\
 	tot += scnprintf(buf + tot, PAGE_SIZE - tot, "\n");		\
 									\
@@ -298,6 +304,7 @@ static struct kobj_type c1dcvs_settings_ktype = {
 
 static int scmi_c1dcvs_probe(struct platform_device *pdev)
 {
+	struct device *dev_root;
 	int ret;
 
 	sdev = get_qcom_scmi_device();
@@ -314,8 +321,12 @@ static int scmi_c1dcvs_probe(struct platform_device *pdev)
 		return ret;
 	}
 
+	dev_root = bus_get_dev_root(&cpu_subsys);
+	if (!dev_root)
+		return -ENODEV;
 	ret = kobject_init_and_add(&c1dcvs_kobj, &c1dcvs_settings_ktype,
-				   &cpu_subsys.dev_root->kobj, "c1dcvs");
+				   &dev_root->kobj, "c1dcvs");
+	put_device(dev_root);
 	if (ret < 0) {
 		dev_err(&pdev->dev, "failed to init c1 dcvs kobj: %d\n", ret);
 		kobject_put(&c1dcvs_kobj);

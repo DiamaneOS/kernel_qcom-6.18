@@ -121,13 +121,14 @@ static int devfreq_cdev_probe(struct platform_device *pdev)
 		dev_err(devfreq_cdev->dev, "add gpu device_link fail\n");
 		return -ENODEV;
 	}
+	/*
+	 * The managed link stays: the kernel refuses to delete it while this device is registered, it probes
+	 * this device once kgsl binds, and its supplier reference keeps gpu_dev valid.
+	 */
 	if (link->status == DL_STATE_DORMANT) {
 		dev_dbg(devfreq_cdev->dev, "kgsl not probed yet:%d\n", ret);
-		device_link_del(link);
 		return -EPROBE_DEFER;
 	}
-
-	device_link_del(link);
 
 	devfreq_cdev->gpu_dev = &gpu_pdev->dev;
 	freq_ct = dev_pm_opp_get_opp_count(devfreq_cdev->gpu_dev);

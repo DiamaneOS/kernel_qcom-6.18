@@ -823,12 +823,6 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
 		goto error;
 	}
 
-	if (policy_has_boost_freq(policy)) {
-		ret = cpufreq_enable_boost_support();
-		if (ret)
-			dev_warn(cpu_dev, "failed to enable boost: %d\n", ret);
-	}
-
 	ret = qcom_cpufreq_hw_lmh_init(policy, index, cpu_dev);
 	if (ret)
 		goto error;
@@ -858,12 +852,6 @@ static void qcom_cpufreq_ready(struct cpufreq_policy *policy)
 		enable_irq(data->throttle_irq);
 }
 
-static struct freq_attr *qcom_cpufreq_hw_attr[] = {
-	&cpufreq_freq_attr_scaling_available_freqs,
-	&cpufreq_freq_attr_scaling_boost_freqs,
-	NULL
-};
-
 static struct cpufreq_driver cpufreq_qcom_hw_driver = {
 	.flags		= CPUFREQ_NEED_INITIAL_FREQ_CHECK |
 			  CPUFREQ_HAVE_GOVERNOR_PER_POLICY |
@@ -878,8 +866,9 @@ static struct cpufreq_driver cpufreq_qcom_hw_driver = {
 	.register_em	= cpufreq_register_em_with_opp,
 	.fast_switch    = qcom_cpufreq_hw_fast_switch,
 	.name		= "qcom-cpufreq-hw",
-	.attr		= qcom_cpufreq_hw_attr,
 	.ready		= qcom_cpufreq_ready,
+	/* 6.18: the core adds the frequency and boost sysfs files and finds the boost entries. */
+	.set_boost	= cpufreq_boost_set_sw,
 	.boost_enabled	= true,
 };
 
@@ -933,7 +922,7 @@ static void qcom_cpufreq_hw_driver_remove(struct platform_device *pdev)
 
 static struct platform_driver qcom_cpufreq_hw_driver = {
 	.probe = qcom_cpufreq_hw_driver_probe,
-	.remove_new = qcom_cpufreq_hw_driver_remove,
+	.remove = qcom_cpufreq_hw_driver_remove,
 	.driver = {
 		.name = "qcom-cpufreq-hw",
 		.of_match_table = qcom_cpufreq_hw_match,

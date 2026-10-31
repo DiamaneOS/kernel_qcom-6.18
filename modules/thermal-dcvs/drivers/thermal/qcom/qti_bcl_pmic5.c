@@ -175,12 +175,12 @@ static uint8_t batt_conf_values[BATT_CONF_MAX] = {
 };
 static BLOCKING_NOTIFIER_HEAD(bcl_pmic5_notifier);
 
-void bcl_pmic5_notifier_register(struct notifier_block *n)
+static void bcl_pmic5_notifier_register(struct notifier_block *n)
 {
 	blocking_notifier_chain_register(&bcl_pmic5_notifier, n);
 }
 
-void bcl_pmic5_notifier_unregister(struct notifier_block *n)
+static void bcl_pmic5_notifier_unregister(struct notifier_block *n)
 {
 	blocking_notifier_chain_unregister(&bcl_pmic5_notifier, n);
 }

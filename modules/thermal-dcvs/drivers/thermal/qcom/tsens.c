@@ -608,7 +608,7 @@ static int tsens_dump_persist_data(struct tsens_priv *priv, struct seq_file *s)
  * Return: IRQ_HANDLED
  */
 
-irqreturn_t tsens_cold_irq_thread(int irq, void *data)
+static irqreturn_t tsens_cold_irq_thread(int irq, void *data)
 {
 	struct tsens_priv *priv = data;
 	struct tsens_sensor *s = priv->cold_sensor;
@@ -1047,7 +1047,7 @@ err_put_device:
 	return ret;
 }
 
-int __init init_common(struct tsens_priv *priv)
+int init_common(struct tsens_priv *priv)
 {
 	void __iomem *tm_base, *srot_base;
 	struct device *dev = priv->dev;
@@ -1746,7 +1746,7 @@ static const struct dev_pm_ops tsens_pm_ops = {
 
 static struct platform_driver tsens_driver = {
 	.probe = tsens_probe,
-	.remove_new = tsens_remove,
+	.remove = tsens_remove,
 	.driver = {
 		.name = "qcom-tsens",
 		.pm	= &tsens_pm_ops,

@@ -317,7 +317,7 @@ static int __qcom_pmu_read(int cpu, u32 event_id, u64 *pmu_data, bool local)
 	return 0;
 }
 
-int __qcom_pmu_read_all(int cpu, struct qcom_pmu_data *data, bool local)
+static int __qcom_pmu_read_all(int cpu, struct qcom_pmu_data *data, bool local)
 {
 	struct cpu_data *cpu_data;
 	struct event_data *event;

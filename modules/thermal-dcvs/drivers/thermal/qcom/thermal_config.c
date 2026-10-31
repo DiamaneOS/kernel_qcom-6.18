@@ -20,7 +20,7 @@ static struct dentry *thermal_debugfs_config;
 #define UINT_MAX_CHARACTER 11
 static char tzone_sensor_name[THERMAL_NAME_LENGTH] = "";
 
-int buffer_overflow_check(char *buf, int offset, int buf_size)
+static int buffer_overflow_check(char *buf, int offset, int buf_size)
 {
 	if ((buf == NULL) || (offset >= buf_size) || (strlen(buf) >= buf_size))
 		return -EINVAL;
@@ -208,7 +208,7 @@ config_exit:
 	return (ret < 0) ? ret : offset;
 }
 
-ssize_t thermal_dbgfs_config_read(struct file *file, char __user *buf,
+static ssize_t thermal_dbgfs_config_read(struct file *file, char __user *buf,
 				size_t count, loff_t *ppos)
 {
 	struct thermal_zone_device *tz = NULL;

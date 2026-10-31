@@ -67,7 +67,7 @@ static ssize_t show_enable_dynpf(struct kobject *kobj,
 	if (ret < 0)
 		return ret;
 
-	return scnprintf(buf, PAGE_SIZE, "%lu\n", le32_to_cpu(val));
+	return scnprintf(buf, PAGE_SIZE, "%u\n", le32_to_cpu(val));
 }
 
 DYNPF_ATTR_RW(enable_dynpf);
@@ -113,6 +113,7 @@ static struct kobj_type dynpf_settings_ktype = {
 
 static int qcom_dynpf_probe(struct platform_device *pdev)
 {
+	struct device *dev_root;
 	int ret;
 
 	sdev = get_qcom_scmi_device();
@@ -129,8 +130,12 @@ static int qcom_dynpf_probe(struct platform_device *pdev)
 		return ret;
 	}
 
+	dev_root = bus_get_dev_root(&cpu_subsys);
+	if (!dev_root)
+		return -ENODEV;
 	ret = kobject_init_and_add(&dynpf_kobj, &dynpf_settings_ktype,
-				   &cpu_subsys.dev_root->kobj, "dynpf");
+				   &dev_root->kobj, "dynpf");
+	put_device(dev_root);
 	if (ret < 0) {
 		dev_err(&pdev->dev, "failed to init dynpf kobj: %d\n", ret);
 		kobject_put(&dynpf_kobj);

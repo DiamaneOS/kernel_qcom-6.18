@@ -13,6 +13,7 @@
 #include <linux/of_device.h>
 #include <linux/hrtimer.h>
 #include <linux/ktime.h>
+#include <linux/of_platform.h>
 #include "bwprof.h"
 #include "trace-dcvs.h"
 
@@ -437,7 +438,7 @@ static enum hrtimer_restart bwprof_hrtimer_handler(struct hrtimer *timer)
 
 static int bwprof_dev_probe(struct platform_device *pdev)
 {
-	struct device *dev = &pdev->dev;
+	struct device *dev = &pdev->dev, *dev_root;
 	struct resource *res;
 	int ret;
 
@@ -468,9 +469,7 @@ static int bwprof_dev_probe(struct platform_device *pdev)
 		return -ENOMEM;
 	}
 
-	hrtimer_init(&bwprof_data->bwprof_hrtimer, CLOCK_MONOTONIC,
-				HRTIMER_MODE_REL);
-	bwprof_data->bwprof_hrtimer.function = bwprof_hrtimer_handler;
+	hrtimer_setup(&bwprof_data->bwprof_hrtimer, bwprof_hrtimer_handler, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
 
 	bwprof_data->bwprof_wq = create_freezable_workqueue("bwprof_wq");
 	if (!bwprof_data->bwprof_wq) {
@@ -480,8 +479,12 @@ static int bwprof_dev_probe(struct platform_device *pdev)
 
 	INIT_WORK(&bwprof_data->work, &bwprof_update_work);
 
+	dev_root = bus_get_dev_root(&cpu_subsys);
+	if (!dev_root)
+		return -ENODEV;
 	ret = kobject_init_and_add(&bwprof_data->kobj, &bwprof_ktype,
-			&cpu_subsys.dev_root->kobj, "bw_prof");
+			&dev_root->kobj, "bw_prof");
+	put_device(dev_root);
 	if (ret < 0) {
 		dev_err(dev, "failed to init bwprof kobj: %d\n", ret);
 		kobject_put(&bwprof_data->kobj);

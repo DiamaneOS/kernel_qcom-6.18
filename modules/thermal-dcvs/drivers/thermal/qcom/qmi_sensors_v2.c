@@ -116,7 +116,7 @@ static void qmi_ts_update_temperature(struct qmi_ts_instance *ts,
 	}
 }
 
-void qmi_ts_ind_cb_v02(struct qmi_handle *qmi, struct sockaddr_qrtr *sq,
+static void qmi_ts_ind_cb_v02(struct qmi_handle *qmi, struct sockaddr_qrtr *sq,
 				   struct qmi_txn *txn, const void *decoded)
 {
 	const struct ts_temp_report_ind_msg_v02 *ind_msg = decoded;

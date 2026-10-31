@@ -170,7 +170,8 @@ static int get_dma_info(const void *data, struct file *file, unsigned int n)
 	struct dma_buf *dmabuf;
 	unsigned long *size = (unsigned long *)data;
 
-	if (!qcom_is_dma_buf_file(file))
+	/* 6.18 exports the dma-buf file test, so the DMA heaps module is not needed for it. */
+	if (!is_dma_buf_file(file))
 		return 0;
 
 	dmabuf = (struct dma_buf *)file->private_data;
@@ -696,5 +697,6 @@ static void __exit sysstats_exit(void)
 
 module_init(sysstats_init);
 module_exit(sysstats_exit);
-MODULE_IMPORT_NS(MINIDUMP);
+MODULE_IMPORT_NS("MINIDUMP");
+MODULE_IMPORT_NS("DMA_BUF");
 MODULE_LICENSE("GPL");
