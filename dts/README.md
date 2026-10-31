@@ -22,3 +22,11 @@ Binding headers: `include/` comes before the 6.18 tree's
 `interrupt-controller/arm-gic.h`, `soc/qcom,rpmh-rsc.h`). The vendor drivers
 read those values. Check each against its 6.18 driver when the driver comes
 from 6.18 instead.
+
+## Build and check
+
+`scripts/build-fp6.sh KERNEL_COMMON OUT` builds the FP6 base device tree, the
+SKU overlays and the techpack overlays with the 6.18 tree's dtc and merges them
+with `scripts/merge_dtbs.py`. `scripts/check-bindings.py OUT` asserts the
+bindings the 5.0 drivers read, and `scripts/dtdiff.py A.dtb B.dtb` compares two
+blobs by content. `BINDINGS-50.md` lists what each node's driver reads.
