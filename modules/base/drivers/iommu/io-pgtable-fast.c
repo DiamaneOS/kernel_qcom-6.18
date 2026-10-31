@@ -19,7 +19,7 @@
 #include <linux/dma-mapping.h>
 #include <linux/qcom-iommu-util.h>
 #include <linux/qcom-io-pgtable.h>
-#include "drivers/iommu/iommu-pages.h"
+#include "qcom-iommu-pages.h"
 
 #define AV8L_FAST_MAX_ADDR_BITS		48
 
@@ -507,7 +507,7 @@ av8l_fast_prepopulate_pgtables(struct av8l_fast_io_pgtable *data,
 	if (!pages)
 		return -ENOMEM;
 
-	page = __iommu_alloc_pages((GFP_KERNEL | __GFP_ZERO), 0);
+	page = qcom_iommu_alloc_page((GFP_KERNEL | __GFP_ZERO));
 	if (!page)
 		goto err_free_pages_arr;
 	pages[pg++] = page;
@@ -521,7 +521,7 @@ av8l_fast_prepopulate_pgtables(struct av8l_fast_io_pgtable *data,
 			++i, pud = pud_next(pud, end)) {
 		av8l_fast_iopte pte, *ptep;
 
-		page = __iommu_alloc_pages((GFP_KERNEL | __GFP_ZERO), 0);
+		page = qcom_iommu_alloc_page((GFP_KERNEL | __GFP_ZERO));
 		if (!page)
 			goto err_free_pages;
 		pages[pg++] = page;
@@ -545,7 +545,7 @@ av8l_fast_prepopulate_pgtables(struct av8l_fast_io_pgtable *data,
 			av8l_fast_iopte pte, *pudp;
 			void *addr;
 
-			page = __iommu_alloc_pages((GFP_KERNEL | __GFP_ZERO), 0);
+			page = qcom_iommu_alloc_page((GFP_KERNEL | __GFP_ZERO));
 			if (!page)
 				goto err_free_pages;
 			pages[pg++] = page;
@@ -579,7 +579,7 @@ av8l_fast_prepopulate_pgtables(struct av8l_fast_io_pgtable *data,
 
 err_free_pages:
 	for (i = 0; i < pg; ++i)
-		__iommu_free_pages(pages[i], 0);
+		qcom_iommu_free_page(pages[i]);
 err_free_pages_arr:
 	kvfree(pages);
 	return -ENOMEM;
@@ -678,7 +678,7 @@ static void av8l_fast_free_pgtable(struct io_pgtable *iop)
 
 	vunmap(data->pmds);
 	for (i = 0; i < data->nr_pages; ++i)
-		__iommu_free_pages(data->pages[i], 0);
+		qcom_iommu_free_page(data->pages[i]);
 	kvfree(data->pages);
 	kfree(data);
 }

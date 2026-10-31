@@ -29,7 +29,7 @@
 #if (KERNEL_VERSION(6, 3, 0) <= LINUX_VERSION_CODE)
 #include <linux/firmware/qcom/qcom_scm.h>
 #else
-#include <linux/qcom_scm.h>
+#include <linux/firmware/qcom/qcom_scm.h>
 #endif
 #include <linux/freezer.h>
 #include <linux/ratelimit.h>
@@ -395,7 +395,6 @@ static struct smcinvoke_worker_thread smcinvoke[MAX_THREAD_NUMBER];
 static const char thread_name[MAX_THREAD_NUMBER][MAX_CHAR_NAME] = {
 	"smcinvoke_shmbridge_postprocess", "smcinvoke_object_postprocess", "smcinvoke_adci_thread"};
 static struct Object adci_rootEnv = Object_NULL;
-extern int get_root_obj(struct Object *rootObj);
 
 static int prepare_send_scm_msg(const uint8_t *in_buf, phys_addr_t in_paddr,
 		size_t in_buf_len,
@@ -3090,7 +3089,7 @@ static int release_cb_server(uint16_t server_id)
 	return 0;
 }
 
-int smcinvoke_release_filp(struct file *filp)
+static int smcinvoke_release_filp(struct file *filp)
 {
 	int ret = 0;
 	struct smcinvoke_file_data *file_data = filp->private_data;
@@ -3220,7 +3219,7 @@ static int smcinvoke_probe(struct platform_device *pdev)
 #if  (KERNEL_VERSION(6, 3, 0) <= LINUX_VERSION_CODE)
 	driver_class = class_create(SMCINVOKE_DEV);
 #else
-	driver_class = class_create(THIS_MODULE, SMCINVOKE_DEV);
+	driver_class = class_create(SMCINVOKE_DEV);
 #endif
 	if (IS_ERR(driver_class)) {
 		rc = -ENOMEM;
@@ -3338,5 +3337,5 @@ module_exit(smcinvoke_exit);
 
 MODULE_LICENSE("GPL v2");
 MODULE_DESCRIPTION("SMC Invoke driver (compat)");
-MODULE_IMPORT_NS(VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver);
-MODULE_IMPORT_NS(DMA_BUF);
+MODULE_IMPORT_NS("ANDROID_GKI_VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver");
+MODULE_IMPORT_NS("DMA_BUF");

@@ -512,6 +512,8 @@ struct arm_smmu_domain {
 	struct gen_pool			*secure_mem_pool;
 	fault_handler_irq_t		fault_handler_irq;
 	void				*handler_irq_token;
+	iommu_fault_handler_t		fault_handler;
+	void				*fault_token;
 
 	/*
 	 * Track PMDs which require tlb invalidate prior to being

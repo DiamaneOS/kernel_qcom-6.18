@@ -72,7 +72,7 @@ struct sc_tcm_carveout_heap {
 
 static void sc_heap_free(struct qcom_sg_buffer *buffer);
 
-void __maybe_unused pages_sync_for_device(struct device *dev, struct page *page,
+static void __maybe_unused pages_sync_for_device(struct device *dev, struct page *page,
 			       size_t size, enum dma_data_direction dir)
 {
 	struct scatterlist sg;
@@ -119,7 +119,7 @@ static void carveout_free(struct carveout_heap *carveout_heap,
 	up_read(&carveout_heap->mem_sem);
 }
 
-struct mem_buf_vmperm *
+static struct mem_buf_vmperm *
 carveout_setup_vmperm(struct carveout_heap *carveout_heap,
 			struct qcom_sg_buffer *buffer)
 {

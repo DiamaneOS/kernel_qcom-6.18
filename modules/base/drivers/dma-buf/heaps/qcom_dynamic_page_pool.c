@@ -84,7 +84,7 @@ int dynamic_page_pool_total(struct dynamic_page_pool *pool, bool high)
 	return count << pool->order;
 }
 
-struct dynamic_page_pool *dynamic_page_pool_create(gfp_t gfp_mask, unsigned int order)
+static struct dynamic_page_pool *dynamic_page_pool_create(gfp_t gfp_mask, unsigned int order)
 {
 	struct dynamic_page_pool *pool = kmalloc(sizeof(*pool), GFP_KERNEL);
 
@@ -105,7 +105,7 @@ struct dynamic_page_pool *dynamic_page_pool_create(gfp_t gfp_mask, unsigned int 
 	return pool;
 }
 
-void dynamic_page_pool_destroy(struct dynamic_page_pool *pool)
+static void dynamic_page_pool_destroy(struct dynamic_page_pool *pool)
 {
 	struct page *page, *tmp;
 	LIST_HEAD(pages);

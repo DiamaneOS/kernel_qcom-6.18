@@ -59,7 +59,11 @@
 #include "qcom_sg_ops.h"
 #include "qcom_system_heap.h"
 #include "qcom_system_movable_heap.h"
-#include "mm/internal.h"
+/* free_area_empty() from the 6.18 mm/internal.h, which modules cannot include */
+static inline bool free_area_empty(struct free_area *area, int migratetype)
+{
+	return list_empty(&area->free_list[migratetype]);
+}
 
 #if IS_ENABLED(CONFIG_QCOM_DMABUF_HEAPS_PAGE_POOL_REFILL)
 #define DYNAMIC_POOL_FILL_MARK (100 * SZ_1M)
@@ -566,21 +570,9 @@ free_buf_struct:
 	return ERR_PTR(ret);
 }
 
-static long get_pool_size_bytes(struct dma_heap *heap)
-{
-	long total_size = 0;
-	int i;
-	struct qcom_system_heap *sys_heap = dma_heap_get_drvdata(heap);
-
-	for (i = 0; i < NUM_ORDERS; i++)
-		total_size += dynamic_page_pool_total(sys_heap->pool_list[i], true);
-
-	return total_size << PAGE_SHIFT;
-}
 
 static const struct dma_heap_ops system_heap_ops = {
 	.allocate = system_heap_allocate,
-	.get_pool_size = get_pool_size_bytes,
 };
 
 void qcom_system_heap_create(const char *name, const char *system_alias, bool uncached)

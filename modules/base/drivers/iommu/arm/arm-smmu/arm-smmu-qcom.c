@@ -1133,7 +1133,7 @@ static int __arm_tbu_micro_idle_cfg(struct arm_smmu_device *smmu,
 	return ret;
 }
 
-int arm_tbu_micro_idle_wake(struct arm_smmu_power_resources *pwr)
+static int arm_tbu_micro_idle_wake(struct arm_smmu_power_resources *pwr)
 {
 	struct qsmmuv500_tbu_device *tbu = dev_get_drvdata(pwr->dev);
 	struct arm_tbu_device *arm_tbu = to_arm_tbu(tbu);
@@ -1147,7 +1147,7 @@ int arm_tbu_micro_idle_wake(struct arm_smmu_power_resources *pwr)
 	return __arm_tbu_micro_idle_cfg(tbu->smmu, val, val);
 }
 
-void arm_tbu_micro_idle_allow(struct arm_smmu_power_resources *pwr)
+static void arm_tbu_micro_idle_allow(struct arm_smmu_power_resources *pwr)
 {
 	struct qsmmuv500_tbu_device *tbu = dev_get_drvdata(pwr->dev);
 	struct arm_tbu_device *arm_tbu = to_arm_tbu(tbu);
@@ -2056,7 +2056,7 @@ static const struct arm_smmu_impl qsmmuv500_virt_impl = {
 	.def_domain_type = qcom_def_domain_type,
 };
 
-struct arm_smmu_device *qsmmuv500_create(struct arm_smmu_device *smmu,
+static struct arm_smmu_device *qsmmuv500_create(struct arm_smmu_device *smmu,
 		const struct arm_smmu_impl *impl)
 {
 	struct device *dev = smmu->dev;

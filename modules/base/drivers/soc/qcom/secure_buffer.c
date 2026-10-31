@@ -465,7 +465,7 @@ static inline void set_each_page_of_sg(struct sg_table *table, u64 flag)
 		if (sg->length % PAGE_SIZE)
 			npages++;
 		while (npages--)
-			set_page_private(nth_page(sg_page(sg), npages), flag);
+			set_page_private(sg_page(sg) + npages, flag);
 	}
 }
 
@@ -755,4 +755,5 @@ static void __exit qcom_secure_buffer_exit(void)
 }
 module_exit(qcom_secure_buffer_exit);
 
+MODULE_DESCRIPTION("Qualcomm secure buffer");
 MODULE_LICENSE("GPL");

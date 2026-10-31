@@ -143,4 +143,5 @@ static int deferred_freelist_init(void)
 	return 0;
 }
 module_init(deferred_freelist_init);
+MODULE_DESCRIPTION("DMA-BUF heaps deferred-free library");
 MODULE_LICENSE("GPL");

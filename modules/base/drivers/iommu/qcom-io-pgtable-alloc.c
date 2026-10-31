@@ -10,7 +10,8 @@
 #include <linux/firmware/qcom/qcom_scm.h>
 
 #include <soc/qcom/secure_buffer.h>
-#include "drivers/iommu/iommu-pages.h"
+#include "qcom-iommu-pages.h"
+#include "qcom-io-pgtable-alloc.h"
 
 struct io_pgtable_pool {
 	u32 vmid;
@@ -123,7 +124,7 @@ static void io_pgtable_pool_release(struct kref *ref)
 	page = __alloc_page_from_pool(&pool->page_pool);
 	while (page) {
 		if (!secure_vmid || !io_pgtable_hyp_unassign_page(pool->vmid, page))
-			__iommu_free_pages(page, 0);
+			qcom_iommu_free_page(page);
 
 		page = __alloc_page_from_pool(&pool->page_pool);
 	}
@@ -219,7 +220,7 @@ struct page *qcom_io_pgtable_alloc_page(u32 vmid, gfp_t gfp)
 	if (page)
 		return page;
 
-	page = __iommu_alloc_pages(gfp, 0);
+	page = qcom_iommu_alloc_page(gfp);
 	if (!page)
 		return NULL;
 	/* The page may be inaccessible if this is true, so leak it. */
@@ -299,7 +300,7 @@ static unsigned long io_pgtable_alloc_scan_objects(struct shrinker *shrinker,
 		list_del(&page->lru);
 
 		if (!is_secure_vmid(vmid) || !io_pgtable_hyp_unassign_page(vmid, page))
-			__iommu_free_pages(page, 0);
+			qcom_iommu_free_page(page);
 		else
 			count--;
 	}

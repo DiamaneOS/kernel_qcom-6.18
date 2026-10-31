@@ -11,7 +11,7 @@
 #include <linux/types.h>
 #include <linux/slab.h>
 #include <linux/notifier.h>
-#include <linux/qcom_scm.h>
+#include <linux/firmware/qcom/qcom_scm.h>
 #include <soc/qcom/secure_buffer.h>
 #include "linux/gunyah/gh_mem_notifier.h"
 #include "linux/gunyah/gh_rm_drv.h"
@@ -68,8 +68,8 @@ static int gh_cpusys_vm_share_mem(struct gh_cpusys_vm_data *drv_data,
 	ret = qcom_scm_assign_mem(drv_data->res.start, resource_size(&drv_data->res), &srcvmids,
 			dst_vmlist, ARRAY_SIZE(dst_vmlist));
 	if (ret) {
-		dev_err(drv_data->dev, "%s: qcom_scm_assign_mem failed addr=%x size=%u err=%d\n",
-			__func__, drv_data->res.start, resource_size(&drv_data->res), ret);
+		dev_err(drv_data->dev, "%s: qcom_scm_assign_mem failed for %pR err=%d\n",
+			__func__, &drv_data->res, ret);
 		return ret;
 	}
 
@@ -94,8 +94,8 @@ static int gh_cpusys_vm_share_mem(struct gh_cpusys_vm_data *drv_data,
 	ret = ghd_rm_mem_share(GH_RM_MEM_TYPE_NORMAL, 0, drv_data->label,
 			acl, sgl, NULL, &drv_data->memparcel);
 	if (ret) {
-		dev_err(drv_data->dev, "%s: gh_rm_mem_share failed addr=%x size=%u err=%d\n",
-			__func__, drv_data->res.start, resource_size(&drv_data->res), ret);
+		dev_err(drv_data->dev, "%s: gh_rm_mem_share failed for %pR err=%d\n",
+			__func__, &drv_data->res, ret);
 		/* Attempt to give resource back to HLOS */
 		qcom_scm_assign_mem(drv_data->res.start, resource_size(&drv_data->res),
 				&dstvmids, src_vmlist, ARRAY_SIZE(src_vmlist));
@@ -181,9 +181,7 @@ static int gh_cpusys_vm_init(struct gh_cpusys_vm_data *drv_data)
 		return -EINVAL;
 	}
 
-	dev_dbg(drv_data->dev, "start:0x%x end:0x%x size:0x%x name:%s\n",
-		drv_data->res.start, drv_data->res.end, resource_size(&drv_data->res),
-		drv_data->res.name);
+	dev_dbg(drv_data->dev, "%pR name:%s\n", &drv_data->res, drv_data->res.name);
 
 	/* Register memory with HYP */
 	ret = of_property_read_u32(node, "peer-name", &drv_data->peer_name);
@@ -223,14 +221,12 @@ static int gh_cpusys_vm_mem_access_probe(struct platform_device *pdev)
 	return 0;
 }
 
-static int gh_cpusys_vm_mem_access_remove(struct platform_device *pdev)
+static void gh_cpusys_vm_mem_access_remove(struct platform_device *pdev)
 {
 	struct gh_cpusys_vm_data *drv_data = platform_get_drvdata(pdev);
 
 	gh_cpusys_vm_drv_data = NULL;
 	gh_rm_unregister_notifier(&drv_data->rm_nb);
-
-	return 0;
 }
 
 static const struct of_device_id gh_cpusys_vm_mem_access_of_match[] = {

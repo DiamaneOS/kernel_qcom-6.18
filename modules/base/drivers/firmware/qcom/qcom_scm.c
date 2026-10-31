@@ -40,7 +40,7 @@
 #include <linux/sizes.h>
 #include <linux/types.h>
 #include <linux/qti-lcp-ppddr.h>
-#include <include/linux/arm-smccc.h>
+#include <linux/arm-smccc.h>
 #include <linux/qtee_shmbridge.h>
 #include <dt-bindings/interrupt-controller/arm-gic.h>
 #include <linux/firmware/qcom/qcom_scm_hab.h>
@@ -812,7 +812,7 @@ int qcom_scm_get_sec_dump_state(u32 *dump_state)
 }
 EXPORT_SYMBOL(qcom_scm_get_sec_dump_state);
 
-int __qcom_scm_get_llcc_missrate(struct device *dev, phys_addr_t in_buf,
+static int __qcom_scm_get_llcc_missrate(struct device *dev, phys_addr_t in_buf,
 		size_t in_buf_size, phys_addr_t out_buf, size_t out_buf_size)
 {
 	int ret;
@@ -840,7 +840,7 @@ int qcom_scm_get_llcc_missrate(phys_addr_t in_buf,
 }
 EXPORT_SYMBOL_GPL(qcom_scm_get_llcc_missrate);
 
-int __qcom_scm_get_llcc_occupancy(struct device *dev, phys_addr_t in_buf,
+static int __qcom_scm_get_llcc_occupancy(struct device *dev, phys_addr_t in_buf,
 		size_t in_buf_size, phys_addr_t out_buf, size_t out_buf_size)
 {
 	int ret;
@@ -868,7 +868,7 @@ int qcom_scm_get_llcc_occupancy(phys_addr_t in_buf,
 }
 EXPORT_SYMBOL_GPL(qcom_scm_get_llcc_occupancy);
 
-int __qcom_scm_memory_lat_profiler(struct device *dev, phys_addr_t in_buf,
+static int __qcom_scm_memory_lat_profiler(struct device *dev, phys_addr_t in_buf,
 		size_t in_buf_size, phys_addr_t out_buf, size_t out_buf_size)
 {
 	int ret;
@@ -962,7 +962,7 @@ bool qcom_scm_is_mode_switch_available(void)
 }
 EXPORT_SYMBOL(qcom_scm_is_mode_switch_available);
 
-int __qcom_scm_get_feat_version(struct device *dev, u64 feat_id, u64 *version)
+static int __qcom_scm_get_feat_version(struct device *dev, u64 feat_id, u64 *version)
 {
 	int ret;
 	struct qcom_scm_desc desc = {
@@ -990,7 +990,7 @@ int __qcom_scm_get_feat_version(struct device *dev, u64 feat_id, u64 *version)
  * SPMI lockup on certain PMIC chips if PS_HOLD is lowered in the middle of
  * an SPMI transaction.
  */
-void qcom_scm_halt_spmi_pmic_arbiter(void)
+static void qcom_scm_halt_spmi_pmic_arbiter(void)
 {
 	int ret;
 	struct qcom_scm_desc desc = {

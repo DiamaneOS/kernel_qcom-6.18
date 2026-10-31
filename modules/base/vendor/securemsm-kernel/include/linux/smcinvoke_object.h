@@ -199,4 +199,7 @@ char *firmware_request_from_smcinvoke(const char *appname, size_t *fw_size, stru
 
 int32_t get_client_env_object(struct Object *clientEnvObj);
 
+/* the root client environment object, from smcinvoke_kernel.c */
+int get_root_obj(struct Object *rootObj);
+
 #endif /* __SMCINVOKE_OBJECT_H */

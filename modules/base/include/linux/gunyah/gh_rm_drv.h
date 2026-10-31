@@ -456,6 +456,8 @@ int gh_rm_mem_qcom_lookup_sgl(u8 mem_type, gh_label_t label,
 			      struct gh_mem_attr_desc *mem_attr_desc,
 			      gh_memparcel_handle_t *handle);
 int gh_rm_mem_release(gh_memparcel_handle_t handle, u8 flags);
+int gh_rm_mem_append(gh_memparcel_handle_t handle, u8 flags,
+		struct gh_sgl_entry *sgl_entries, u32 n_sgl_entries);
 int ghd_rm_mem_reclaim(gh_memparcel_handle_t handle, u8 flags);
 struct gh_sgl_desc *gh_rm_mem_accept(gh_memparcel_handle_t handle, u8 mem_type,
 				     u8 trans_type, u32 flags, gh_label_t label,

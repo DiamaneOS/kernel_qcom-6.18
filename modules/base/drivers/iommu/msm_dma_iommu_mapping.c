@@ -478,4 +478,5 @@ void msm_dma_buf_freed(void *buffer)
 }
 EXPORT_SYMBOL(msm_dma_buf_freed);
 
+MODULE_DESCRIPTION("MSM DMA IOMMU lazy mapping");
 MODULE_LICENSE("GPL");

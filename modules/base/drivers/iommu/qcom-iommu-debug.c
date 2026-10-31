@@ -405,4 +405,5 @@ static void iommu_debug_exit(void)
 module_init(iommu_debug_init);
 module_exit(iommu_debug_exit);
 
+MODULE_DESCRIPTION("Qualcomm IOMMU debug support");
 MODULE_LICENSE("GPL");

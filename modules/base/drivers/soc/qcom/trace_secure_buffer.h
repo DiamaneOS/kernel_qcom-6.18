@@ -132,7 +132,8 @@ TRACE_EVENT(hyp_assign_end,
 #endif /* _TRACE_SECURE_BUFFER_H */
 
 #undef TRACE_INCLUDE_PATH
-#define TRACE_INCLUDE_PATH ../../drivers/soc/qcom/
+/* Out-of-tree module: found through the -I of its own directory */
+#define TRACE_INCLUDE_PATH .
 
 #undef TRACE_INCLUDE_FILE
 #define TRACE_INCLUDE_FILE trace_secure_buffer

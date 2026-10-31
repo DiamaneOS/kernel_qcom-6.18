@@ -53,7 +53,7 @@ struct gh_msgq_cap_table {
 static LIST_HEAD(gh_msgq_cap_list);
 static DEFINE_SPINLOCK(gh_msgq_cap_list_lock);
 
-struct gh_msgq_cap_table *gh_msgq_alloc_entry(int label)
+static struct gh_msgq_cap_table *gh_msgq_alloc_entry(int label)
 {
 	int ret;
 	struct gh_msgq_cap_table *cap_table_entry = NULL;
