@@ -866,7 +866,7 @@ static int ipa3_active_clients_log_insert(const char *string)
 
 	memset(ipa3_ctx->ipa3_active_clients_logging.log_buffer[head], '_',
 			IPA3_ACTIVE_CLIENTS_LOG_LINE_LEN);
-	strlcpy(ipa3_ctx->ipa3_active_clients_logging.log_buffer[head], string,
+	strscpy(ipa3_ctx->ipa3_active_clients_logging.log_buffer[head], string,
 			(size_t)IPA3_ACTIVE_CLIENTS_LOG_LINE_LEN);
 	head = (head + 1) % IPA3_ACTIVE_CLIENTS_LOG_BUFFER_SIZE_LINES;
 	if (tail == head)
@@ -4501,7 +4501,7 @@ int ipa3_setup_dflt_rt_tables(void)
 	rt_rule->num_rules = 1;
 	rt_rule->commit = 1;
 	rt_rule->ip = IPA_IP_v4;
-	strlcpy(rt_rule->rt_tbl_name, IPA_DFLT_RT_TBL_NAME,
+	strscpy(rt_rule->rt_tbl_name, IPA_DFLT_RT_TBL_NAME,
 		IPA_RESOURCE_NAME_MAX);
 
 	rt_rule_entry = &rt_rule->rules[0];
@@ -4560,7 +4560,7 @@ static int ipa3_setup_exception_path(void)
 		hdr->commit = 1;
 		hdr_entry = &hdr->hdr[0];
 
-		strlcpy(hdr_entry->name, IPA_LAN_RX_HDR_NAME, IPA_RESOURCE_NAME_MAX);
+		strscpy(hdr_entry->name, IPA_LAN_RX_HDR_NAME, IPA_RESOURCE_NAME_MAX);
 		hdr_entry->hdr_len = IPA_LAN_RX_HEADER_LENGTH;
 
 		if (ipa_add_hdr(hdr)) {
@@ -6896,7 +6896,7 @@ static void ipa3_active_clients_log_mod(
 	int_ctx = true;
 	hfound = NULL;
 	memset(str_to_hash, 0, IPA3_ACTIVE_CLIENTS_LOG_NAME_LEN);
-	strlcpy(str_to_hash, id->id_string, IPA3_ACTIVE_CLIENTS_LOG_NAME_LEN);
+	strscpy(str_to_hash, id->id_string, IPA3_ACTIVE_CLIENTS_LOG_NAME_LEN);
 	hkey = jhash(str_to_hash, IPA3_ACTIVE_CLIENTS_LOG_NAME_LEN,
 			0);
 	hash_for_each_possible(ipa3_ctx->ipa3_active_clients_logging.htable,
@@ -6918,7 +6918,7 @@ static void ipa3_active_clients_log_mod(
 			return;
 		}
 		hentry->type = id->type;
-		strlcpy(hentry->id_string, id->id_string,
+		strscpy(hentry->id_string, id->id_string,
 				IPA3_ACTIVE_CLIENTS_LOG_NAME_LEN);
 		INIT_HLIST_NODE(&hentry->list);
 		hentry->count = inc ? 1 : -1;
@@ -8327,7 +8327,7 @@ static int ipa3_post_init(const struct ipa3_plat_drv_res *resource_p,
 	/*Adding ipa3_ctx pointer to minidump list*/
 	mini_dump = (struct ipa_minidump_data *)kzalloc(sizeof(struct ipa_minidump_data), GFP_KERNEL);
 	if (mini_dump != NULL) {
-		strlcpy(mini_dump->data.owner, "ipa3_ctx", sizeof(mini_dump->data.owner));
+		strscpy(mini_dump->data.owner, "ipa3_ctx", sizeof(mini_dump->data.owner));
 		mini_dump->data.vaddr = (unsigned long)(ipa3_ctx);
 		mini_dump->data.size = sizeof(struct ipa3_context);
 		list_add(&mini_dump->entry, &ipa3_ctx->minidump_list_head);
@@ -9168,16 +9168,23 @@ static int ipa3_lan_poll(struct napi_struct *napi, int budget)
 static inline void ipa3_enable_napi_netdev(void)
 {
 	if (ipa3_ctx->lan_rx_napi_enable || ipa3_ctx->tx_napi_enable) {
-		init_dummy_netdev(&ipa3_ctx->generic_ndev);
+		/* 6.18 allocates dummy netdevs, init_dummy_netdev() is no longer exported. */
+		ipa3_ctx->generic_ndev = alloc_netdev_dummy(0);
+		if (!ipa3_ctx->generic_ndev) {
+			IPAERR("no NAPI netdev, LAN rx and tx NAPI off\n");
+			ipa3_ctx->lan_rx_napi_enable = false;
+			ipa3_ctx->tx_napi_enable = false;
+			return;
+		}
 		if(ipa3_ctx->lan_rx_napi_enable) {
 #if (LINUX_VERSION_CODE > KERNEL_VERSION(6, 0, 14))
 			netif_napi_add(
-				&ipa3_ctx->generic_ndev,
+				ipa3_ctx->generic_ndev,
 				&ipa3_ctx->napi_lan_rx,
 				ipa3_lan_poll);
 #else
 			netif_napi_add(
-				&ipa3_ctx->generic_ndev,
+				ipa3_ctx->generic_ndev,
 				&ipa3_ctx->napi_lan_rx,
 				ipa3_lan_poll,
 				NAPI_WEIGHT);
@@ -9823,7 +9830,7 @@ static int ipa3_pre_init(const struct ipa3_plat_drv_res *resource_p,
 	spin_lock_init(&ipa3_ctx->wc_memb.ipa_tx_mul_spinlock);
 	INIT_LIST_HEAD(&ipa3_ctx->wc_memb.wlan_comm_desc_list);
 
-	ipa3_ctx->cdev.class = class_create(THIS_MODULE, DRV_NAME);
+	ipa3_ctx->cdev.class = class_create(DRV_NAME);
 
 	result = alloc_chrdev_region(&ipa3_ctx->cdev.dev_num, 0, 1, DRV_NAME);
 	if (result) {
@@ -12437,7 +12444,7 @@ int ipa3_iommu_map(struct iommu_domain *domain,
 	if (cb->is_cache_coherent)
 		prot |= IOMMU_CACHE;
 
-	return iommu_map_atomic(domain, iova, paddr, size, prot);
+	return iommu_map(domain, iova, paddr, size, prot, GFP_ATOMIC);
 }
 
 /**

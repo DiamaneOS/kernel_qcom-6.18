@@ -18,6 +18,8 @@
 #include <trace/hooks/sched.h>
 #include <linux/tracepoint.h>
 #include <trace/hooks/vendor_hooks.h>
+#include <net/rps.h>
+#include <net/netdev_rx_queue.h>
 #define DATARMNET94fa0a43a2 489335
 void DATARMNET4095253347(struct DATARMNET9b44b71ee9*ep);void DATARMNETf7d317ed55
 (struct DATARMNET9b44b71ee9*ep);void DATARMNET36e5e526fa(struct 

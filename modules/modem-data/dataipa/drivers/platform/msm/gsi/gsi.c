@@ -315,7 +315,7 @@ static void gsi_channel_state_change_wait(unsigned long chan_hdl,
 
 		GSIDBG("GSI wait on chan_hld=%lu irqtyp=%u state=%u intr=%u\n",
 			chan_hdl,
-			type,
+			type.ch_ctrl,
 			ctx->state,
 			gsi_pending_intr);
 	}
@@ -1411,8 +1411,9 @@ static int __gsi_allocate_msis(void)
 	size_t size = 0;
 
 	/* Allocate all MSIs */
-	GSIDBG("gsi_ctx->dev = %lu, gsi_ctx->msi.num = %d", gsi_ctx->dev, gsi_ctx->msi.num);
-	result = platform_msi_domain_alloc_irqs(gsi_ctx->dev, gsi_ctx->msi.num,
+	GSIDBG("gsi_ctx->dev = %pK, gsi_ctx->msi.num = %d", gsi_ctx->dev, gsi_ctx->msi.num);
+	/* 6.10: platform-MSI devices allocate through the per-device MSI domain. */
+	result = platform_device_msi_init_and_alloc_irqs(gsi_ctx->dev, gsi_ctx->msi.num,
 			__gsi_msi_write_msg);
 	if (result) {
 		GSIERR("error allocating platform MSIs - %d\n", result);
@@ -1456,7 +1457,7 @@ static int __gsi_allocate_msis(void)
 
 err_free_msis:
 	size = sizeof(unsigned long) * BITS_TO_LONGS(gsi_ctx->msi.num);
-	platform_msi_domain_free_irqs(gsi_ctx->dev);
+	platform_device_msi_free_irqs_all(gsi_ctx->dev);
 	memset(gsi_ctx->msi.allocated, 0, size);
 
 	return result;
@@ -1758,7 +1759,7 @@ err_free_msis:
 	if (gsi_ctx->msi.num) {
 		size_t size =
 			sizeof(unsigned long) * BITS_TO_LONGS(gsi_ctx->msi.num);
-		platform_msi_domain_free_irqs(gsi_ctx->dev);
+		platform_device_msi_free_irqs_all(gsi_ctx->dev);
 		memset(gsi_ctx->msi.allocated, 0, size);
 	}
 
@@ -1866,7 +1867,7 @@ int gsi_deregister_device(unsigned long dev_hdl, bool force)
 	__gsi_config_gen_irq(gsi_ctx->per.ee, ~0, 0);
 
 	if (gsi_ctx->msi.num)
-		platform_msi_domain_free_irqs(gsi_ctx->dev);
+		platform_device_msi_free_irqs_all(gsi_ctx->dev);
 
 	devm_free_irq(gsi_ctx->dev, gsi_ctx->per.irq, gsi_ctx);
 	gsi_ctx->per_registered = false;
@@ -5917,7 +5918,7 @@ static int qcom_va_md_gsi_notif_handler(struct notifier_block *this,
 {
 	struct va_md_entry entry;
 
-	strlcpy(entry.owner, "gsi_mini", sizeof(entry.owner));
+	strscpy(entry.owner, "gsi_mini", sizeof(entry.owner));
 	entry.vaddr = (unsigned long)gsi_ctx;
 	entry.size = sizeof(struct gsi_ctx);
 	qcom_va_md_add_region(&entry);

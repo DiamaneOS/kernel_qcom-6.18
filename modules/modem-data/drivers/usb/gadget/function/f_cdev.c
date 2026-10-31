@@ -646,7 +646,7 @@ static void dun_cser_connect(struct cserial *cser)
 	port_notify_serial_state(cser);
 }
 
-unsigned int dun_cser_get_dtr(struct cserial *cser)
+static unsigned int dun_cser_get_dtr(struct cserial *cser)
 {
 	if (cser->port_handshake_bits & ACM_CTRL_DTR)
 		return 1;
@@ -654,7 +654,7 @@ unsigned int dun_cser_get_dtr(struct cserial *cser)
 		return 0;
 }
 
-unsigned int dun_cser_get_rts(struct cserial *cser)
+static unsigned int dun_cser_get_rts(struct cserial *cser)
 {
 	if (cser->port_handshake_bits & ACM_CTRL_RTS)
 		return 1;
@@ -662,7 +662,7 @@ unsigned int dun_cser_get_rts(struct cserial *cser)
 		return 0;
 }
 
-unsigned int dun_cser_send_carrier_detect(struct cserial *cser,
+static unsigned int dun_cser_send_carrier_detect(struct cserial *cser,
 				unsigned int yes)
 {
 	u16 state;
@@ -676,7 +676,7 @@ unsigned int dun_cser_send_carrier_detect(struct cserial *cser,
 	return port_notify_serial_state(cser);
 }
 
-unsigned int dun_cser_send_ring_indicator(struct cserial *cser,
+static unsigned int dun_cser_send_ring_indicator(struct cserial *cser,
 				unsigned int yes)
 {
 	u16 state;
@@ -859,7 +859,7 @@ static void cser_free_inst(struct usb_function_instance *fi)
 	if (opts->port) {
 		cdev_device_del(&opts->port->fcdev_cdev, &opts->port->dev);
 		mutex_lock(&chardev_ida_lock);
-		ida_simple_remove(&chardev_ida, opts->port->minor);
+		ida_free(&chardev_ida, opts->port->minor);
 		mutex_unlock(&chardev_ida_lock);
 		usb_cser_debugfs_exit(opts->port);
 		put_device(&opts->port->dev);
@@ -1103,7 +1103,7 @@ static void usb_cser_stop_io(struct f_cdev *port)
 	spin_unlock_irqrestore(&port->port_lock, flags);
 }
 
-int f_cdev_open(struct inode *inode, struct file *file)
+static int f_cdev_open(struct inode *inode, struct file *file)
 {
 	int ret;
 	unsigned long flags;
@@ -1137,7 +1137,7 @@ int f_cdev_open(struct inode *inode, struct file *file)
 	return 0;
 }
 
-int f_cdev_release(struct inode *inode, struct file *file)
+static int f_cdev_release(struct inode *inode, struct file *file)
 {
 	unsigned long flags;
 	struct f_cdev *port;
@@ -1153,7 +1153,7 @@ int f_cdev_release(struct inode *inode, struct file *file)
 	return 0;
 }
 
-ssize_t f_cdev_read(struct file *file,
+static ssize_t f_cdev_read(struct file *file,
 		       char __user *buf,
 		       size_t count,
 		       loff_t *ppos)
@@ -1253,7 +1253,7 @@ start_rx:
 	return bytes_copied;
 }
 
-ssize_t f_cdev_write(struct file *file,
+static ssize_t f_cdev_write(struct file *file,
 		       const char __user *buf,
 		       size_t count,
 		       loff_t *ppos)
@@ -1707,9 +1707,9 @@ static struct f_cdev *f_cdev_alloc(char *func_name, int portno)
 		}
 	}
 
-	ret = ida_simple_get(&chardev_ida, 0, 0, GFP_KERNEL);
+	ret = ida_alloc(&chardev_ida, GFP_KERNEL);
 	if (ret >= NUM_INSTANCE) {
-		ida_simple_remove(&chardev_ida, ret);
+		ida_free(&chardev_ida, ret);
 		mutex_unlock(&chardev_ida_lock);
 		ret = -ENODEV;
 		goto err_get_ida;

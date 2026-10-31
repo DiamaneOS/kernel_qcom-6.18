@@ -470,7 +470,7 @@ static int ipa3_aux_napi_poll_tx_complete(struct napi_struct *napi_tx,
 		ret = ipa3_tx_switch_to_intr_mode(sys);
 
 		/* if we got an EOT while we marked NAPI as complete */
-		if (ret == -GSI_STATUS_PENDING_IRQ && napi_reschedule(napi_tx)) {
+		if (ret == -GSI_STATUS_PENDING_IRQ && napi_schedule(napi_tx)) {
 			/* rescheduale will perform poll again, don't dec vote twice*/
 			napi_rescheduled = true;
 		}
@@ -522,7 +522,7 @@ poll_tx:
 		/*if we got an EOT while we marked NAPI as complete*/
 		if (atomic_read(&sys->xmit_eot_cnt) > 0 &&
 		    !atomic_cmpxchg(&sys->in_napi_context, 0, 1)
-		    && napi_reschedule(napi_tx)) {
+		    && napi_schedule(napi_tx)) {
 			goto poll_tx;
 		}
 	}
@@ -1532,9 +1532,7 @@ int ipa_setup_sys_pipe(struct ipa_sys_connect_params *sys_in, u32 *clnt_hdl)
 		INIT_LIST_HEAD(&ep->sys->avail_tx_wrapper_list);
 		ep->sys->avail_tx_wrapper = 0;
 		spin_lock_init(&ep->sys->spinlock);
-		hrtimer_init(&ep->sys->db_timer, CLOCK_MONOTONIC,
-			HRTIMER_MODE_REL);
-		ep->sys->db_timer.function = ipa3_ring_doorbell_timer_fn;
+		hrtimer_setup(&ep->sys->db_timer, ipa3_ring_doorbell_timer_fn, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
 
 		/* create IPA PM resources for handling polling mode */
 		if (sys_in->client == IPA_CLIENT_APPS_WAN_CONS &&
@@ -1606,11 +1604,11 @@ int ipa_setup_sys_pipe(struct ipa_sys_connect_params *sys_in, u32 *clnt_hdl)
 		ipa3_ctx->tx_napi_enable) {
 		if (sys_in->client == IPA_CLIENT_APPS_LAN_PROD) {
 #if (LINUX_VERSION_CODE > KERNEL_VERSION(6, 0, 14))
-			netif_napi_add_tx_weight(&ipa3_ctx->generic_ndev,
+			netif_napi_add_tx_weight(ipa3_ctx->generic_ndev,
 			&ep->sys->napi_tx, tx_completion_func,
 			NAPI_TX_WEIGHT);
 #else
-			netif_tx_napi_add(&ipa3_ctx->generic_ndev,
+			netif_tx_napi_add(ipa3_ctx->generic_ndev,
 			&ep->sys->napi_tx, tx_completion_func,
 			NAPI_TX_WEIGHT);
 
@@ -2002,12 +2000,12 @@ int ipa_teardown_sys_pipe(u32 clnt_hdl)
 
 		delete_avail_tx_wrapper_list(ep);
 		/* Delete NAPI TX object. For WAN_PROD, it is deleted
-		 * in rmnet_ipa driver.
+		 * with the rmnet_ipa netdev, which needs it disabled first.
 		 */
-		if (ep->sys->napi_tx_enable &&
-			(ep->client != IPA_CLIENT_APPS_WAN_PROD)) {
+		if (ep->sys->napi_tx_enable) {
 			napi_disable(&ep->sys->napi_tx);
-			netif_napi_del(&ep->sys->napi_tx);
+			if (ep->client != IPA_CLIENT_APPS_WAN_PROD)
+				netif_napi_del(&ep->sys->napi_tx);
 		}
 	}
 
@@ -7230,7 +7228,7 @@ start_poll:
 		napi_complete(ep->sys->napi_obj);
 		ret = ipa3_rx_switch_to_intr_mode(ep->sys);
 		if (ret == -GSI_STATUS_PENDING_IRQ &&
-				napi_reschedule(ep->sys->napi_obj))
+				napi_schedule(ep->sys->napi_obj))
 			goto start_poll;
 
 		IPA_ACTIVE_CLIENTS_DEC_EP_NO_BLOCK(ep->client);
@@ -7334,7 +7332,7 @@ start_poll:
 		napi_complete(ep->sys->napi_obj);
 		ret = ipa3_rx_switch_to_intr_mode(ep->sys);
 		if (ret == -GSI_STATUS_PENDING_IRQ &&
-				napi_reschedule(ep->sys->napi_obj))
+				napi_schedule(ep->sys->napi_obj))
 			goto start_poll;
 		IPA_ACTIVE_CLIENTS_DEC_EP_NO_BLOCK(ep->client);
 	} else {
@@ -7563,7 +7561,7 @@ start_poll:
 		napi_complete(napi_rx);
 		ret = ipa3_rx_switch_to_intr_mode(sys);
 		if (ret == -GSI_STATUS_PENDING_IRQ &&
-				napi_reschedule(napi_rx))
+				napi_schedule(napi_rx))
 			goto start_poll;
 		IPA_ACTIVE_CLIENTS_DEC_EP_NO_BLOCK(sys->ep->client);
 	} else {

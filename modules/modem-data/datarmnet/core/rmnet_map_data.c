@@ -386,8 +386,8 @@ struct sk_buff *rmnet_map_deaggregate(struct sk_buff *skb,
 		if (!skbn)
 			return NULL;
 
-		skb_append_pagefrags(skbn, page, frag0->bv_offset,
-				     packet_len);
+		skb_append_pagefrags(skbn, page, skb_frag_off(frag0),
+				     packet_len, MAX_SKB_FRAGS);
 		skbn->data_len += packet_len;
 		skbn->len += packet_len;
 	} else {
@@ -677,10 +677,10 @@ static void rmnet_map_nonlinear_copy(struct sk_buff *coal_skb,
 		struct page *page = skb_frag_page(frag0);
 
 		skb_append_pagefrags(dest, page,
-				     frag0->bv_offset + coal_meta->ip_len +
+				     skb_frag_off(frag0) + coal_meta->ip_len +
 				     coal_meta->trans_len +
 				     coal_meta->data_offset,
-				     copy_len);
+				     copy_len, MAX_SKB_FRAGS);
 		dest->data_len += copy_len;
 		dest->len += copy_len;
 	} else {
@@ -1590,9 +1590,7 @@ void rmnet_map_tx_aggregate_init(struct rmnet_port *port)
 
 		spin_lock_init(&state->agg_lock);
 		INIT_LIST_HEAD(&state->agg_list);
-		hrtimer_init(&state->hrtimer, CLOCK_MONOTONIC,
-			     HRTIMER_MODE_REL);
-		state->hrtimer.function = rmnet_map_flush_tx_packet_queue;
+		hrtimer_setup(&state->hrtimer, rmnet_map_flush_tx_packet_queue, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
 		INIT_WORK(&state->agg_wq, rmnet_map_flush_tx_packet_work);
 		state->stats = &port->stats.agg;
 
