@@ -1,6 +1,7 @@
 #ifndef __LINUX_PLATFORM_DATA_ESWIN_EPH_TYPES_H
 #define __LINUX_PLATFORM_DATA_ESWIN_EPH_TYPES_H
 
+#include <linux/ktime.h>
 #include <linux/types.h>
 #include <linux/atomic.h>
 
@@ -201,6 +202,8 @@ struct eph_flash
 struct eph_data
 {
     struct mutex comms_mutex;
+    /* Optional operation deadline, set and cleared under comms_mutex. */
+    ktime_t comms_deadline;
     struct mutex sysfs_report_buffer_lock;
     struct comms_device *commsdevice;
     struct input_dev *inputdev;
@@ -247,8 +250,13 @@ struct eph_data
     /* low power mode gesture */
     u8 lp;
     bool irq_wake;
+    /* Our regulator votes are dropped while RESET is held in deep suspend. */
+    bool initialized;
+    u8 mode_settings_dirty;
+    bool supplies_disabled;
+    ktime_t supplies_disabled_at;
 
-    /* Serialises low-power entry and exit with gesture_wakeup writes */
+    /* Serialises power transitions, external control and maintenance operations */
     struct mutex mode_lock;
     /* EPH_WAKE_GESTURE_* bits the controller reported that wake_gesture has not returned yet */
     atomic_t wake_gesture_pending;

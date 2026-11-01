@@ -14,6 +14,7 @@
 // uncomment to test with input forced open
 //#define INPUT_DEVICE_ALWAYS_OPEN
 #include <linux/types.h>
+#include <linux/unaligned.h>
 #include <uapi/asm-generic/errno-base.h>
 #include <linux/sysfs.h>
 
@@ -28,6 +29,7 @@
 #include <linux/init.h>
 #include <linux/completion.h>
 #include <linux/delay.h>
+#include <linux/iopoll.h>
 #include <linux/firmware.h>
 #include <linux/input/mt.h>
 #include <linux/interrupt.h>
@@ -57,68 +59,90 @@
 extern void SetModuleName(int, const char *, const char *);
 char emkit_buf[256] = {0,};
 
-/* add_for_charger_start */
-struct eph_data *gephdata = NULL;
-static int eswin_ts_enable_charger_mode(struct device *dev, int mode);
-static int eswin_charger_notifier_callback(struct notifier_block *nb, unsigned long val, void *v)
-{
-	int ret = 0;
-	struct power_supply *psy = NULL;
-	union power_supply_propval prop;
+enum eph_mode_setting {
+    EPH_SETTING_CHARGER,
+    EPH_SETTING_HEADPHONE,
+    EPH_SETTING_GLOVE,
+    EPH_SETTING_EDGE,
+    EPH_SETTING_COUNT,
+};
 
-	psy = power_supply_get_by_name("usb");
-	if (!psy) {
-		pr_err("Couldn't get usbpsy\n");
-		return -EINVAL;
-	}
-	if (!strcmp(psy->desc->name, "usb")) {
-		if (psy && val == POWER_SUPPLY_PROP_STATUS) {
-			ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_ONLINE, &prop);
-			if (ret < 0) {
-				pr_err("Couldn't get POWER_SUPPLY_PROP_ONLINE rc=%d\n", ret);
-				return ret;
-			} else {
-				if (gephdata->charger_mode != prop.intval) {
-					gephdata->charger_mode = prop.intval;
-					if (gephdata->suspended && (gephdata->charger_notify_wq != NULL))
-						queue_work(gephdata->charger_notify_wq, &gephdata->update_charger);
-				}
-			}
-		}
-	}
-	return 0;
+static int eph_set_mode_setting(struct eph_data *ephdata,
+                                enum eph_mode_setting setting, u8 value);
+static int eph_apply_mode_settings(struct eph_data *ephdata);
+static int eph_reset_active(struct eph_data *ephdata);
+
+/* External maintenance never wakes a sleeping controller or races a power transition.
+ * Hold mode_lock until the operation ends; the only nested driver lock is comms_mutex.
+ */
+static int eph_maintenance_begin(struct eph_data *ephdata, bool allow_bootloader)
+{
+    mutex_lock(&ephdata->mode_lock);
+    if (!ephdata->initialized || ephdata->lp || ephdata->supplies_disabled ||
+        ephdata->suspended || (!allow_bootloader && ephdata->in_bootloader)) {
+        mutex_unlock(&ephdata->mode_lock);
+        return -EBUSY;
+    }
+    return 0;
 }
+
+static int eswin_charger_notifier_callback(struct notifier_block *nb,
+                                          unsigned long event, void *data)
+{
+    struct eph_data *ephdata = container_of(nb, struct eph_data, notifier_charger);
+    struct power_supply *psy = data;
+
+    if (event != PSY_EVENT_PROP_CHANGED || !psy || strcmp(psy->desc->name, "usb"))
+        return NOTIFY_DONE;
+    queue_work(ephdata->charger_notify_wq, &ephdata->update_charger);
+    return NOTIFY_OK;
+}
+
 static void eswin_update_charger(struct work_struct *work)
 {
-	int ret = 0;
+    struct eph_data *ephdata = container_of(work, struct eph_data, update_charger);
+    struct power_supply *psy = power_supply_get_by_name("usb");
+    union power_supply_propval prop;
+    int ret;
 
-	ret = eswin_ts_enable_charger_mode(&gephdata->commsdevice->dev, gephdata->charger_mode);/* 0 plug in, 1 plug out */
-	if (ret) {
-		pr_err("eswin Write plug %s failed\n", gephdata->charger_mode? "in":"out");
-	}
-
+    if (!psy)
+        return;
+    ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_ONLINE, &prop);
+    power_supply_put(psy);
+    if (!ret)
+        ret = eph_set_mode_setting(ephdata, EPH_SETTING_CHARGER, !!prop.intval);
+    if (ret && ret != -EBUSY)
+        dev_warn_ratelimited(&ephdata->commsdevice->dev,
+                             "Charger setting update failed: %d\n", ret);
 }
-static void eswin_charger_init(void)
+
+static int eswin_charger_init(struct eph_data *ephdata)
 {
-	int ret = 0;
-    if(gephdata == NULL){
-        pr_err("gephdata == NULL\n");
-            return;
-    } else {
-        gephdata->charger_mode = 0;
-        gephdata->charger_notify_wq = create_singlethread_workqueue("eswin_charger_wq");
-        if (!gephdata->charger_notify_wq) {
-            pr_err("eswin allocate eswin_charger_wq failed\n");
-            return;
-        }
-        INIT_WORK(&gephdata->update_charger, eswin_update_charger);
-        gephdata->notifier_charger.notifier_call = eswin_charger_notifier_callback;
-        ret = power_supply_reg_notifier(&gephdata->notifier_charger);
-        if (ret < 0)
-            pr_err("power_supply_reg_notifier failed\n");
+    int ret;
+
+    ephdata->charger_notify_wq = alloc_ordered_workqueue("eswin_charger", 0);
+    if (!ephdata->charger_notify_wq)
+        return -ENOMEM;
+    INIT_WORK(&ephdata->update_charger, eswin_update_charger);
+    ephdata->notifier_charger.notifier_call = eswin_charger_notifier_callback;
+    ret = power_supply_reg_notifier(&ephdata->notifier_charger);
+    if (ret) {
+        destroy_workqueue(ephdata->charger_notify_wq);
+        ephdata->charger_notify_wq = NULL;
+        return ret;
     }
+    queue_work(ephdata->charger_notify_wq, &ephdata->update_charger);
+    return 0;
 }
-/* add_for_charger_end */
+
+static void eswin_charger_remove(struct eph_data *ephdata)
+{
+    if (!ephdata->charger_notify_wq)
+        return;
+    power_supply_unreg_notifier(&ephdata->notifier_charger);
+    destroy_workqueue(ephdata->charger_notify_wq);
+    ephdata->charger_notify_wq = NULL;
+}
 
 
 /* device settings file format version expected*/
@@ -233,6 +257,15 @@ static int eph_read_and_process_messages(struct eph_data *ephdata)
     dev_dbg(&ephdata->commsdevice->dev, "%s >\n", __func__);
 
     mutex_lock(&ephdata->comms_mutex);
+    /*
+     * CHG is level-low. A command reader can consume the pending message
+     * while this IRQ thread waits for the bus lock. Recheck the level under
+     * the same lock so a stale IRQ cannot read an empty controller FIFO.
+     */
+    if (eph_read_chg(ephdata)) {
+        mutex_unlock(&ephdata->comms_mutex);
+        return 0;
+    }
     /* Read report */
     ret_val = eph_read_report(ephdata, ephdata->report_buf);
     mutex_unlock(&ephdata->comms_mutex);
@@ -802,17 +835,6 @@ static int eph_initialize(struct eph_data *ephdata)
         msleep(EPH_FW_RESET_TIME);
     }
 
-    ret_val = eph_acquire_irq(ephdata);
-    if (ret_val)
-    {
-        return ret_val;
-    }
-
-    ret_val = eph_sysfs_mem_access_init(ephdata);
-    if (ret_val)
-    {
-        return ret_val;
-    }
 
 #if 0
     dev_dbg(&commsdevice->dev, "device_settings_name: %s\n", ephdata->device_settings_name);
@@ -902,17 +924,9 @@ static int eph_enter_bootloader(struct eph_data *ephdata)
 
     dev_dbg(&ephdata->commsdevice->dev, "%s >\n", __func__);
 
-    if (!ephdata->in_bootloader)
-    {
-        if (ephdata->suspended)
-        {
-            if (ephdata->ephplatform->suspend_mode == EPH_SUSPEND_REGULATOR)
-            {
-                eph_regulator_enable(ephdata);
-            }
-            ephdata->suspended = false;
-        }
-    }
+    lockdep_assert_held(&ephdata->mode_lock);
+    if (ephdata->lp || ephdata->supplies_disabled || ephdata->suspended)
+        return -EBUSY;
 
     /* force bootloader regardless whether we are in bootloader already - Always in defined TIC state */
     /* Force device into bootloader mode using chg line held low while toggle reset */
@@ -936,8 +950,7 @@ static int eph_enter_bootloader(struct eph_data *ephdata)
     if (!ephdata->in_bootloader)
     {
         ephdata->in_bootloader = true;
-        /* Need in_bootloader to be true otherwise the regulators get disabled */
-        eph_sysfs_mem_access_remove(ephdata);
+        /* Maintenance is serialized with mode transitions; attributes stay registered. */
         eph_unregister_input_device(ephdata);
     }
 
@@ -983,10 +996,9 @@ static int eph_load_fw(struct device *dev)
     }
 
 #ifdef IC_UPDATE_DETECT
-    if (!eph_check_ic_update(ephdata, ephdata->ephflash->fw)) {
-        dev_info(dev, "not get new vers firmware\n");
+    ret_val = eph_check_ic_update(ephdata, ephdata->ephflash->fw);
+    if (ret_val <= 0)
         goto release_firmware;
-    }
 #endif
 
     disable_irq(ephdata->chg_irq);
@@ -1097,7 +1109,8 @@ static void eph_gesture_mode_apply(struct eph_data *ephdata, u8 mode)
 
 #if defined(CONFIG_DRM)
     if (deep_sleep && ephdata->gesture_wakeup_enable) {
-        __eph_dev_enter_normal_mode(ephdata);
+        if (__eph_dev_enter_normal_mode(ephdata))
+            return;
         __eph_dev_enter_lp_mode(ephdata);
         eph_clear_all_host_touch_slots(ephdata);
     }
@@ -1106,171 +1119,99 @@ static void eph_gesture_mode_apply(struct eph_data *ephdata, u8 mode)
 
 static ssize_t eph_devattr_update_fw_store(struct device *dev,
                                            struct device_attribute *attr,
-                                           const char *buf,
-                                           size_t count)
+                                           const char *buf, size_t count)
 {
-    struct eph_data *ephdata = (struct eph_data*)dev_get_drvdata(dev);
-    int ret_val;
+    struct eph_data *ephdata = dev_get_drvdata(dev);
+    int ret;
 
-    /* Pass in file name and length of name and if accepted put into fw_name */
-    ret_val = eph_update_file_name(dev, &ephdata->fw_name, buf, count);
-    if (ret_val)
-    {
-        return ret_val;
-    }
-
-    ret_val = eph_load_fw(dev);
-    if (ret_val)
-    {
-        dev_err(dev, "The firmware update failed(%d)\n", ret_val);
-        count = ret_val;
-    }
-    else
-    {
-        dev_info(dev, "The firmware update succeeded\n");
-
-        /* TODO re-check - initial bootloader appears to require an extended delay before moving to communicating with App */
-        msleep(EPH_RESET_TIME*2);
-        ephdata->suspended = false;
-
-        ret_val = eph_initialize(ephdata);
-        if (ret_val)
-        {
-            return ret_val;
+    ret = eph_maintenance_begin(ephdata, true);
+    if (ret)
+        return ret;
+    ret = eph_update_file_name(dev, &ephdata->fw_name, buf, count);
+    if (!ret)
+        ret = eph_load_fw(dev);
+    if (!ret) {
+        msleep(EPH_RESET_TIME * 2);
+        ret = eph_initialize(ephdata);
+        if (!ret) {
+            mutex_lock(&ephdata->comms_mutex);
+            ret = eph_apply_mode_settings(ephdata);
+            mutex_unlock(&ephdata->comms_mutex);
         }
     }
-
-    return count;
+    mutex_unlock(&ephdata->mode_lock);
+    return ret ? ret : count;
 }
 
 static ssize_t eph_devattr_update_device_settings_store(struct device *dev,
                                             struct device_attribute *attr,
-                                            const char *buf,
-                                            size_t count)
+                                            const char *buf, size_t count)
 {
-    struct eph_data *ephdata = (struct eph_data*)dev_get_drvdata(dev);
-    const struct eph_platform_data *ephplatform = ephdata->ephplatform;
-    const struct firmware *device_settings;
-    int ret_val;
+    struct eph_data *ephdata = dev_get_drvdata(dev);
+    const struct firmware *settings;
+    int ret;
 
-    ret_val = eph_update_file_name(dev, &ephdata->device_settings_name, buf, count);
-    if (ret_val)
-    {
-        return ret_val;
-    }
-
-    /* find the device settings file under the following name */
-    ret_val = request_firmware(&device_settings, ephdata->device_settings_name, dev);
-    if (ret_val)
-    {
-        dev_err(dev, "request_firmware %d %s\n", ret_val, ephdata->device_settings_name);
+    ret = eph_maintenance_begin(ephdata, false);
+    if (ret)
+        return ret;
+    ret = eph_update_file_name(dev, &ephdata->device_settings_name, buf, count);
+    if (ret)
         goto out;
-    }
-
+    ret = request_firmware(&settings, ephdata->device_settings_name, dev);
+    if (ret)
+        goto out;
     ephdata->updating_device_settings = true;
-
-
-    if (ephdata->suspended)
-    {
-        dev_info(dev, "ESWIN device was in suspend %d\n", ret_val);
-        if (ephplatform->suspend_mode == EPH_SUSPEND_REGULATOR)
-        {
-            enable_irq(ephdata->chg_irq);
-            eph_regulator_enable(ephdata);
-        }
-        else if (ephplatform->suspend_mode == EPH_SUSPEND_DEEP_SLEEP)
-        {
-            /* do nothing as TIC does not currently support sleep */
-        }
-
-        ephdata->suspended = false;
-    }
-
-    ret_val = eph_configure_components(ephdata, device_settings);
-    if (!ret_val)
-    {
-        /* no error so return count */
-        ret_val = count;
-    }
-
-    release_firmware(device_settings);
-out:
+    ret = eph_configure_components(ephdata, settings);
     ephdata->updating_device_settings = false;
-    return ret_val;
+    release_firmware(settings);
+out:
+    mutex_unlock(&ephdata->mode_lock);
+    return ret ? ret : count;
 }
 
 
 static ssize_t eph_devattr_comms_read(struct device *dev,
-                                           struct device_attribute *attr,
-                                           char *buf)
+                                      struct device_attribute *attr, char *buf)
 {
-    struct eph_data *ephdata;
-    int ret_val;
-    size_t count = TLV_HEADER_SIZE;
+    struct eph_data *ephdata = dev_get_drvdata(dev);
+    int ret = eph_maintenance_begin(ephdata, false);
+    size_t count;
 
-    ephdata = (struct eph_data*)dev_get_drvdata(dev);
-
-
-    /* Wait for any pending IRQ handler to complete - Gives priority for interrupt handler */
+    if (ret)
+        return ret;
     synchronize_irq(ephdata->chg_irq);
-
     mutex_lock(&ephdata->comms_mutex);
-    ret_val = eph_comms_two_stage_read(ephdata, (u8*)buf);
+    ret = eph_comms_two_stage_read(ephdata, (u8 *)buf);
     mutex_unlock(&ephdata->comms_mutex);
-
-
-    if(ret_val)
-    {
-        /* Return NULL message if there is no message or an error occured */
-        /* clear 3 bytes to mimic null read */
-        memset(buf, 0, TLV_HEADER_SIZE); 
-    }
-    else
-    {
-        /* decode and return the legth of message */
-        count = (size_t)((buf[TLV_LENGTH_FIELD] | ((u16)buf[TLV_LENGTH_FIELD + 1u] << 8u)) + TLV_HEADER_SIZE);
-    }
-
-    dev_info(&ephdata->commsdevice->dev, "ESWIN sysfs read the following %d, %d , %d<\n", buf[0], buf[1], buf[2]);
-
-    return ret_val == 0 ? count : ret_val;
+    mutex_unlock(&ephdata->mode_lock);
+    if (ret)
+        return ret;
+    count = get_unaligned_le16(buf + TLV_LENGTH_FIELD) + TLV_HEADER_SIZE;
+    return count;
 }
 
-
 static ssize_t eph_devattr_comms_write(struct device *dev,
-                                           struct device_attribute *attr,
-                                           const char *buf,
-                                           size_t count)
+                                       struct device_attribute *attr,
+                                       const char *buf, size_t count)
 {
-    
-    struct eph_data *ephdata = (struct eph_data*)dev_get_drvdata(dev);
-    ssize_t ret_val;
+    struct eph_data *ephdata = dev_get_drvdata(dev);
+    int ret;
 
-    ret_val = eph_check_mem_access_params(ephdata, 0, &count);
-    if (0 < ret_val)
-    {
-        return ret_val;
-    }
-
-    if (0 < count)
-    {
-
-        /* Wait for any pending IRQ handler to complete - Gives priority for interrupt handler */
-        synchronize_irq(ephdata->chg_irq);
-
-        mutex_lock(&ephdata->comms_mutex);
-        ret_val = eph_comms_write(ephdata, count, (u8 *)buf);
-        mutex_unlock(&ephdata->comms_mutex);
-
-        dev_info(&ephdata->commsdevice->dev, "ESWIN sysfs: %s. Write the following %d, %d , %d<\n", __func__, buf[0], buf[1], buf[2]);        
-    }
-    
-
-    return ret_val == 0 ? count : ret_val;
-
-
-  }
-
+    if (count < TLV_HEADER_SIZE)
+        return -EINVAL;
+    ret = eph_check_mem_access_params(ephdata, 0, &count);
+    if (ret)
+        return ret;
+    ret = eph_maintenance_begin(ephdata, false);
+    if (ret)
+        return ret;
+    synchronize_irq(ephdata->chg_irq);
+    mutex_lock(&ephdata->comms_mutex);
+    ret = eph_comms_write(ephdata, count, (u8 *)buf);
+    mutex_unlock(&ephdata->comms_mutex);
+    mutex_unlock(&ephdata->mode_lock);
+    return ret ? ret : count;
+}
 
 static ssize_t eph_devattr_device_report_read(struct device *dev,
                                            struct device_attribute *attr,
@@ -1314,24 +1255,20 @@ static ssize_t eph_devattr_device_report_read(struct device *dev,
 
 
 static ssize_t eph_devattr_reset_device(struct device *dev,
-                                           struct device_attribute *attr,
-                                           char *buf)
+                                       struct device_attribute *attr, char *buf)
 {
-    struct eph_data *ephdata;
-    int ret_val;
-    ephdata = (struct eph_data*)dev_get_drvdata(dev);
+    struct eph_data *ephdata = dev_get_drvdata(dev);
+    int ret = eph_maintenance_begin(ephdata, false);
 
-    dev_dbg(&ephdata->commsdevice->dev, "%s start gpio_reset \n > \n", __func__);
-    eph_reset_device(ephdata);
-
-    dev_dbg(&ephdata->commsdevice->dev, "%s start trigger_baseline \n > \n", __func__);
-    ret_val = eph_trigger_baseline(ephdata);
+    if (ret)
+        return ret;
+    ret = eph_reset_active(ephdata);
+    if (!ret)
+        ret = eph_trigger_baseline(ephdata);
     eph_clear_all_host_touch_slots(ephdata);
-
-    dev_dbg(&ephdata->commsdevice->dev, "%s < \n", __func__);
-    return ret_val;
-
-  }
+    mutex_unlock(&ephdata->mode_lock);
+    return ret;
+}
 
 static ssize_t eph_devattr_gesture_wakeup_read(struct device *dev,
                                            struct device_attribute *attr,
@@ -1387,6 +1324,10 @@ static ssize_t eph_devattr_gesture_wakeup_store(struct device *dev,
 
     mutex_lock(&ephdata->mode_lock);
 
+    if (!ephdata->initialized || ephdata->in_bootloader) {
+        mutex_unlock(&ephdata->mode_lock);
+        return -EBUSY;
+    }
     mode = ephdata->gesture_mode & EPH_GESTURE_TYPES;
     set_mode = (input > 0) ? (mode | gesture_bit) : (mode & ~gesture_bit);
 
@@ -1418,361 +1359,178 @@ static ssize_t eph_devattr_wake_gesture_show(struct device *dev,
     return sysfs_emit(buf, "%d\n", atomic_xchg(&ephdata->wake_gesture_pending, 0));
 }
 
+
 static ssize_t eph_devattr_finger_print_enable(struct device *dev,
-                                           struct device_attribute *attr,
-                                           const char *buf,
-                                           size_t count)
+                                              struct device_attribute *attr,
+                                              const char *buf, size_t count)
 {
-    struct eph_data *ephdata = (struct eph_data*)dev_get_drvdata(dev);
-    ssize_t ret_val = 0;
-    int input = 0;
+    struct eph_data *ephdata = dev_get_drvdata(dev);
+    bool enable;
+    int ret = kstrtobool(buf, &enable);
 
-    if (!ephdata)
-    {
-        return -EIO;
-    }
-
-    if (0 < count)
-    {
-        if (kstrtoint(buf, 10, &input))
-        {
-            return -EINVAL;
-        }
-        else
-        {
-            if (0 == input)
-            {
-                dev_dbg(&ephdata->commsdevice->dev, "%s disable FOD \n > \n", __func__);
-                ret_val = eph_finger_print_enable(ephdata, false);
-            }
-            else
-            {
-                dev_dbg(&ephdata->commsdevice->dev, "%s enable FOD \n > \n", __func__);
-                ret_val = eph_finger_print_enable(ephdata, true);
-            }
-        }
-    }
-    return ret_val == 0 ? count : ret_val;
+    if (ret)
+        return ret;
+    ret = eph_maintenance_begin(ephdata, false);
+    if (ret)
+        return ret;
+    ret = eph_finger_print_enable(ephdata, enable);
+    mutex_unlock(&ephdata->mode_lock);
+    return ret ? ret : count;
 }
 
-// charger mode
-static int eswin_ts_enable_charger_mode(struct device *dev, int mode)
+/* All user settings share one state transition and one wire encoding. The cached
+ * values describe the requested state; dirty values are retried after a failed write.
+ */
+static u8 *eph_mode_setting_value(struct eph_data *ephdata, enum eph_mode_setting setting)
 {
-    int ret = 0;
-    uint8_t cmd[] = {0x08, 0x05, 0x00, 0x0C, 0x00, 0x02, 0x00, 0x01};
-    struct eph_data *ephdata = (struct eph_data*)dev_get_drvdata(dev);
-
-    if(mode == 0)
-    {
-        /* disable charger mode. */
-        cmd[7] = 0x0;
+    switch (setting) {
+    case EPH_SETTING_CHARGER: return &ephdata->charger_mode;
+    case EPH_SETTING_HEADPHONE: return &ephdata->headphone_mode;
+    case EPH_SETTING_GLOVE: return &ephdata->glove_mode;
+    case EPH_SETTING_EDGE: return &ephdata->edge_suppresion;
+    default: return NULL;
     }
+}
 
-    mutex_lock(&ephdata->comms_mutex);
+static int __eph_write_mode_setting(struct eph_data *ephdata,
+                                   enum eph_mode_setting setting, u8 value)
+{
+    static const u8 offsets[] = { 0x02, 0x04, 0x08, 0x09 };
+    u8 cmd[] = { TLV_CONTROL_DATA_WRITE, 0x05, 0x00, 0x0c, 0x00, 0, 0x00, value };
+    int ret;
+
+    lockdep_assert_held(&ephdata->mode_lock);
+    lockdep_assert_held(&ephdata->comms_mutex);
+    if ((unsigned int)setting >= EPH_SETTING_COUNT)
+        return -EINVAL;
+    cmd[5] = offsets[setting];
     ret = eph_write_control_config(ephdata, sizeof(cmd), cmd);
-    if (ret)
-    {
-        dev_err(dev, "failed to set charger mode\n");
-    }
-    msleep(10);
-    dev_err(dev, "Success to %s charger mode\n", mode ? "Enable" : "Disable");
-    mutex_unlock(&ephdata->comms_mutex);
-
+    if (!ret)
+        usleep_range(10000, 11000);
     return ret;
+}
+
+static int eph_set_mode_setting(struct eph_data *ephdata,
+                                enum eph_mode_setting setting, u8 value)
+{
+    u8 *cached = eph_mode_setting_value(ephdata, setting);
+    int ret = 0;
+
+    if (!cached || value > (setting == EPH_SETTING_EDGE ? 3 : 1))
+        return -EINVAL;
+    mutex_lock(&ephdata->mode_lock);
+    if (!ephdata->initialized || ephdata->in_bootloader) {
+        ret = -EBUSY;
+        goto out;
+    }
+    if (*cached != value) {
+        *cached = value;
+        ephdata->mode_settings_dirty |= BIT(setting);
+    }
+    if (!(ephdata->mode_settings_dirty & BIT(setting)) || ephdata->lp ||
+        ephdata->supplies_disabled || ephdata->suspended)
+        goto out;
+    mutex_lock(&ephdata->comms_mutex);
+    ret = __eph_write_mode_setting(ephdata, setting, value);
+    mutex_unlock(&ephdata->comms_mutex);
+    if (!ret)
+        ephdata->mode_settings_dirty &= ~BIT(setting);
+out:
+    mutex_unlock(&ephdata->mode_lock);
+    return ret;
+}
+
+/* Reset changes controller defaults, so restore every requested setting, including zero.
+ * Resume calls this inside the same readiness deadline with the IRQ still disabled.
+ */
+static int eph_apply_mode_settings(struct eph_data *ephdata)
+{
+    enum eph_mode_setting setting;
+    int ret;
+
+    lockdep_assert_held(&ephdata->mode_lock);
+    lockdep_assert_held(&ephdata->comms_mutex);
+    ephdata->mode_settings_dirty = GENMASK(EPH_SETTING_COUNT - 1, 0);
+    for (setting = 0; setting < EPH_SETTING_COUNT; setting++) {
+        ret = __eph_write_mode_setting(ephdata, setting,
+                                      *eph_mode_setting_value(ephdata, setting));
+        if (ret)
+            return ret;
+        ephdata->mode_settings_dirty &= ~BIT(setting);
+    }
+    return 0;
+}
+
+static ssize_t eph_mode_setting_store(struct device *dev, const char *buf, size_t count,
+                                      enum eph_mode_setting setting)
+{
+    struct eph_data *ephdata = dev_get_drvdata(dev);
+    u8 value;
+    int ret = kstrtou8(buf, 0, &value);
+
+    if (!ret)
+        ret = eph_set_mode_setting(ephdata, setting, value);
+    return ret ? ret : count;
 }
 
 static ssize_t eswin_ts_charger_mode_show(struct device *dev,
-	struct device_attribute *attr, char *buf)
+                                       struct device_attribute *attr, char *buf)
 {
-    struct eph_data *ephdata = (struct eph_data*)dev_get_drvdata(dev);
+    struct eph_data *ephdata = dev_get_drvdata(dev);
 
-    dev_info(dev, "charger mode state = %d.\n", ephdata->charger_mode);
-    return scnprintf(buf, PAGE_SIZE, "%d\n", ephdata->charger_mode);
+    return sysfs_emit(buf, "%u\n", READ_ONCE(ephdata->charger_mode));
 }
 
 static ssize_t eswin_ts_charger_mode_store(struct device *dev,
-			struct device_attribute *attr, const char *buf, size_t size)
+                                        struct device_attribute *attr,
+                                        const char *buf, size_t count)
 {
-    int ret = 0;
-    unsigned long value = 0;
-    struct eph_data *ephdata = (struct eph_data*)dev_get_drvdata(dev);
-
-	ret = kstrtoul(buf, 0, &value);
-	if (ret < 0) {
-		dev_err(dev, "charger_mode: Failed to convert value\n");
-		return -EINVAL;
-	}
-
-	switch (value) {
-		case 0x0:
-			dev_info(dev, "charger mode try disable\n");
-			break;
-		case 0x1:
-			dev_info(dev, "charger mode try enable\n");
-			break;
-		default:
-			dev_info(dev, "unsupport charger mode type, value = %lu\n", value);
-			return -EINVAL;
-	}
-
-	if (ephdata->charger_mode == value) {
-		dev_info(dev, "The value = %d is same, so not to write", ephdata->charger_mode);
-		goto exit;
-	}
-
-	ret = eswin_ts_enable_charger_mode(dev, value);
-	if (ret < 0) {
-		dev_err(dev, "failed to send charger mode cmd");
-		goto exit;
-	}
-
-	ephdata->charger_mode = value;
-	msleep(20);
-
-	dev_info(dev, "Success to %s charger_mode", ephdata->charger_mode ? "Enable" : "Disable");
-exit:
-	return size;
-}
-
-//headphone line insert
-static int eswin_ts_enable_headphone_mode(struct device *dev, int mode)
-{
-    int ret = 0;
-    uint8_t cmd[] = {0x08, 0x05, 0x00, 0x0C, 0x00, 0x04, 0x00, 0x01};
-    struct eph_data *ephdata = (struct eph_data*)dev_get_drvdata(dev);
-
-    if(mode == 0)
-    {
-        /* disable mode. */
-        cmd[7] = 0x0;
-    }
-
-    mutex_lock(&ephdata->comms_mutex);
-    ret = eph_write_control_config(ephdata, sizeof(cmd), cmd);
-    if (ret) {
-        dev_err(dev, "failed to set headphone line insert\n");
-    }
-    msleep(10);
-    dev_info(dev, "Success to %s headphone line insert\n", mode ? "Enable" : "Disable");
-    mutex_unlock(&ephdata->comms_mutex);
-
-    return ret;
+    return eph_mode_setting_store(dev, buf, count, EPH_SETTING_CHARGER);
 }
 
 static ssize_t eswin_ts_headphone_mode_show(struct device *dev,
-	struct device_attribute *attr, char *buf)
+                                       struct device_attribute *attr, char *buf)
 {
-    struct eph_data *ephdata = (struct eph_data*)dev_get_drvdata(dev);
+    struct eph_data *ephdata = dev_get_drvdata(dev);
 
-	dev_info(dev, "headphone mode state = %d.\n", ephdata->headphone_mode);
-	return scnprintf(buf, PAGE_SIZE, "%d\n", ephdata->headphone_mode);
+    return sysfs_emit(buf, "%u\n", READ_ONCE(ephdata->headphone_mode));
 }
 
 static ssize_t eswin_ts_headphone_mode_store(struct device *dev,
-			struct device_attribute *attr, const char *buf, size_t size)
+                                        struct device_attribute *attr,
+                                        const char *buf, size_t count)
 {
-	int ret = 0;
-	unsigned long value = 0;
-        struct eph_data *ephdata = (struct eph_data*)dev_get_drvdata(dev);
-
-	ret = kstrtoul(buf, 0, &value);
-	if (ret < 0) {
-		dev_err(dev, "headphone_mode: Failed to convert value\n");
-		return -EINVAL;
-	}
-
-	switch (value) {
-		case 0x0:
-			dev_info(dev, "headphone mode try disable\n");
-			break;
-		case 0x1:
-			dev_info(dev, "headphone mode try enable\n");
-			break;
-		default:
-			dev_info(dev, "unsupport headphone mode type, value = %lu\n", value);
-			return -EINVAL;
-	}
-
-	if (ephdata->headphone_mode == value) {
-		dev_info(dev, "The value = %d is same, so not to write", ephdata->headphone_mode);
-		goto exit;
-	}
-
-	ret = eswin_ts_enable_headphone_mode(dev, value);
-	if (ret < 0) {
-		dev_err(dev, "failed to send headphone mode cmd");
-		goto exit;
-	}
-
-	ephdata->headphone_mode = value;
-	msleep(20);
-
-	dev_info(dev, "Success to %s headphone mode", ephdata->headphone_mode ? "Enable" : "Disable");
-exit:
-	return size;
-}
-
-//glove mode
-static int eswin_ts_enable_glove_mode(struct device *dev, int mode)
-{
-    int ret = 0;
-    uint8_t cmd[] = {0x08, 0x05, 0x00, 0x0C, 0x00, 0x08, 0x00, 0x01};
-    struct eph_data *ephdata = (struct eph_data*)dev_get_drvdata(dev);
-
-    if(mode == 0)
-    {
-        /* disable mode. */
-        cmd[7] = 0x0;
-    }
-
-    mutex_lock(&ephdata->comms_mutex);
-    ret = eph_write_control_config(ephdata, sizeof(cmd), cmd);
-    if (ret) {
-        dev_err(dev, "failed to set glove mode\n");
-    }
-    msleep(10);
-    dev_info(dev, "Success to %s glove mode\n", mode ? "Enable" : "Disable");
-    mutex_unlock(&ephdata->comms_mutex);
-
-    return ret;
+    return eph_mode_setting_store(dev, buf, count, EPH_SETTING_HEADPHONE);
 }
 
 static ssize_t eswin_ts_glove_mode_show(struct device *dev,
-	struct device_attribute *attr, char *buf)
+                                       struct device_attribute *attr, char *buf)
 {
-    struct eph_data *ephdata = (struct eph_data*)dev_get_drvdata(dev);
+    struct eph_data *ephdata = dev_get_drvdata(dev);
 
-	dev_info(dev, "glove mode state = %d.\n", ephdata->glove_mode);
-	return scnprintf(buf, PAGE_SIZE, "%d\n", ephdata->glove_mode);
+    return sysfs_emit(buf, "%u\n", READ_ONCE(ephdata->glove_mode));
 }
 
 static ssize_t eswin_ts_glove_mode_store(struct device *dev,
-			struct device_attribute *attr, const char *buf, size_t size)
+                                        struct device_attribute *attr,
+                                        const char *buf, size_t count)
 {
-	int ret = 0;
-	unsigned long value = 0;
-        struct eph_data *ephdata = (struct eph_data*)dev_get_drvdata(dev);
-
-	ret = kstrtoul(buf, 0, &value);
-	if (ret < 0) {
-		dev_err(dev, "glove_mode: Failed to convert value\n");
-		return -EINVAL;
-	}
-
-	switch (value) {
-		case 0x0:
-			dev_info(dev, "glove mode try disable\n");
-			break;
-		case 0x1:
-			dev_info(dev, "glove mode try enable\n");
-			break;
-		default:
-			dev_info(dev, "unsupport glove mode type, value = %lu\n", value);
-			return -EINVAL;
-	}
-
-	if (ephdata->glove_mode == value) {
-		dev_info(dev, "The value = %d is same, so not to write", ephdata->glove_mode);
-		goto exit;
-	}
-
-	ret = eswin_ts_enable_glove_mode(dev, value);
-	if (ret < 0) {
-		dev_err(dev, "failed to send glove mode cmd");
-		goto exit;
-	}
-
-	ephdata->glove_mode = value;
-	msleep(20);
-
-	dev_info(dev, "Success to %s glove mode", ephdata->glove_mode ? "Enable" : "Disable");
-exit:
-	return size;
-}
-
-//edge_suppresion
-static int eswin_ts_enable_edge_suppresion(struct device *dev, int mode)
-{
-    int ret = 0;
-    uint8_t cmd[] = {0x08, 0x05, 0x00, 0x0C, 0x00, 0x09, 0x00, 0x00};
-    struct eph_data *ephdata = (struct eph_data*)dev_get_drvdata(dev);
-
-    switch (mode) {
-    case 0:
-	cmd[7] = 0; // 0
-	break;
-    case 1:
-	cmd[7] = 1; // 90
-	break;
-    case 2:
-	cmd[7] = 2; // 180
-	break;
-    case 3:
-	cmd[7] = 3; // 270
-	break;
-    default:
-	dev_info(dev, "unsupport edge_suppresion type, mode = %d\n", mode);
-	return -1;
-    }
-
-    mutex_lock(&ephdata->comms_mutex);
-    ret = eph_write_control_config(ephdata, sizeof(cmd), cmd);
-    if (ret)
-    {
-        dev_err(dev, "failed to set edge_suppresion\n");
-    }
-    msleep(10);
-    dev_info(dev, "Success to %s edge_suppresion ret = %d\n", mode ? "Enable" : "Disable", ret);
-    mutex_unlock(&ephdata->comms_mutex);
-
-    return ret;
+    return eph_mode_setting_store(dev, buf, count, EPH_SETTING_GLOVE);
 }
 
 static ssize_t eswin_ts_edge_suppresion_show(struct device *dev,
-	struct device_attribute *attr, char *buf)
+                                       struct device_attribute *attr, char *buf)
 {
-    struct eph_data *ephdata = (struct eph_data*)dev_get_drvdata(dev);
+    struct eph_data *ephdata = dev_get_drvdata(dev);
 
-	dev_info(dev, "edge_suppresion state = %d.\n", ephdata->edge_suppresion);
-	return scnprintf(buf, PAGE_SIZE, "%d\n", ephdata->edge_suppresion);
+    return sysfs_emit(buf, "%u\n", READ_ONCE(ephdata->edge_suppresion));
 }
 
 static ssize_t eswin_ts_edge_suppresion_store(struct device *dev,
-			struct device_attribute *attr, const char *buf, size_t size)
+                                        struct device_attribute *attr,
+                                        const char *buf, size_t count)
 {
-	int ret = 0;
-	unsigned long value = 0;
-    struct eph_data *ephdata = (struct eph_data*)dev_get_drvdata(dev);
-
-	ret = kstrtoul(buf, 0, &value);
-	if (ret < 0) {
-		dev_err(dev, "edge_suppresion: Failed to convert value\n");
-		mutex_unlock(&ephdata->comms_mutex);
-		return -EINVAL;
-	}
-
-	if (value > 4 || value < 0) {
-	    dev_info(dev, "unsupport edge_suppresion type, value = %lu\n", value);
-	    return -EINVAL;
-	}
-
-	if (ephdata->edge_suppresion == value) {
-		dev_info(dev, "The value = %d is same, so not to write", ephdata->edge_suppresion);
-		goto exit;
-	}
-
-	ret = eswin_ts_enable_edge_suppresion(dev, value);
-	if (ret < 0) {
-		dev_err(dev, "failed to send edge_suppresion cmd");
-		goto exit;
-	}
-
-	ephdata->edge_suppresion = value;
-	msleep(20);
-
-	dev_info(dev, "Success to %s edge_suppresion", ephdata->edge_suppresion ? "Enable" : "Disable");
-exit:
-	return size;
+    return eph_mode_setting_store(dev, buf, count, EPH_SETTING_EDGE);
 }
 
 /* .attr.name, .attr.mode, .show, .store  */
@@ -1878,11 +1636,14 @@ static int eph_start(struct eph_data *ephdata)
 {
     struct comms_device *commsdevice = ephdata->commsdevice;
 
+    mutex_lock(&ephdata->mode_lock);
+
     dev_info(&commsdevice->dev, "%s, suspend_mode %d >\n", __func__, ephdata->ephplatform->suspend_mode);
 
     if (!ephdata->suspended || ephdata->in_bootloader)
     {
         dev_info(&commsdevice->dev, "%s, suspended %d, in_bootloader = %d <\n", __func__, ephdata->suspended, ephdata->in_bootloader);
+        mutex_unlock(&ephdata->mode_lock);
         return 0;
     }
 
@@ -1907,6 +1668,7 @@ static int eph_start(struct eph_data *ephdata)
 
     dev_info(&commsdevice->dev, "%s <\n",__func__);
 
+    mutex_unlock(&ephdata->mode_lock);
     return 0;
 }
 
@@ -1915,11 +1677,14 @@ static int eph_stop(struct eph_data *ephdata)
 
     struct comms_device *commsdevice = ephdata->commsdevice;
 
+    mutex_lock(&ephdata->mode_lock);
+
     dev_info(&commsdevice->dev, "%s, suspend mode %d >\n", __func__, ephdata->ephplatform->suspend_mode);
 
     if (ephdata->suspended || ephdata->in_bootloader || ephdata->updating_device_settings)
     {
         dev_info(&commsdevice->dev, "%s, suspended %d, in_bootloader %d, updating_device_settings %d <\n",__func__, ephdata->suspended, ephdata->in_bootloader, ephdata->updating_device_settings);
+        mutex_unlock(&ephdata->mode_lock);
         return 0;
     }
 
@@ -1948,6 +1713,7 @@ static int eph_stop(struct eph_data *ephdata)
 
     dev_info(&commsdevice->dev, "%s <\n",__func__);
 
+    mutex_unlock(&ephdata->mode_lock);
     return 0;
 }
 
@@ -2039,7 +1805,8 @@ static void eph_resume_work(struct work_struct *work)
 	struct eph_data *ephdata =
 		container_of(work, struct eph_data, resume_work);
 
-	eph_dev_enter_normal_mode(ephdata);
+	if (eph_dev_enter_normal_mode(ephdata))
+		return;
 	// heartbeat work is needed
 	eph_heartbeat_start(ephdata);
 	// schedule_work(&ephdata->force_baseline_work);
@@ -2379,24 +2146,16 @@ exit:
 static int send_heartbeat(struct eph_data *ephdata)
 {
     int ret;
-    int retry = 1000;
-relock:
+
     mutex_lock(&ephdata->comms_mutex);
-    if (eph_read_chg(ephdata) == 0) {
-    	// read the data if irq flag is tiggered by falling
-	    if ((irq_get_trigger_type(ephdata->chg_irq) == IRQF_TRIGGER_FALLING) &&
-	     (retry >= 0)) {
-            if (eph_read_report(ephdata, ephdata->report_buf)) {
-                ret = eph_handle_report(ephdata, ephdata->report_buf);
-                memset(ephdata->report_buf, 0, COMMS_BUF_SIZE);
-                dev_info(&ephdata->commsdevice->dev, "Process unexpected msg %d\n", ret);
-	        }
-            retry--;
-	    }
-    	mutex_unlock(&ephdata->comms_mutex);
-	    usleep_range(900, 1000);
-	    goto relock;
+    if (!eph_read_chg(ephdata)) {
+        /* The level-triggered IRQ owns pending reports. Do not spin on it or
+         * mistake ordinary touch traffic for a failed health check.
+         */
+        ret = -EAGAIN;
+        goto out;
     }
+    ephdata->comms_deadline = ktime_add_ms(ktime_get(), 500);
 #if ESD_CHECK_V1
     ret = eph_read_device_information(ephdata);
 #else
@@ -2405,82 +2164,36 @@ relock:
         dev_info(&ephdata->commsdevice->dev, "eph ic fe dead!\n");
     }
 #endif
+    ephdata->comms_deadline = 0;
+out:
     mutex_unlock(&ephdata->comms_mutex);
     return ret;
 }
 
 static void heartbeat_work_handler(struct work_struct *work)
 {
-    int ret = 0;
-    struct delayed_work *dwork = to_delayed_work(work);
-    struct eph_data *ephdata = container_of(dwork, struct eph_data, heartbeat_work);
-    struct device *dev = &ephdata->commsdevice->dev;
-
-    //dev_info(dev, "ic heartbeat work...\n");
+    struct eph_data *ephdata = container_of(to_delayed_work(work),
+                                          struct eph_data, heartbeat_work);
+    int ret;
 
     if (atomic_read(&ephdata->heartbeat_state) <= 0)
-	    return;
-
-    // check power
-    if (!regulator_is_enabled(ephdata->reg_vdd)) {
-        if (atomic_read(&ephdata->heartbeat_state))
-            schedule_delayed_work(&ephdata->heartbeat_work, msecs_to_jiffies(2000));
         return;
-    }
-    if (!regulator_is_enabled(ephdata->reg_avdd))
-        dev_warn(dev, "ic avdd is not enable\n");
-
-    if (ephdata->suspended) {
-        if (ephdata->in_bootloader) {
-            dev_warn(dev, "sys suspend, ic in boot mode!\n");
-            goto ic_reset;
-        } else {
-#if 0
-            // ic in gesture mode, fod mode
-            if (ephdata->gesture_wakeup_enable == true) {
-                    ret = send_heartbeat(ephdata);
-                    if (ret) {
-                        dev_err(dev, "sys suspend, heartbeat fail %d\n", ret);
-                        goto ic_recovery;
-                    }
-
-
-            } else {
-            // ic in deep mode or spi in low power mode
-                    dev_info(dev, "sys suspend, ic in deep mode or spi in lp mode");
-            }
-#else
-        dev_info(dev, "sys suspend, ic in deep mode or spi in lp mode");
-#endif
-        }
-    } else {
-        if (ephdata->in_bootloader) {
-            /* may loading firmware or setting */
-            dev_warn(dev, "sys active, ic in boot mode!\n");
-        } else {
-            // ic in active or idle mode
-            ret = send_heartbeat(ephdata);
-            if (ret) {
-                dev_err(dev, "sys normal, heartbeat fail %d\n", ret);
-                goto ic_recovery;
-            }
+    if (!mutex_trylock(&ephdata->mode_lock))
+        goto reschedule;
+    if (ephdata->initialized && !ephdata->lp && !ephdata->supplies_disabled &&
+        !ephdata->suspended && !ephdata->in_bootloader) {
+        ret = send_heartbeat(ephdata);
+        if (ret && ret != -EAGAIN) {
+            dev_warn(&ephdata->commsdevice->dev, "Heartbeat failed: %d\n", ret);
+            ret = eph_reset_active(ephdata);
+            if (ret)
+                dev_err(&ephdata->commsdevice->dev, "Heartbeat recovery failed: %d\n", ret);
         }
     }
-
+    mutex_unlock(&ephdata->mode_lock);
+reschedule:
     if (atomic_read(&ephdata->heartbeat_state))
         schedule_delayed_work(&ephdata->heartbeat_work, msecs_to_jiffies(5000));
-    return;
-
-ic_recovery:
-    eph_recovery_device(ephdata);
-    if (atomic_read(&ephdata->heartbeat_state))
-        schedule_delayed_work(&ephdata->heartbeat_work, msecs_to_jiffies(3000));
-    return;
-ic_reset:
-    eph_reset_device(ephdata);
-    if (atomic_read(&ephdata->heartbeat_state))
-        schedule_delayed_work(&ephdata->heartbeat_work, msecs_to_jiffies(3000));
-    return;
 }
 
 #if defined(CONFIG_DRM)
@@ -2568,6 +2281,9 @@ static int eph_probe(struct comms_device *commsdevice, const struct comms_device
     int device_info_read_retry = 0;
     struct device *dev = &commsdevice->dev;
     int cnt = -EINVAL;
+    bool fw_attrs_created = false;
+    bool attrs_created = false;
+    bool input_registered = false;
 
     struct device_node *node = commsdevice->dev.of_node;
     dev_dbg(dev, "%s >>>\n", __func__);
@@ -2690,8 +2406,9 @@ static int eph_probe(struct comms_device *commsdevice, const struct comms_device
     if (ret_val)
     {
         dev_err(dev, "Failure %d creating fw sysfs group\n", ret_val);
-        return ret_val;
+        goto err_free_irq;
     }
+    fw_attrs_created = true;
     // get dev info from ic
     mutex_lock(&ephdata->comms_mutex);
     do {
@@ -2717,7 +2434,9 @@ static int eph_probe(struct comms_device *commsdevice, const struct comms_device
     SetModuleName(MODULE_TOUCH, emkit_buf, __FUNCTION__);
 
 #if 1
+    mutex_lock(&ephdata->mode_lock);
     ret_val = eph_load_fw(&commsdevice->dev);
+    mutex_unlock(&ephdata->mode_lock);
     if (ret_val) {
         dev_err(dev, "The firmware update failed(%d)\n", ret_val);
         //goto err_free_irq;
@@ -2733,10 +2452,16 @@ static int eph_probe(struct comms_device *commsdevice, const struct comms_device
     {
         goto err_free_irq;
     }
+    ret_val = eph_sysfs_mem_access_init(ephdata);
+    if (ret_val)
+        goto err_free_irq;
+    attrs_created = true;
+    enable_irq(ephdata->chg_irq);
     ret_val = eph_input_device_initialize(ephdata);
     if (ret_val) {
         goto err_free_irq;
     }
+    input_registered = true;
 
 #if defined(CONFIG_DRM)
     ephdata->power_wq = alloc_workqueue(
@@ -2766,21 +2491,30 @@ static int eph_probe(struct comms_device *commsdevice, const struct comms_device
     //     dev_info(dev, "success register panel bridge\n");
 #endif
 
-    /* default disable gesture */
-    ephdata->gesture_mode = 0x0;
-    ephdata->gesture_wakeup_enable = false;
-
-    ephdata->lp = false;
-    ephdata->irq_wake = false;
-
-    gephdata = ephdata;
-    eswin_charger_init();
+    mutex_lock(&ephdata->mode_lock);
+    ephdata->initialized = true;
+    mutex_unlock(&ephdata->mode_lock);
+    ret_val = eswin_charger_init(ephdata);
+    if (ret_val)
+        dev_warn(dev, "Charger notifier unavailable: %d\n", ret_val);
     eph_heartbeat_start(ephdata);
 
     dev_info(dev, "%s <\n", __func__);
     return 0;
 
 err_free_irq:
+#if defined(CONFIG_DRM)
+    if (ephdata->notifier_cookie)
+        panel_event_notifier_unregister(ephdata->notifier_cookie);
+    if (ephdata->power_wq)
+        destroy_workqueue(ephdata->power_wq);
+#endif
+    if (input_registered)
+        eph_unregister_input_device(ephdata);
+    if (attrs_created)
+        eph_sysfs_mem_access_remove(ephdata);
+    if (fw_attrs_created)
+        sysfs_remove_group(&commsdevice->dev.kobj, &eph_fw_attr_group);
     if (ephdata->chg_irq)
     {
         free_irq(ephdata->chg_irq, ephdata);
@@ -2811,6 +2545,10 @@ static void eph_remove(struct comms_device *commsdevice)
     struct eph_data *ephdata = eph_comms_driver_data_get(commsdevice);
     dev_info(&commsdevice->dev, "%s >\n", __func__);
 
+    mutex_lock(&ephdata->mode_lock);
+    ephdata->initialized = false;
+    mutex_unlock(&ephdata->mode_lock);
+    eswin_charger_remove(ephdata);
     eph_heartbeat_stop(ephdata);
 
     sysfs_remove_group(&commsdevice->dev.kobj, &eph_fw_attr_group);
@@ -2819,9 +2557,11 @@ static void eph_remove(struct comms_device *commsdevice)
 #if defined(CONFIG_DRM)
     if (ephdata->notifier_cookie)
 			panel_event_notifier_unregister(ephdata->notifier_cookie);
-// #elif defined(CONFIG_BOARD_CLOUDRIPPER)
-//     eph_unregister_panel_bridge(ephdata);
+    if (ephdata->power_wq)
+        destroy_workqueue(ephdata->power_wq);
 #endif
+
+    eph_unregister_input_device(ephdata);
 
     if (ephdata->chg_irq)
     {
@@ -2839,7 +2579,6 @@ static void eph_remove(struct comms_device *commsdevice)
     {
         regulator_put(ephdata->reg_vdd);
     }
-    eph_unregister_input_device(ephdata);
 
 #if (ESWIN_EPH861X_SPI && ESWIN_EPH861X_SPI_USE_DMA)
     dma_pool_free(pool_rx, ephdata->comms_receive_buf, ephdata->comms_dma_handle_rx);
@@ -2886,24 +2625,69 @@ static int eph_enable_report_event(struct device *dev, int enable)
     return ret;
 }
 
-static int eph_deep_mode_enable(struct eph_data *ephdata, int enable)
+#endif /* CONFIG_DRM report control */
+
+static int eph_normal_mode_power_off(struct eph_data *ephdata)
 {
-    int ret_val;
-    u8 cfg[] = {0x08, 0x05, 0x00, 0x00, 0x00, 0x16, 0x00, 0x02};
-    u16 length = (sizeof(cfg)/sizeof(cfg[0]));
+    struct regulator_bulk_data supplies[] = {
+        { .supply = "vdd", .consumer = ephdata->reg_vdd },
+        { .supply = "avdd", .consumer = ephdata->reg_avdd },
+    };
+    int ret;
 
-    if (enable == 1)
-        cfg[7] = 0x02;
-    else if (enable == 0)
-        cfg[7] = 0x0;
+    lockdep_assert_held(&ephdata->mode_lock);
+    lockdep_assert_held(&ephdata->comms_mutex);
+    if (ephdata->supplies_disabled)
+        return 0;
+    if (!ephdata->reg_vdd || !ephdata->reg_avdd)
+        return -ENODEV;
 
-    mutex_lock(&ephdata->comms_mutex);
-    ret_val = eph_write_control_config(ephdata, length, &cfg[0]);
-    mutex_unlock(&ephdata->comms_mutex);
-    dev_info(&ephdata->commsdevice->dev, "eph_deep_mode_enable enable = %d, ret_val = %d", enable, ret_val);
-    return ret_val;
+    /* RESET also holds the IC quiescent if another consumer keeps a rail on. */
+    gpio_set_value(ephdata->ephplatform->gpio_reset, GPIO_RESET_YES_LOW);
+    ret = regulator_bulk_disable(ARRAY_SIZE(supplies), supplies);
+    if (ret)
+        return ret;
+    ephdata->supplies_disabled = true;
+    ephdata->supplies_disabled_at = ktime_get_boottime();
+    dev_dbg(&ephdata->commsdevice->dev, "Controller held in reset; supply votes dropped\n");
+    return 0;
 }
 
+static int eph_normal_mode_power_on(struct eph_data *ephdata)
+{
+    struct regulator_bulk_data supplies[] = {
+        { .supply = "vdd", .consumer = ephdata->reg_vdd },
+        { .supply = "avdd", .consumer = ephdata->reg_avdd },
+    };
+    s64 remaining_ms;
+    int ret;
+
+    lockdep_assert_held(&ephdata->mode_lock);
+    lockdep_assert_held(&ephdata->comms_mutex);
+    if (!ephdata->reg_vdd || !ephdata->reg_avdd)
+        return -ENODEV;
+    if (ephdata->supplies_disabled) {
+        /* Include time actually spent suspended; rapid off/on and recovery
+         * still need the IC's minimum 100 ms discharge interval.
+         */
+        remaining_ms = ktime_ms_delta(ktime_add_ms(ephdata->supplies_disabled_at, 100),
+                                      ktime_get_boottime());
+        if (remaining_ms > 0)
+            msleep(remaining_ms + 1);
+        ret = regulator_bulk_enable(ARRAY_SIZE(supplies), supplies);
+        if (ret)
+            return ret;
+        ephdata->supplies_disabled = false;
+    }
+    /* Keep RESET asserted for the specified supply-to-reset interval. The
+     * subsequent CHG/device-info handshake checks firmware readiness.
+     */
+    msleep(EPH_REGULATOR_DELAY);
+    gpio_set_value(ephdata->ephplatform->gpio_reset, GPIO_RESET_NO_HIGH);
+    return 0;
+}
+
+#if defined(CONFIG_DRM)
 static int __eph_dev_enter_lp_mode(struct eph_data *ephdata)
 {
     int ret_val = 0;
@@ -2920,11 +2704,12 @@ static int __eph_dev_enter_lp_mode(struct eph_data *ephdata)
             enable_irq_wake(ephdata->chg_irq);
             ephdata->irq_wake = true;
             ret_val = eph_gesture_mode_set(ephdata, ephdata->gesture_mode | BIT(0));
-	    } else { 
-            // set tic in deep mode
+        } else {
             disable_irq(ephdata->chg_irq);
-	        ret_val = eph_deep_mode_enable(ephdata, 1);
-	    }
+            mutex_lock(&ephdata->comms_mutex);
+            ret_val = eph_normal_mode_power_off(ephdata);
+            mutex_unlock(&ephdata->comms_mutex);
+        }
 
         ephdata->lp = true;
     }
@@ -2935,15 +2720,107 @@ static int __eph_dev_enter_lp_mode(struct eph_data *ephdata)
     return ret_val;
 }
 
+#endif /* CONFIG_DRM low-power entry */
+
+/* The caller holds mode_lock, disables the controller IRQ, and holds the bus. */
+static int eph_reset_normal_mode(struct eph_data *ephdata, bool power_cycle,
+                                 bool from_deep_sleep)
+{
+    u8 chg;
+    int ret;
+    s64 remaining_us;
+    ktime_t deadline;
+
+    lockdep_assert_held(&ephdata->comms_mutex);
+    /* Include power sequencing, queued reports and device-info in one budget.
+     * Deep suspend drops the supplies with RESET asserted; gesture mode keeps
+     * its supply votes and only needs RESET. A failure gets one bounded retry.
+     */
+    deadline = ktime_add_ms(ktime_get(), power_cycle ? 1000 : 600);
+    ephdata->comms_deadline = deadline;
+    if (power_cycle) {
+        ret = eph_normal_mode_power_off(ephdata);
+        if (ret)
+            goto out;
+    }
+    if (power_cycle || from_deep_sleep) {
+        ret = eph_normal_mode_power_on(ephdata);
+        if (ret)
+            goto out;
+    } else {
+        eph_reset_device(ephdata);
+    }
+
+    remaining_us = ktime_us_delta(deadline, ktime_get());
+    if (remaining_us <= 0) {
+        ret = -ETIMEDOUT;
+        goto out;
+    }
+    ret = read_poll_timeout(eph_read_chg, chg, !chg, 1000, remaining_us,
+                            false, ephdata);
+    if (ret)
+        goto out;
+
+    while (!eph_read_chg(ephdata)) {
+        if (ktime_after(ktime_get(), deadline)) {
+            ret = -ETIMEDOUT;
+            goto out;
+        }
+        memset(ephdata->comms_receive_buf, 0, COMMS_BUF_SIZE);
+        ret = eph_read_report(ephdata, ephdata->comms_receive_buf);
+        if (ret)
+            goto out;
+        ret = eph_handle_report(ephdata, ephdata->comms_receive_buf);
+        if (ret)
+            goto out;
+    }
+    /* The device-info helper already handles intervening report frames. Do not
+     * restart its entire response budget several times while holding both locks.
+     */
+    ret = eph_read_device_information(ephdata);
+    if (!ret && (ephdata->ephdeviceinfo.application_version_major ||
+                 ephdata->ephdeviceinfo.application_version_minor)) {
+        ephdata->in_bootloader = false;
+        ret = eph_apply_mode_settings(ephdata);
+    }
+    else if (!ret)
+        ret = -EIO;
+out:
+    ephdata->comms_deadline = 0;
+    return ret;
+}
+
+/* An active reset and a resume share the same bounded recovery and setting replay. */
+static int eph_reset_active(struct eph_data *ephdata)
+{
+    int ret;
+
+    lockdep_assert_held(&ephdata->mode_lock);
+    disable_irq(ephdata->chg_irq);
+    mutex_lock(&ephdata->comms_mutex);
+    ret = eph_reset_normal_mode(ephdata, false, false);
+    if (ret)
+        ret = eph_reset_normal_mode(ephdata, true, false);
+    mutex_unlock(&ephdata->comms_mutex);
+    if (ret)
+        ephdata->lp = true; /* Keep IRQ disabled; a later panel resume can retry. */
+    else
+        enable_irq(ephdata->chg_irq);
+    return ret;
+}
+
+#if defined(CONFIG_DRM)
 static int __eph_dev_enter_normal_mode(struct eph_data *ephdata)
 {
     int ret_val = 0;
+    bool from_deep_sleep;
     struct device *dev = &ephdata->commsdevice->dev;
 
     if (!ephdata->lp)
         return 0;
 
     if (ephdata->lp) {
+        from_deep_sleep = !ephdata->irq_wake;
         /*
          * Leave the mode the controller entered: gesture_wakeup may have
          * changed the wanted gestures while the panel was off.
@@ -2951,59 +2828,31 @@ static int __eph_dev_enter_normal_mode(struct eph_data *ephdata)
         if (ephdata->irq_wake) {
             disable_irq_wake(ephdata->chg_irq);
             ephdata->irq_wake = false;
-#if 0
-            ret_val = eph_gesture_mode_set(ephdata, ephdata->gesture_mode & (~BIT(0)));
-	        if (ret_val)
-                dev_err(dev, "gesture mode set failed %d\n", ret_val);
-            if (eph_enable_report_event(dev, 1)) {
-                dev_warn(dev, "disable ic report ev faild\n");
-            }
-#else
-            eph_reset_device(ephdata);
+            disable_irq(ephdata->chg_irq);
             ephdata->gesture_mode &= (~BIT(0));
-#endif
-	    } else {
-                // wake up tic
-                ret_val = eph_deep_mode_enable(ephdata, 0);
-                msleep(5);
-                eph_clear_all_host_touch_slots(ephdata);
-                eph_reset_device(ephdata);
-                enable_irq(ephdata->chg_irq);
-	    }
-        // wait tic wake
-        msleep(200);
-
-	    if (ephdata->charger_mode) {
-            ret_val = eswin_ts_enable_charger_mode(dev, ephdata->charger_mode);
-	        if (ret_val)
-                dev_err(dev, "charger mode set failed %d\n", ret_val);
-	    }
-	    if (ephdata->glove_mode) {
-	        ret_val = eswin_ts_enable_glove_mode(dev, ephdata->glove_mode);
-	        if (ret_val)
-                dev_err(dev, "glove mode set failed %d\n", ret_val);
-	    }
-
-        ephdata->edge_suppresion = 0;
-        ret_val = eswin_ts_enable_edge_suppresion(dev, ephdata->edge_suppresion);
-        if (ret_val) {
-            dev_err(dev, "edge_suppresion mode set failed ret_val = %d, will recovery tic\n", ret_val);
-            eph_normal_mode_recovery_device(ephdata);
-            dev_err(dev, "tic recovery done!\n");
-            if (ephdata->charger_mode) {
-                ret_val = eswin_ts_enable_charger_mode(dev, ephdata->charger_mode);
-                if (ret_val)
-                    dev_err(dev, "charger mode set failed %d\n", ret_val);
-            }
-            if (ephdata->glove_mode) {
-                ret_val = eswin_ts_enable_glove_mode(dev, ephdata->glove_mode);
-                if (ret_val)
-                    dev_err(dev, "glove mode set failed %d\n", ret_val);
-            }
-
-            ephdata->edge_suppresion = 0;
-            ret_val = eswin_ts_enable_edge_suppresion(dev, ephdata->edge_suppresion);
+        } else {
+            eph_clear_all_host_touch_slots(ephdata);
         }
+        /*
+         * Reset asserts CHG before the controller can answer SPI reads.
+         * Drain the threaded handler before taking comms_mutex, then keep
+         * both interrupt reads and control transfers out of the reset and
+         * bounded readiness handshake. Deep sleep already
+         * disabled the IRQ; gesture mode leaves it enabled for wakeup.
+         */
+        mutex_lock(&ephdata->comms_mutex);
+        ret_val = eph_reset_normal_mode(ephdata, false, from_deep_sleep);
+        if (ret_val) {
+            dev_warn(dev, "Reset wake failed (%d), retrying recovery once\n", ret_val);
+            ret_val = eph_reset_normal_mode(ephdata, true, false);
+        }
+        mutex_unlock(&ephdata->comms_mutex);
+        if (ret_val) {
+            /* Keep lp and the disabled IRQ for a later resume retry. */
+            dev_err(dev, "Controller did not become ready after reset (%d)\n", ret_val);
+            return ret_val;
+        }
+        enable_irq(ephdata->chg_irq);
 
         ephdata->lp = false;
     }

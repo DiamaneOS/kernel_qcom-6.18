@@ -21,6 +21,7 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/delay.h>
+#include <linux/iopoll.h>
 #include <linux/spi/spi.h>
 #include <linux/dma-mapping.h>
 
@@ -131,61 +132,50 @@ int __eph_spi_write(struct eph_data *ephdata, u16 len, const u8 *val)
 }
 
 
-int eph_comms_read(struct eph_data *ephdata, u16 len, u8 *buf)
+/* Command replies need not assert CHG. Poll their SPI response instead of
+ * treating an empty FIFO after a startup report as an immediate transfer error.
+ */
+static int eph_spi_read_response(struct eph_data *ephdata, u16 len, u8 *buf,
+                                 bool *response_ready)
 {
-    int ret_val = 0;
+    int ret = __eph_spi_read(ephdata, len, buf);
 
-    if ((SPI_APP_BUF_SIZE_READ) < len)
-    {
-        dev_err(&ephdata->commsdevice->dev, "Error reading from spi: length greater than buffer size(%d)", len);
-        return -ENOMEM;
-    }
-
-    ret_val = __eph_spi_read(ephdata,
-                             len,
-                             buf);
-
-    if (ret_val)
-    {
-        dev_err(&ephdata->commsdevice->dev, "Error occured(%d)", ret_val);
-        return ret_val;
-    }
-
-    /* check valid read - (not a null or reserved message) */
-    if (true == eph_is_report_null_report(buf) || (TLV_RESERVED_INVALID_TYPE == buf[0]))
-    {
-        /* Device response was not ready, try again */
-        /* wait a delay for TIC to be ready - Additional delay as device was not previously ready */
-        udelay(200);
-
-        /* do a read */
-        ret_val = __eph_spi_read(ephdata,
-                                 len,
-                                 buf);
-
-        if (ret_val)
-        {
-            return ret_val;
-        }
-
-        dev_info(&ephdata->commsdevice->dev,
-                "ESWIN SPI READ RETRY------>type: %u length_LSB: %u length_MSB: %u data1: %u data2: %u data3: %u data4: %u ",
-                buf[0], buf[1],buf[2],buf[3],buf[4],buf[5],buf[6]);
-
-        if (true == eph_is_report_null_report(buf) || (TLV_RESERVED_INVALID_TYPE == buf[0]))
-        {
-            dev_err(&ephdata->commsdevice->dev,
-                    "Failed to read message --- No response type: %u ",
-                    buf[0]);
-            return -EIO;
-        }
-
-    }   
-
-
-    return ret_val;
+    *response_ready = !ret && !eph_is_report_null_report(buf) &&
+                      buf[0] != TLV_RESERVED_INVALID_TYPE;
+    return ret;
 }
 
+int eph_comms_read(struct eph_data *ephdata, u16 len, u8 *buf)
+{
+    bool response_ready;
+    int ret, timeout;
+    s64 timeout_us = 500000;
+
+    if (len > SPI_APP_BUF_SIZE_READ)
+        return -ENOMEM;
+
+    /* A resume handshake shares one deadline across all of its SPI reads. */
+    if (ephdata->comms_deadline) {
+        timeout_us = min_t(s64, timeout_us,
+                          ktime_us_delta(ephdata->comms_deadline, ktime_get()));
+        if (timeout_us <= 0)
+            return -ETIMEDOUT;
+    }
+
+    /* A real transport error stops immediately; only an empty response retries. */
+    timeout = read_poll_timeout(eph_spi_read_response, ret, ret || response_ready,
+                               200, timeout_us, false, ephdata, len, buf,
+                               &response_ready);
+    if (timeout) {
+        dev_err(&ephdata->commsdevice->dev,
+                "SPI response timed out len=%u data=%*ph\n",
+                len, min_t(u16, len, 7), buf);
+        return timeout;
+    }
+    if (ret)
+        dev_err(&ephdata->commsdevice->dev, "Error reading SPI (%d)\n", ret);
+    return ret;
+}
 
 int eph_comms_write(struct eph_data *ephdata, u16 len, u8 *buf)
 {

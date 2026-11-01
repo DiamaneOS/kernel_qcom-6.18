@@ -73,7 +73,7 @@ int eph_check_ic_update(struct eph_data *ephdata, const struct firmware *fw)
     struct eph_device_info *dev_info;
     struct device *dev = &ephdata->commsdevice->dev;
 
-    if (!fw)
+    if (!fw || fw->size < sizeof(fw_info))
         return -EINVAL;
 
     dev_info = &ephdata->ephdeviceinfo;
@@ -130,7 +130,7 @@ int eph_update_file_name(struct device *dev,
     char *file_name_tmp;
 
     /* Simple sanity check */
-    if (in_str_len > 64)
+    if (!in_str_len || in_str_len > 64)
     {
         dev_warn(dev, "File name too long\n");
         return -EINVAL;
@@ -361,6 +361,8 @@ void eph_regulator_enable(struct eph_data *ephdata)
         return;
     }
 
+    /* Arm before power-on: the first report may arrive during startup delays. */
+    reinit_completion(&ephdata->chg_completion);
     gpio_set_value(ephdata->ephplatform->gpio_reset, GPIO_RESET_YES_LOW);
 
     ret_val = regulator_enable(ephdata->reg_vdd);
@@ -383,7 +385,6 @@ void eph_regulator_enable(struct eph_data *ephdata)
     /* Delay to prevent poor signals after power up. This will allow device time to "settle" before baseline */
     msleep(EPH_POWERON_DELAY);
 retry_wait:
-    reinit_completion(&ephdata->chg_completion);
     ephdata->in_bootloader = true;
     ret_val = eph_wait_for_completion(ephdata, &ephdata->chg_completion, EPH_POWERON_DELAY, "CHG");
     if (ret_val == -EINTR)

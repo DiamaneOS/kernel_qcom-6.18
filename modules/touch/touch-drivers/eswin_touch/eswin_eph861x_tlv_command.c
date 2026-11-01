@@ -17,7 +17,7 @@
 
 
 
-#include <uapi/asm-generic/errno-base.h>
+#include <linux/errno.h>
 #include <linux/kernel.h>
 #include <uapi/linux/input-event-codes.h>
 
@@ -120,7 +120,14 @@ int eph_write_control_config(struct eph_data *ephdata, u16 len, u8 *buf)
     bool type_match = false;
     u8 retry = 0;
     /* calculate this before CRC adjustment */
-    u16 payload_length = (len - (TLV_HEADER_SIZE + TLV_WRITE_HEADER_SIZE));
+    u16 payload_length;
+
+    if (!buf || len < TLV_HEADER_SIZE + TLV_WRITE_HEADER_SIZE)
+        return -EINVAL;
+    if (len > COMMS_BUF_WRITE_SIZE -
+            (ephdata->ephdeviceinfo.protocol_version > CONFIG_ESWIN_TOUCH_PROTOCOL_VERSION_2))
+        return -EMSGSIZE;
+    payload_length = len - (TLV_HEADER_SIZE + TLV_WRITE_HEADER_SIZE);
 
     /* wait a delay for TIC to be ready */
     udelay(50);
@@ -171,16 +178,20 @@ int eph_write_control_config(struct eph_data *ephdata, u16 len, u8 *buf)
             /* Only copy the amount for the expected message type and its storage */
             memcpy((u8*)&response, ephdata->comms_receive_buf, sizeof(struct eph_device_control_config_write_response));
 
-            /* check bytes written matches what was sent */
-            if (le16_to_cpu(response.bytes_written) != payload_length)
-            {
-                dev_err(&ephdata->commsdevice->dev, "Error writing to control config bytes written did not match what was sent");
-                dev_err(&ephdata->commsdevice->dev, 
-                        "Sent the following number of bytes (%d) but (%d) bytes where written", 
-                        payload_length, le16_to_cpu(response.bytes_written));
-            }
-
             type_match = (TLV_CONFIG_DATA_WRITE ==  response.header.type) || (TLV_CONTROL_DATA_WRITE ==  response.header.type);    
+
+            /* Unsolicited reports are not control-write acknowledgements. */
+            if (type_match) {
+                if (le16_to_cpu(response.header.length) < sizeof(response.bytes_written))
+                    return -EPROTO;
+
+                if (le16_to_cpu(response.bytes_written) != payload_length) {
+                    dev_err(&ephdata->commsdevice->dev,
+                            "Control write acknowledged %u bytes, expected %u\n",
+                            le16_to_cpu(response.bytes_written), payload_length);
+                    return -EIO;
+                }
+            }
 
             if (type_match == false) {
                 ret_val = eph_handle_report(ephdata, ephdata->comms_receive_buf);

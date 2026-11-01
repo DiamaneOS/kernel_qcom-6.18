@@ -17,7 +17,7 @@
 
 
 
-#include <uapi/asm-generic/errno-base.h>
+#include <linux/errno.h>
 #include <linux/kernel.h>
 #include <uapi/linux/input-event-codes.h>
 
@@ -69,6 +69,9 @@ int eph_comms_two_stage_read(struct eph_data *ephdata, u8 *buf)
         /* if device isnt connected then this can overflow without the saturation */
         length = (u16)min((int)((int)le16_to_cpu(tlvheader.length) + TLV_HEADER_SIZE), 0xFFFF);
 
+        if (length > COMMS_BUF_SIZE)
+            return -EMSGSIZE;
+
         /* wait a delay for TIC to be ready */
         udelay(50);
 #if 0
@@ -88,15 +91,16 @@ int eph_comms_two_stage_read(struct eph_data *ephdata, u8 *buf)
         {
             dev_err(&ephdata->commsdevice->dev, "eph_comms_two_stage_read: Failed to read payload: (%d)", ret_val);
         } else {
-            // bugfix: spi clk low when start to transfer data
-	        if ((buf[0] == buf[0+TLV_HEADER_SIZE]) && (buf[1] == buf[1+TLV_HEADER_SIZE]) && (buf[2] == buf[2+TLV_HEADER_SIZE])) {
-                uint16_t data_length = buf[TLV_LENGTH_FIELD] | ((uint16_t)buf[TLV_LENGTH_FIELD+1] << 8);
-		            for (int i = 0; i < data_length; i++) {
-                        buf[i] = buf[i+TLV_HEADER_SIZE];
-		            }
-		    ret_val = eph_comms_read(ephdata, TLV_HEADER_SIZE, &buf[data_length]);
-		    //dev_info(&ephdata->commsdevice->dev, "glued the data %d %d %d", buf[0], buf[1], buf[2]);
-	        }
+            struct tlv_header *received = (struct tlv_header *)buf;
+
+            /* Both stages describe the same frame. Payload bytes may repeat
+             * the header; that is not evidence of extra transport framing.
+             * Do not shift the payload or clock out speculative tail bytes.
+             */
+            if (received->type != tlvheader.type ||
+                received->length != tlvheader.length) {
+                return -EPROTO;
+            }
 	    }
     }
     else
