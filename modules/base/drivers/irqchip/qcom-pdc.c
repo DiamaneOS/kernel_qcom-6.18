@@ -226,8 +226,33 @@ static void pdc_enable_intr(struct irq_data *d, bool on)
 
 static void qcom_pdc_gic_disable(struct irq_data *d)
 {
-	pdc_enable_intr(d, false);
+	bool pending = true;
+	bool clear_transient;
+
+	if (pdc_version < PDC_VERSION_3_2 ||
+	    !(irqd_get_trigger_type(d) & IRQ_TYPE_EDGE_BOTH)) {
+		pdc_enable_intr(d, false);
+		irq_chip_disable_parent(d);
+		return;
+	}
+
+	/*
+	 * Mask delivery before gating the source so a gate-induced transition
+	 * cannot be queued by genirq for replay. The PDC must still be disabled:
+	 * masking only the parent leaves the pin armed for wakeup and shutdown.
+	 * Preserve events pending at the snapshot, including those arriving
+	 * after parent disable, and preserve unknown parent state.
+	 * Events arriving after this snapshot are inside the disable transition;
+	 * they cannot be distinguished from the gate-induced transition.
+	 */
 	irq_chip_disable_parent(d);
+	clear_transient = !irq_chip_get_parent_state(d, IRQCHIP_STATE_PENDING,
+						    &pending) && !pending;
+	pdc_enable_intr(d, false);
+	/* Complete the source gate write before clearing parent pending state. */
+	readl(pdc_base + IRQ_i_CFG + d->hwirq * sizeof(u32));
+	if (clear_transient)
+		irq_chip_set_parent_state(d, IRQCHIP_STATE_PENDING, false);
 }
 
 static void qcom_pdc_gic_enable(struct irq_data *d)
