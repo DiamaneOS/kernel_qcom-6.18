@@ -401,18 +401,25 @@ static int pdc_suspend_notifier(struct notifier_block *nb,
 static void pdc_resume(void)
 {
 	int i;
-	u32 config;
+	u32 config, expected;
 
 	if (!pdc_save_restore)
 		return;
 
 	for (i = 0; i < PDC_MAX_GPIO_IRQS; i++) {
 		if (pdc_irq_config[i].set) {
-			pdc_reg_write(IRQ_i_CFG, i, pdc_irq_config[i].type);
+			expected = pdc_irq_config[i].type;
+			/* Restore current enable state, not the bit cached by set_type(). */
+			if (pdc_version >= PDC_VERSION_3_2) {
+				expected &= ~BIT(IRQ_i_CFG_IRQ_ENABLE);
+				if (pdc_irq_config[i].enabled)
+					expected |= BIT(IRQ_i_CFG_IRQ_ENABLE);
+			}
+			pdc_reg_write(IRQ_i_CFG, i, expected);
 
 			do {
 				config = pdc_reg_read(IRQ_i_CFG, i);
-				if (config == pdc_irq_config[i].type)
+				if (config == expected)
 					break;
 				udelay(5);
 			} while (1);
