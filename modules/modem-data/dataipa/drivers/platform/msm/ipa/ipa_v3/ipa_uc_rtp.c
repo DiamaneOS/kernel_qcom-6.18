@@ -814,7 +814,7 @@ int ipa3_smmu_unmap_buff(uint64_t bitstream_buffer_fd, uint64_t meta_buff_fd, in
 	}
 
 	if (map_table->sgt[0] !=  NULL) {
-		dma_buf_unmap_attachment(map_table->attachment[0],
+		dma_buf_unmap_attachment_unlocked(map_table->attachment[0],
 			map_table->sgt[0], DMA_DIR);
 	}
 
@@ -822,7 +822,7 @@ int ipa3_smmu_unmap_buff(uint64_t bitstream_buffer_fd, uint64_t meta_buff_fd, in
 	dma_buf_put(map_table->dma_buf_list[0]);
 	if (bitstream_buffer_fd != meta_buff_fd) {
 		if (map_table->sgt[1] !=  NULL) {
-			dma_buf_unmap_attachment(map_table->attachment[1],
+			dma_buf_unmap_attachment_unlocked(map_table->attachment[1],
 				map_table->sgt[1], DMA_DIR);
 		}
 		dma_buf_detach(map_table->dma_buf_list[1], map_table->attachment[1]);
@@ -958,7 +958,7 @@ int ipa3_send_bitstream_buff_info(struct bitstream_buffers *data)
 		}
 
 		if (!map_table->sgt[0]) {
-			sgt = dma_buf_map_attachment(map_table->attachment[0], DMA_DIR);
+			sgt = dma_buf_map_attachment_unlocked(map_table->attachment[0], DMA_DIR);
 			if (IS_ERR_OR_NULL(sgt)) {
 				dma_buf_put(dmab);
 				IPAERR("dma buf map attachment failed\n");
@@ -969,7 +969,7 @@ int ipa3_send_bitstream_buff_info(struct bitstream_buffers *data)
 
 		if (data->bs_info[index].meta_buff_fd != data->bs_info[index].buff_fd) {
 			if (!map_table->sgt[1]) {
-				sgt = dma_buf_map_attachment(map_table->attachment[1], DMA_DIR);
+				sgt = dma_buf_map_attachment_unlocked(map_table->attachment[1], DMA_DIR);
 				if (IS_ERR_OR_NULL(sgt)) {
 					dma_buf_detach(map_table->dma_buf_list[0],
 						map_table->attachment[0]);

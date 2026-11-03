@@ -574,7 +574,7 @@ static int inline cam_subdev_list_cmp(struct cam_subdev *entry_1, struct cam_sub
 int cam_compat_util_get_dmabuf_va(struct dma_buf *dmabuf, uintptr_t *vaddr)
 {
 	struct iosys_map mapping = {0};
-	int error_code = dma_buf_vmap(dmabuf, &mapping);
+	int error_code = dma_buf_vmap_unlocked(dmabuf, &mapping);
 
 	if (error_code) {
 		*vaddr = 0;
@@ -593,14 +593,14 @@ void cam_compat_util_put_dmabuf_va(struct dma_buf *dmabuf, void *vaddr)
 {
 	struct iosys_map mapping = IOSYS_MAP_INIT_VADDR(vaddr);
 
-	dma_buf_vunmap(dmabuf, &mapping);
+	dma_buf_vunmap_unlocked(dmabuf, &mapping);
 }
 
 #elif (KERNEL_VERSION(5, 15, 0) <= LINUX_VERSION_CODE)
 int cam_compat_util_get_dmabuf_va(struct dma_buf *dmabuf, uintptr_t *vaddr)
 {
 	struct dma_buf_map mapping;
-	int error_code = dma_buf_vmap(dmabuf, &mapping);
+	int error_code = dma_buf_vmap_unlocked(dmabuf, &mapping);
 
 	if (error_code) {
 		*vaddr = 0;
@@ -619,14 +619,14 @@ void cam_compat_util_put_dmabuf_va(struct dma_buf *dmabuf, void *vaddr)
 {
 	struct dma_buf_map mapping = DMA_BUF_MAP_INIT_VADDR(vaddr);
 
-	dma_buf_vunmap(dmabuf, &mapping);
+	dma_buf_vunmap_unlocked(dmabuf, &mapping);
 }
 
 #else
 int cam_compat_util_get_dmabuf_va(struct dma_buf *dmabuf, uintptr_t *vaddr)
 {
 	int error_code = 0;
-	void *addr = dma_buf_vmap(dmabuf);
+	void *addr = dma_buf_vmap_unlocked(dmabuf);
 
 	if (!addr) {
 		*vaddr = 0;
@@ -640,7 +640,7 @@ int cam_compat_util_get_dmabuf_va(struct dma_buf *dmabuf, uintptr_t *vaddr)
 
 void cam_compat_util_put_dmabuf_va(struct dma_buf *dmabuf, void *vaddr)
 {
-	dma_buf_vunmap(dmabuf, vaddr);
+	dma_buf_vunmap_unlocked(dmabuf, vaddr);
 }
 #endif
 

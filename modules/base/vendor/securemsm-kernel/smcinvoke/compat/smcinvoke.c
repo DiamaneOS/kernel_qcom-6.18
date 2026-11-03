@@ -890,7 +890,7 @@ static void del_mem_map_obj_locked(struct kref *kref)
 		dma_buf_unmap_attachment_unlocked(mem_obj->buf_attach,
 				mem_obj->sgt, DMA_BIDIRECTIONAL);
 #else
-		dma_buf_unmap_attachment(mem_obj->buf_attach,
+		dma_buf_unmap_attachment_unlocked(mem_obj->buf_attach,
 				mem_obj->sgt, DMA_BIDIRECTIONAL);
 #endif
 	}
@@ -1208,7 +1208,7 @@ static int32_t smcinvoke_map_mem_region_locked(struct smcinvoke_mem_obj* mem_obj
 #if (KERNEL_VERSION(6, 2, 0) <= LINUX_VERSION_CODE)
 		sgt = dma_buf_map_attachment_unlocked(buf_attach, DMA_BIDIRECTIONAL);
 #else
-		sgt = dma_buf_map_attachment(buf_attach, DMA_BIDIRECTIONAL);
+		sgt = dma_buf_map_attachment_unlocked(buf_attach, DMA_BIDIRECTIONAL);
 #endif
 		if (IS_ERR(sgt)) {
 			pr_err("mapping dma buffers failed, ret: %ld\n",

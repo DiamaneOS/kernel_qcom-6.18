@@ -799,7 +799,7 @@ static int sde_mdp_put_img(struct sde_mdp_img_data *data, bool rotator,
 		if (!data->skip_detach) {
 			data->srcp_attachment->dma_map_attrs |=
 				DMA_ATTR_DELAYED_UNMAP;
-			dma_buf_unmap_attachment(data->srcp_attachment,
+			dma_buf_unmap_attachment_unlocked(data->srcp_attachment,
 				data->srcp_table, dir);
 			dma_buf_detach(data->srcp_dma_buf,
 					data->srcp_attachment);
@@ -920,7 +920,7 @@ static int sde_mdp_map_buffer(struct sde_mdp_img_data *data, bool rotator,
 			}
 		}
 
-		sgt = dma_buf_map_attachment(
+		sgt = dma_buf_map_attachment_unlocked(
 				data->srcp_attachment, dir);
 		if (IS_ERR_OR_NULL(sgt) ||
 				IS_ERR_OR_NULL(sgt->sgl)) {
@@ -985,7 +985,7 @@ static int sde_mdp_map_buffer(struct sde_mdp_img_data *data, bool rotator,
 	return ret;
 
 err_unmap:
-	dma_buf_unmap_attachment(data->srcp_attachment, data->srcp_table, dir);
+	dma_buf_unmap_attachment_unlocked(data->srcp_attachment, data->srcp_table, dir);
 err_detach:
 	dma_buf_detach(data->srcp_dma_buf, data->srcp_attachment);
 	if (!(data->flags & SDE_ROT_EXT_DMA_BUF)) {

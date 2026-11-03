@@ -236,7 +236,7 @@ struct drm_gem_object *msm_gem_prime_import(struct drm_device *dev,
 	 * after the SID switch scm_call and will be handled during msm_gem_get_dma_addr
 	 */
 	if (!is_vmid_tvm && !is_vmid_cam_preview && !is_vmid_sec_display) {
-		sgt = dma_buf_map_attachment(attach, DMA_BIDIRECTIONAL);
+		sgt = dma_buf_map_attachment_unlocked(attach, DMA_BIDIRECTIONAL);
 		if (IS_ERR(sgt)) {
 			ret = PTR_ERR(sgt);
 			DRM_ERROR("dma_buf_map_attachment failure, err=%d\n", ret);
@@ -264,7 +264,7 @@ struct drm_gem_object *msm_gem_prime_import(struct drm_device *dev,
 
 fail_unmap:
 	if (sgt)
-		dma_buf_unmap_attachment(attach, sgt, DMA_BIDIRECTIONAL);
+		dma_buf_unmap_attachment_unlocked(attach, sgt, DMA_BIDIRECTIONAL);
 fail_detach:
 	dma_buf_detach(dma_buf, attach);
 fail_put:

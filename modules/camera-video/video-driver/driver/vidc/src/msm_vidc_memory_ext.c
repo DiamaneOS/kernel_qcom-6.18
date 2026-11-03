@@ -103,9 +103,9 @@ static int msm_vidc_memory_free_ext(struct msm_vidc_core *core, struct msm_vidc_
 
 	if (mem->kvaddr) {
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 15, 0))
-		dma_buf_vunmap(mem->dmabuf, mem->kvaddr);
+		dma_buf_vunmap_unlocked(mem->dmabuf, mem->kvaddr);
 #else
-		dma_buf_vunmap(mem->dmabuf, &mem->dmabuf_map);
+		dma_buf_vunmap_unlocked(mem->dmabuf, &mem->dmabuf_map);
 #endif
 		mem->kvaddr = NULL;
 		dma_buf_end_cpu_access(mem->dmabuf, DMA_BIDIRECTIONAL);
@@ -195,14 +195,14 @@ static int msm_vidc_memory_alloc_ext(struct msm_vidc_core *core, struct msm_vidc
 	 * Pineapple uses Kernel Version 5.18.x
 	 */
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 15, 0))
-		mem->kvaddr = dma_buf_vmap(mem->dmabuf);
+		mem->kvaddr = dma_buf_vmap_unlocked(mem->dmabuf);
 		if (!mem->kvaddr) {
 			d_vpr_e("%s: kernel map failed\n", __func__);
 			rc = -EIO;
 			goto error;
 		}
 #elif (LINUX_VERSION_CODE < KERNEL_VERSION(5, 16, 0))
-		rc = dma_buf_vmap(mem->dmabuf, &mem->dmabuf_map);
+		rc = dma_buf_vmap_unlocked(mem->dmabuf, &mem->dmabuf_map);
 		if (rc) {
 			d_vpr_e("%s: kernel map failed\n", __func__);
 			rc = -EIO;
@@ -210,7 +210,7 @@ static int msm_vidc_memory_alloc_ext(struct msm_vidc_core *core, struct msm_vidc
 		}
 		mem->kvaddr = mem->dmabuf_map.vaddr;
 #else
-		rc = dma_buf_vmap(mem->dmabuf, &mem->dmabuf_map);
+		rc = dma_buf_vmap_unlocked(mem->dmabuf, &mem->dmabuf_map);
 		if (rc) {
 			d_vpr_e("%s: kernel map failed\n", __func__);
 			rc = -EIO;

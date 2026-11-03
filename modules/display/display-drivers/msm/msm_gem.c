@@ -354,7 +354,7 @@ dma_addr_t msm_gem_get_dma_addr(struct drm_gem_object *obj)
 	struct sg_table *sgt;
 
 	if (!msm_obj->sgt) {
-		sgt = dma_buf_map_attachment(obj->import_attach,
+		sgt = dma_buf_map_attachment_unlocked(obj->import_attach,
 						DMA_BIDIRECTIONAL);
 		if (IS_ERR_OR_NULL(sgt)) {
 			DRM_ERROR("dma_buf_map_attachment failure, err=%ld\n",
@@ -477,7 +477,7 @@ static int msm_gem_get_iova_locked(struct drm_gem_object *obj,
 					 msm_obj->obj_dirty);
 
 			if (msm_obj->sgt)
-				dma_buf_unmap_attachment(obj->import_attach,
+				dma_buf_unmap_attachment_unlocked(obj->import_attach,
 					msm_obj->sgt, DMA_BIDIRECTIONAL);
 			dma_buf_detach(dmabuf, obj->import_attach);
 
@@ -741,12 +741,12 @@ static void *get_vaddr(struct drm_gem_object *obj, unsigned madv)
 			}
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
-			ret = dma_buf_vmap(obj->import_attach->dmabuf, &map);
+			ret = dma_buf_vmap_unlocked(obj->import_attach->dmabuf, &map);
 			if (ret)
 				goto fail;
 			msm_obj->vaddr = map.vaddr;
 #else
-			msm_obj->vaddr = dma_buf_vmap(obj->import_attach->dmabuf);
+			msm_obj->vaddr = dma_buf_vmap_unlocked(obj->import_attach->dmabuf);
 #endif
 		} else {
 			msm_obj->vaddr = vmap(pages, obj->size >> PAGE_SHIFT,
@@ -820,9 +820,9 @@ static void msm_gem_vunmap_locked(struct drm_gem_object *obj)
 
 	if (obj->import_attach) {
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
-		dma_buf_vunmap(obj->import_attach->dmabuf, &map);
+		dma_buf_vunmap_unlocked(obj->import_attach->dmabuf, &map);
 #else
-		dma_buf_vunmap(obj->import_attach->dmabuf, msm_obj->vaddr);
+		dma_buf_vunmap_unlocked(obj->import_attach->dmabuf, msm_obj->vaddr);
 #endif
 		if (obj->dev && obj->dev->dev && !dev_is_dma_coherent(obj->dev->dev))
 			dma_buf_end_cpu_access(obj->import_attach->dmabuf, DMA_BIDIRECTIONAL);
@@ -903,9 +903,9 @@ void msm_gem_free_object(struct drm_gem_object *obj)
 	if (obj->import_attach) {
 		if (msm_obj->vaddr)
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
-			dma_buf_vunmap(obj->import_attach->dmabuf, &map);
+			dma_buf_vunmap_unlocked(obj->import_attach->dmabuf, &map);
 #else
-			dma_buf_vunmap(obj->import_attach->dmabuf, msm_obj->vaddr);
+			dma_buf_vunmap_unlocked(obj->import_attach->dmabuf, msm_obj->vaddr);
 #endif
 
 		/* Don't drop the pages for imported dmabuf, as they are not
@@ -1169,7 +1169,7 @@ int msm_gem_delayed_import(struct drm_gem_object *obj)
 	 * dma_buf_map_attachment will call dma_map_sg for ion buffer
 	 * mapping, and iova will get mapped when the function returns.
 	 */
-	sgt = dma_buf_map_attachment(attach, DMA_BIDIRECTIONAL);
+	sgt = dma_buf_map_attachment_unlocked(attach, DMA_BIDIRECTIONAL);
 	if (IS_ERR(sgt)) {
 		ret = PTR_ERR(sgt);
 		DRM_ERROR("dma_buf_map_attachment failure, err=%d\n",

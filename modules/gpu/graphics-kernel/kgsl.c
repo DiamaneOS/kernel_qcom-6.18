@@ -359,7 +359,7 @@ static void kgsl_destroy_ion(struct kgsl_memdesc *memdesc)
 		dma_buf_unmap_attachment_unlocked(metadata->attach, memdesc->sgt,
 				DMA_BIDIRECTIONAL);
 #else
-		dma_buf_unmap_attachment(metadata->attach, memdesc->sgt, DMA_BIDIRECTIONAL);
+		dma_buf_unmap_attachment_unlocked(metadata->attach, memdesc->sgt, DMA_BIDIRECTIONAL);
 #endif
 		dma_buf_detach(metadata->dmabuf, metadata->attach);
 		dma_buf_put(metadata->dmabuf);
@@ -3467,7 +3467,7 @@ static int kgsl_setup_dma_buf(struct kgsl_device *device,
 #if (KERNEL_VERSION(6, 2, 0) <= LINUX_VERSION_CODE)
 	sg_table = dma_buf_map_attachment_unlocked(attach, DMA_BIDIRECTIONAL);
 #else
-	sg_table = dma_buf_map_attachment(attach, DMA_BIDIRECTIONAL);
+	sg_table = dma_buf_map_attachment_unlocked(attach, DMA_BIDIRECTIONAL);
 #endif
 	if (IS_ERR_OR_NULL(sg_table)) {
 		ret = PTR_ERR(sg_table);
@@ -3500,7 +3500,7 @@ out:
 #if (KERNEL_VERSION(6, 2, 0) <= LINUX_VERSION_CODE)
 			dma_buf_unmap_attachment_unlocked(attach, sg_table, DMA_BIDIRECTIONAL);
 #else
-			dma_buf_unmap_attachment(attach, sg_table, DMA_BIDIRECTIONAL);
+			dma_buf_unmap_attachment_unlocked(attach, sg_table, DMA_BIDIRECTIONAL);
 #endif
 		if (!IS_ERR_OR_NULL(attach))
 			dma_buf_detach(dmabuf, attach);

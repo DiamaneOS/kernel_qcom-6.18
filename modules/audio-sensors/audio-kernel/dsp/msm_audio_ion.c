@@ -118,7 +118,7 @@ static int msm_audio_ion_map_kernel(struct dma_buf *dma_buf,
 		goto exit;
 	}
 
-	rc = dma_buf_vmap(dma_buf, iosys_vmap);
+	rc = dma_buf_vmap_unlocked(dma_buf, iosys_vmap);
 	if (rc) {
 		pr_err("%s: kernel mapping of dma_buf failed\n",
 		       __func__);
@@ -185,7 +185,7 @@ static int msm_audio_dma_buf_map(struct dma_buf *dma_buf,
 	 * read buffer, hence the request is bi-directional
 	 * to accommodate both read and write mappings.
 	 */
-	alloc_data->table = dma_buf_map_attachment(alloc_data->attach,
+	alloc_data->table = dma_buf_map_attachment_unlocked(alloc_data->attach,
 				DMA_BIDIRECTIONAL);
 	if (IS_ERR(alloc_data->table)) {
 		rc = PTR_ERR(alloc_data->table);
@@ -246,7 +246,7 @@ static int msm_audio_dma_buf_unmap(struct dma_buf *dma_buf, struct msm_audio_ion
 
 		if (alloc_data->dma_buf == dma_buf) {
 			found = true;
-			dma_buf_unmap_attachment(alloc_data->attach,
+			dma_buf_unmap_attachment_unlocked(alloc_data->attach,
 						 alloc_data->table,
 						 DMA_BIDIRECTIONAL);
 
@@ -322,7 +322,7 @@ static int msm_audio_ion_unmap_kernel(struct dma_buf *dma_buf, struct msm_audio_
 		goto err;
 	}
 
-	dma_buf_vunmap(dma_buf, iosys_vmap);
+	dma_buf_vunmap_unlocked(dma_buf, iosys_vmap);
 
 	rc = dma_buf_end_cpu_access(dma_buf, DMA_BIDIRECTIONAL);
 	if (rc) {
