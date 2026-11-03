@@ -7,6 +7,10 @@
 #include <linux/string.h>
 #include <linux/types.h>
 #include <linux/slab.h>
+#include <linux/llist.h>
+#include <linux/mm.h>
+#include <linux/vmalloc.h>
+#include <linux/workqueue.h>
 #include <linux/timer.h>
 #include <linux/completion.h>
 #include <linux/module.h>
@@ -881,8 +885,25 @@ int cam_common_mem_kdup(void **dst,
 }
 EXPORT_SYMBOL(cam_common_mem_kdup);
 
+static LLIST_HEAD(cam_common_mem_deferred);
+
+static void cam_common_mem_free_work(struct work_struct *work)
+{
+	struct llist_node *node, *next;
+
+	llist_for_each_safe(node, next, llist_del_all(&cam_common_mem_deferred))
+		vfree(node);
+}
+static DECLARE_WORK(cam_common_mem_work, cam_common_mem_free_work);
+
+/* Many callers hold a spinlock and vfree() may sleep. Free those buffers from a worker. */
 void cam_common_mem_free(void *memory)
 {
+	if (is_vmalloc_addr(memory) && !preemptible()) {
+		if (llist_add((struct llist_node *)memory, &cam_common_mem_deferred))
+			schedule_work(&cam_common_mem_work);
+		return;
+	}
 	kvfree(memory);
 }
 EXPORT_SYMBOL(cam_common_mem_free);
