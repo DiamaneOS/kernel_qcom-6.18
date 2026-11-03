@@ -70,47 +70,33 @@ out:
 	return err;
 }
 
-static int ufs_qcom_phy_qmp_v4_init(struct phy *generic_phy)
+/*
+ * Clocks, supplies and the power domain are taken at probe. The UFS power path
+ * in the clock-ungate work, which I/O waits on, runs under the generic PHY mutex,
+ * so phy_init() under that mutex must not allocate or create sysfs or debugfs entries.
+ */
+static int ufs_qcom_phy_qmp_v4_get_resources(struct ufs_qcom_phy *phy_common)
 {
-	struct ufs_qcom_phy_qmp_v4 *phy = phy_get_drvdata(generic_phy);
-	struct ufs_qcom_phy *phy_common = &phy->common_cfg;
-	struct generic_pm_domain *genpd = NULL;
+	struct device *dev = phy_common->dev;
+	struct generic_pm_domain *genpd;
 	int err;
 
 	err = ufs_qcom_phy_init_clks(phy_common);
-	if (err) {
-		dev_err(phy_common->dev, "%s: ufs_qcom_phy_init_clks() failed %d\n",
-			__func__, err);
-		goto out;
-	}
+	if (err)
+		return dev_err_probe(dev, err, "%s: clocks failed\n", __func__);
 
 	err = ufs_qcom_phy_init_vregulators(phy_common);
-	if (err) {
-		dev_err(phy_common->dev, "%s: ufs_qcom_phy_init_vregulators() failed %d\n",
-			__func__, err);
-		goto out;
+	if (err)
+		return dev_err_probe(dev, err, "%s: supplies failed\n", __func__);
+
+	if (!phy_common->vdd_phy_gdsc.reg && dev->pm_domain) {
+		genpd = pd_to_genpd(dev->pm_domain);
+		genpd->flags |= GENPD_FLAG_ALWAYS_ON;
+		err = devm_pm_runtime_enable(dev);
+		if (err)
+			return err;
 	}
 
-	/* Optional */
-	ufs_qcom_phy_get_reset(phy_common);
-
-	if (!phy_common->vdd_phy_gdsc.reg) {
-		genpd = pd_to_genpd(phy_common->dev->pm_domain);
-		if (genpd) {
-			genpd->flags |= GENPD_FLAG_ALWAYS_ON;
-			pm_runtime_enable(phy_common->dev);
-			err = pm_runtime_get_sync(phy_common->dev);
-			if (err < 0)
-				dev_err(phy_common->dev, "failed to enable %s\n", genpd->name);
-		}
-	}
-
-out:
-	return err;
-}
-
-static int ufs_qcom_phy_qmp_v4_exit(struct phy *generic_phy)
-{
 	return 0;
 }
 
@@ -299,8 +285,6 @@ static void ufs_qcom_phy_qmp_v4_dbg_register_save(struct ufs_qcom_phy *phy)
 }
 
 static const struct phy_ops ufs_qcom_phy_qmp_v4_phy_ops = {
-	.init		= ufs_qcom_phy_qmp_v4_init,
-	.exit		= ufs_qcom_phy_qmp_v4_exit,
 	.power_on	= ufs_qcom_phy_power_on,
 	.power_off	= ufs_qcom_phy_power_off,
 	.set_mode	= ufs_qcom_phy_qmp_v4_set_mode,
@@ -324,31 +308,33 @@ static int ufs_qcom_phy_qmp_v4_probe(struct platform_device *pdev)
 	struct device *dev = &pdev->dev;
 	struct phy *generic_phy;
 	struct ufs_qcom_phy_qmp_v4 *phy;
-	int err = 0;
+	int err;
 
 	phy = devm_kzalloc(dev, sizeof(*phy), GFP_KERNEL);
-	if (!phy) {
-		err = -ENOMEM;
-		goto out;
-	}
+	if (!phy)
+		return -ENOMEM;
 
-	generic_phy = ufs_qcom_phy_generic_probe(pdev, &phy->common_cfg,
-				&ufs_qcom_phy_qmp_v4_phy_ops, &phy_v4_ops);
-
-	if (!generic_phy) {
-		dev_err(dev, "%s: ufs_qcom_phy_generic_probe() failed\n",
-			__func__);
-		err = -EIO;
-		goto out;
-	}
-
-	phy_set_drvdata(generic_phy, phy);
-
+	phy->common_cfg.dev = dev;
 	strscpy(phy->common_cfg.name, UFS_PHY_NAME,
 		sizeof(phy->common_cfg.name));
 
-out:
-	return err;
+	err = ufs_qcom_phy_qmp_v4_get_resources(&phy->common_cfg);
+	if (err)
+		return err;
+
+	generic_phy = ufs_qcom_phy_generic_probe(pdev, &phy->common_cfg,
+				&ufs_qcom_phy_qmp_v4_phy_ops, &phy_v4_ops);
+	if (IS_ERR(generic_phy))
+		return PTR_ERR(generic_phy);
+
+	/* The PHY GDSC stays on: it holds the PHY setup, see power_control */
+	if (!phy->common_cfg.vdd_phy_gdsc.reg && dev->pm_domain) {
+		err = pm_runtime_get_sync(dev);
+		if (err < 0)
+			dev_err(dev, "failed to enable the power domain: %d\n", err);
+	}
+
+	return 0;
 }
 
 static const struct of_device_id ufs_qcom_phy_qmp_v4_of_match[] = {

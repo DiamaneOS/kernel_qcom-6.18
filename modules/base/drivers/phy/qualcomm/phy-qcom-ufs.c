@@ -170,29 +170,24 @@ struct phy *ufs_qcom_phy_generic_probe(struct platform_device *pdev,
 {
 	int err;
 	struct device *dev = &pdev->dev;
-	struct phy *generic_phy = NULL;
+	struct phy *generic_phy;
 	struct phy_provider *phy_provider;
 
 	err = ufs_qcom_phy_base_init(pdev, common_cfg);
 	if (err) {
 		dev_err(dev, "%s: phy base init failed %d\n", __func__, err);
-		goto out;
+		return ERR_PTR(err);
 	}
 
 	generic_phy = devm_phy_create(dev, NULL, ufs_qcom_phy_gen_ops);
 	if (IS_ERR(generic_phy)) {
-		err =  PTR_ERR(generic_phy);
-		dev_err(dev, "%s: failed to create phy %d\n", __func__, err);
-		generic_phy = NULL;
-		goto out;
+		dev_err(dev, "%s: failed to create phy %ld\n", __func__,
+			PTR_ERR(generic_phy));
+		return generic_phy;
 	}
 
-	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-	if (IS_ERR(phy_provider)) {
-		err = PTR_ERR(phy_provider);
-		dev_err(dev, "%s: failed to register phy %d\n", __func__, err);
-		goto out;
-	}
+	/* common_cfg is the first member of the variant's drvdata */
+	phy_set_drvdata(generic_phy, common_cfg);
 
 	if (of_property_read_u32(dev->of_node, "lanes-per-direction",
 				 &common_cfg->lanes_per_direction))
@@ -212,7 +207,6 @@ struct phy *ufs_qcom_phy_generic_probe(struct platform_device *pdev,
 	pm_runtime_no_callbacks(&generic_phy->dev);
 
 	common_cfg->phy_spec_ops = phy_spec_ops;
-	common_cfg->dev = dev;
 
 	/*
 	 * Init PHY register domain list. We use it to manage the memory space which be used
@@ -220,13 +214,26 @@ struct phy *ufs_qcom_phy_generic_probe(struct platform_device *pdev,
 	 */
 	INIT_LIST_HEAD(&common_cfg->regs_list_head);
 
-out:
+	/* The host may use the PHY from here on */
+	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+	if (IS_ERR(phy_provider)) {
+		dev_err(dev, "%s: failed to register phy %ld\n", __func__,
+			PTR_ERR(phy_provider));
+		return ERR_CAST(phy_provider);
+	}
+
 	return generic_phy;
 }
 EXPORT_SYMBOL(ufs_qcom_phy_generic_probe);
 
-int ufs_qcom_phy_get_reset(struct ufs_qcom_phy *phy_common)
+/*
+ * The reset controller belongs to the UFS host, so this cannot run at PHY probe.
+ * The host calls it before phy_init(), not under the PHY mutex that its power
+ * path takes.
+ */
+int ufs_qcom_phy_get_reset(struct phy *generic_phy)
 {
+	struct ufs_qcom_phy *phy_common = get_ufs_qcom_phy(generic_phy);
 	struct reset_control *reset;
 
 	if (phy_common->ufs_reset)
@@ -239,142 +246,91 @@ int ufs_qcom_phy_get_reset(struct ufs_qcom_phy *phy_common)
 	phy_common->ufs_reset = reset;
 	return 0;
 }
-EXPORT_SYMBOL(ufs_qcom_phy_get_reset);
+EXPORT_SYMBOL_GPL(ufs_qcom_phy_get_reset);
 
-static int __ufs_qcom_phy_clk_get(struct device *dev,
-			 const char *name, struct clk **clk_out, bool err_print)
-{
-	struct clk *clk;
-	int err = 0;
-
-	clk = devm_clk_get(dev, name);
-	if (IS_ERR(clk)) {
-		err = PTR_ERR(clk);
-		if (err_print)
-			dev_err(dev, "failed get %s, %d\n", name, err);
-	} else {
-		*clk_out = clk;
-	}
-
-	return err;
-}
-
-static int ufs_qcom_phy_clk_get(struct device *dev,
+/* An optional clock may be absent, but its provider must have probed */
+static int ufs_qcom_phy_clk_get_optional(struct device *dev,
 			 const char *name, struct clk **clk_out)
 {
-	return __ufs_qcom_phy_clk_get(dev, name, clk_out, true);
+	struct clk *clk = devm_clk_get_optional(dev, name);
+
+	if (IS_ERR(clk))
+		return PTR_ERR(clk) == -EPROBE_DEFER ? -EPROBE_DEFER : 0;
+
+	*clk_out = clk;
+	return 0;
 }
 
 int ufs_qcom_phy_init_clks(struct ufs_qcom_phy *phy_common)
 {
-	int err;
+	static const struct {
+		const char *name;
+		size_t offset;
+	} optional[] = {
+		/* Newer PHYs have no iface clocks */
+		{ "tx_iface_clk", offsetof(struct ufs_qcom_phy, tx_iface_clk) },
+		{ "rx_iface_clk", offsetof(struct ufs_qcom_phy, rx_iface_clk) },
+		{ "ref_clk_parent", offsetof(struct ufs_qcom_phy, ref_clk_parent) },
+		{ "ref_clk_pad_en", offsetof(struct ufs_qcom_phy, ref_clk_pad_en) },
+		{ "ref_clk", offsetof(struct ufs_qcom_phy, ref_clk) },
+		{ "ref_aux_clk", offsetof(struct ufs_qcom_phy, ref_aux_clk) },
+		{ "qref_clk", offsetof(struct ufs_qcom_phy, qref_clk) },
+		{ "rx_sym0_mux_clk", offsetof(struct ufs_qcom_phy, rx_sym0_mux_clk) },
+		{ "rx_sym1_mux_clk", offsetof(struct ufs_qcom_phy, rx_sym1_mux_clk) },
+		{ "tx_sym0_mux_clk", offsetof(struct ufs_qcom_phy, tx_sym0_mux_clk) },
+		{ "rx_sym0_phy_clk", offsetof(struct ufs_qcom_phy, rx_sym0_phy_clk) },
+		{ "rx_sym1_phy_clk", offsetof(struct ufs_qcom_phy, rx_sym1_phy_clk) },
+		{ "tx_sym0_phy_clk", offsetof(struct ufs_qcom_phy, tx_sym0_phy_clk) },
+	};
+	struct device *dev = phy_common->dev;
+	struct clk *clk;
+	int i, err;
 
-	if (of_device_is_compatible(phy_common->dev->of_node,
-				"qcom,msm8996-ufs-phy-qmp-14nm"))
-		goto skip_txrx_clk;
-	/*
-	 * tx_iface_clk does not exist in newer version of ufs-phy HW,
-	 * so don't return error if it is not found
-	 */
-	__ufs_qcom_phy_clk_get(phy_common->dev, "tx_iface_clk",
-				   &phy_common->tx_iface_clk, false);
+	clk = devm_clk_get(dev, "ref_clk_src");
+	if (IS_ERR(clk))
+		return dev_err_probe(dev, PTR_ERR(clk), "failed to get ref_clk_src\n");
+	phy_common->ref_clk_src = clk;
 
-	/*
-	 * rx_iface_clk does not exist in newer version of ufs-phy HW,
-	 * so don't return error if it is not found
-	 */
-	__ufs_qcom_phy_clk_get(phy_common->dev, "rx_iface_clk",
-				   &phy_common->rx_iface_clk, false);
+	for (i = 0; i < ARRAY_SIZE(optional); i++) {
+		err = ufs_qcom_phy_clk_get_optional(dev, optional[i].name,
+				(struct clk **)((char *)phy_common + optional[i].offset));
+		if (err)
+			return err;
+	}
 
-skip_txrx_clk:
-	err = ufs_qcom_phy_clk_get(phy_common->dev, "ref_clk_src",
-				   &phy_common->ref_clk_src);
-	if (err)
-		goto out;
-
-	/*
-	 * "ref_clk_parent" is optional hence don't abort init if it's not
-	 * found.
-	 */
-	__ufs_qcom_phy_clk_get(phy_common->dev, "ref_clk_parent",
-				   &phy_common->ref_clk_parent, false);
-
-	/*
-	 * "ref_clk_pad_en" is only required in case where UFS_PHY and
-	 * UFS_REF_CLK_BSM both needs to be enabled for REF clock supply
-	 * to card. Hence don't abort init if it's not found.
-	 */
-	__ufs_qcom_phy_clk_get(phy_common->dev, "ref_clk_pad_en",
-				&phy_common->ref_clk_pad_en, false);
-	/*
-	 * Some platforms may not have the ON/OFF control for reference clock,
-	 * hence this clock may be optional.
-	 */
-	__ufs_qcom_phy_clk_get(phy_common->dev, "ref_clk",
-				   &phy_common->ref_clk, false);
-
-	/*
-	 * "ref_aux_clk" is optional and only supported by certain
-	 * phy versions, don't abort init if it's not found.
-	 */
-	 __ufs_qcom_phy_clk_get(phy_common->dev, "ref_aux_clk",
-				   &phy_common->ref_aux_clk, false);
-
-	 /*
-	  * "qref_clk_signal" is optional. It is needed for certain platforms.
-	  * No need to abort if it's not present.
-	  */
-	 __ufs_qcom_phy_clk_get(phy_common->dev, "qref_clk",
-				   &phy_common->qref_clk, false);
-
-	 __ufs_qcom_phy_clk_get(phy_common->dev, "rx_sym0_mux_clk",
-				   &phy_common->rx_sym0_mux_clk, false);
-	 __ufs_qcom_phy_clk_get(phy_common->dev, "rx_sym1_mux_clk",
-				   &phy_common->rx_sym1_mux_clk, false);
-	 __ufs_qcom_phy_clk_get(phy_common->dev, "tx_sym0_mux_clk",
-				   &phy_common->tx_sym0_mux_clk, false);
-	 __ufs_qcom_phy_clk_get(phy_common->dev, "rx_sym0_phy_clk",
-				   &phy_common->rx_sym0_phy_clk, false);
-	 __ufs_qcom_phy_clk_get(phy_common->dev, "rx_sym1_phy_clk",
-				   &phy_common->rx_sym1_phy_clk, false);
-	 __ufs_qcom_phy_clk_get(phy_common->dev, "tx_sym0_phy_clk",
-				   &phy_common->tx_sym0_phy_clk, false);
 	if (!phy_common->rx_sym0_mux_clk ||
 		!phy_common->rx_sym1_mux_clk ||
 		!phy_common->tx_sym0_mux_clk ||
-		!phy_common->ref_clk_src ||
 		!phy_common->rx_sym0_phy_clk ||
 		!phy_common->rx_sym1_phy_clk ||
 		!phy_common->tx_sym0_phy_clk)
-		dev_err(phy_common->dev, "%s: null clock\n", __func__);
-out:
-	return err;
+		dev_err(dev, "%s: null clock\n", __func__);
+
+	return 0;
 }
 EXPORT_SYMBOL(ufs_qcom_phy_init_clks);
-
 static int ufs_qcom_phy_init_vreg(struct device *dev,
 				  struct ufs_qcom_phy_vreg *vreg,
 				  const char *name)
 {
+	struct regulator *reg;
 	int err = 0;
 
 	char prop_name[MAX_PROP_NAME];
 
 	if (dev->of_node) {
 		snprintf(prop_name, MAX_PROP_NAME, "%s-supply", name);
-		if (!of_parse_phandle(dev->of_node, prop_name, 0)) {
+		if (!of_property_present(dev->of_node, prop_name)) {
 			dev_dbg(dev, "No vreg data found for %s\n", prop_name);
 			return -ENODATA;
 		}
 	}
 
 	vreg->name = name;
-	vreg->reg = devm_regulator_get(dev, name);
-	if (IS_ERR(vreg->reg)) {
-		err = PTR_ERR(vreg->reg);
-		dev_err(dev, "failed to get %s, %d\n", name, err);
-		goto out;
-	}
+	reg = devm_regulator_get(dev, name);
+	if (IS_ERR(reg))
+		return dev_err_probe(dev, PTR_ERR(reg), "failed to get %s\n", name);
+	vreg->reg = reg;
 
 	if (dev->of_node) {
 		snprintf(prop_name, MAX_PROP_NAME, "%s-max-microamp", name);
@@ -442,17 +398,26 @@ int ufs_qcom_phy_init_vregulators(struct ufs_qcom_phy *phy_common)
 	if (err)
 		goto out;
 
-	ufs_qcom_phy_init_vreg(phy_common->dev, &phy_common->vddp_ref_clk,
+	/* Optional: absent is fine, but a listed supply must have probed */
+	err = ufs_qcom_phy_init_vreg(phy_common->dev, &phy_common->vddp_ref_clk,
 				     "vddp-ref-clk");
+	if (err == -EPROBE_DEFER)
+		goto out;
 
-	ufs_qcom_phy_init_vreg(phy_common->dev, &phy_common->vdd_phy_gdsc,
-			       "vdd-phy-gdsc");
+	err = ufs_qcom_phy_init_vreg(phy_common->dev, &phy_common->vdd_phy_gdsc,
+				     "vdd-phy-gdsc");
+	if (err == -EPROBE_DEFER)
+		goto out;
 
-	ufs_qcom_phy_init_vreg(phy_common->dev, &phy_common->vdda_qref,
-			       "vdda-qref");
+	err = ufs_qcom_phy_init_vreg(phy_common->dev, &phy_common->vdda_qref,
+				     "vdda-qref");
+	if (err == -EPROBE_DEFER)
+		goto out;
 
-	ufs_qcom_phy_init_vreg(phy_common->dev, &phy_common->vdda_refgen,
-			       "vdda-refgen");
+	err = ufs_qcom_phy_init_vreg(phy_common->dev, &phy_common->vdda_refgen,
+				     "vdda-refgen");
+	if (err != -EPROBE_DEFER)
+		err = 0;
 
 out:
 	return err;

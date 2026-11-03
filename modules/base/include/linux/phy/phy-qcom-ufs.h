@@ -20,5 +20,6 @@ void ufs_qcom_phy_set_src_clk_h8_exit(struct phy *generic_phy);
 void ufs_qcom_phy_save_controller_version(struct phy *generic_phy,
 					u8 major, u16 minor, u16 step);
 void ufs_qcom_phy_set_device_id(struct phy *generic_phy, u32 vendor_id);
+int ufs_qcom_phy_get_reset(struct phy *generic_phy);
 
 #endif /* PHY_QCOM_UFS_H_ */

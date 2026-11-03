@@ -3772,6 +3772,11 @@ static int ufs_qcom_init(struct ufs_hba *hba)
 	err = ufs_qcom_parse_reg_info(host, "qcom,vddp-ref-clk",
 				      &host->vddp_ref_clk);
 
+	/* Optional, and needs the reset controller registered above */
+	err = ufs_qcom_phy_get_reset(host->generic_phy);
+	if (err)
+		dev_warn(dev, "no PHY reset control: %d\n", err);
+
 	err = phy_init(host->generic_phy);
 	if (err) {
 		dev_err(hba->dev, "%s: phy init failed, err %d\n",
