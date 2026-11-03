@@ -378,6 +378,21 @@ static int qmp_startup(struct mbox_chan *chan)
  *
  * Return: 0 on succes or standard Linux error code.
  */
+/*
+ * The send path of this controller sends on a second controller's channel while the
+ * mailbox core holds this channel's lock. They are different locks, always taken in
+ * this order, so give this controller's channels their own class.
+ */
+static struct lock_class_key qmp_chan_lock_key;
+
+static void qmp_set_chan_lock_class(struct qmp_mbox *mbox)
+{
+	int i;
+
+	for (i = 0; i < mbox->ctrl.num_chans; i++)
+		lockdep_set_class(&mbox->ctrl.chans[i].lock, &qmp_chan_lock_key);
+}
+
 static int qmp_send_data(struct mbox_chan *chan, void *data)
 {
 	struct qmp_mbox *mbox = chan->con_priv;
@@ -912,6 +927,7 @@ static int qmp_mbox_init(struct device_node *n, struct qmp_device *mdev)
 				rc);
 		return rc;
 	}
+	qmp_set_chan_lock_class(mbox);
 	spin_lock_init(&mbox->tx_lock);
 	mutex_init(&mbox->state_lock);
 	mbox->local_state = LINK_DISCONNECTED;
@@ -1011,6 +1027,7 @@ static int qmp_shim_init(struct platform_device *pdev, struct qmp_device *mdev)
 		pr_err("%s: failed to register mbox ctrl %d\n", __func__, rc);
 		return rc;
 	}
+	qmp_set_chan_lock_class(mbox);
 	mdev_add_mbox(mdev, mbox);
 	mdev->ilc = ipc_log_context_create(QMP_IPC_LOG_PAGE_CNT, mdev->name, 0);
 
