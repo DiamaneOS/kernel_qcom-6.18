@@ -614,7 +614,8 @@ static int gdsc_set_mode(struct regulator_dev *rdev, unsigned int mode)
 		 * of the GDSC control register for GDSCs whose register access
 		 * is gated by the parent supply enable state in hardware.
 		 */
-		ww_mutex_lock(&parent_rdev->mutex, NULL);
+		/* Child before supply, the order of the regulator core */
+		mutex_lock_nested(&parent_rdev->mutex.base, SINGLE_DEPTH_NESTING);
 
 		if (!parent_rdev->use_count) {
 			dev_err(&rdev->dev,
