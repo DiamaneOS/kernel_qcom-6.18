@@ -114,6 +114,8 @@ static struct service_info service_data[AUDIO_NOTIFIER_MAX_SERVICES]
 /* Master list of all audio notifier clients */
 LIST_HEAD(client_list);
 struct mutex       notifier_mutex;
+/* Serializes registrars while they drop notifier_mutex around PDR registration */
+static DEFINE_MUTEX(registration_mutex);
 
 static int audio_notifier_get_default_service(int domain)
 {
@@ -186,11 +188,19 @@ static int audio_notifier_reg_service(int service, int domain)
 			service_data[service][domain].hook.nb);
 		break;
 	case AUDIO_NOTIFIER_PDR_SERVICE:
+		/*
+		 * The PDR callback takes notifier_mutex under the PDR locks, and
+		 * registering takes those locks. A callback may run from here on,
+		 * so set the state first and keep what it reports.
+		 */
+		service_data[service][domain].state = AUDIO_NOTIFIER_SERVICE_DOWN;
+		mutex_unlock(&notifier_mutex);
 		handle = audio_pdr_service_register(
 			service_data[service][domain].domain_id,
 			service_data[service][domain].hook.cb);
+		mutex_lock(&notifier_mutex);
 
-		curr_state = AUDIO_NOTIFIER_SERVICE_DOWN;
+		curr_state = service_data[service][domain].state;
 		break;
 	default:
 		pr_err_ratelimited("%s: Invalid service %d\n",
@@ -571,10 +581,12 @@ int audio_notifier_register(char *client_name, int domain,
 	client_data->service = NO_SERVICE;
 	client_data->domain = domain;
 
+	mutex_lock(&registration_mutex);
 	mutex_lock(&notifier_mutex);
 	ret = audio_notifier_reg_client(client_data);
 	if (ret < 0) {
 		mutex_unlock(&notifier_mutex);
+		mutex_unlock(&registration_mutex);
 		pr_err_ratelimited("%s: audio_notifier_reg_client for client %s failed ret = %d\n",
 			__func__, client_data->client_name,
 			ret);
@@ -583,6 +595,7 @@ int audio_notifier_register(char *client_name, int domain,
 	}
 	list_add_tail(&client_data->list, &client_list);
 	mutex_unlock(&notifier_mutex);
+	mutex_unlock(&registration_mutex);
 done:
 	return ret;
 }
@@ -612,11 +625,13 @@ static int audio_notifier_late_init(void)
 	 * If pdr registration failed, register clients on next service
 	 * Do in late init to ensure that SSR subsystem is initialized
 	 */
+	mutex_lock(&registration_mutex);
 	mutex_lock(&notifier_mutex);
 	if (!audio_notifier_is_service_enabled(AUDIO_NOTIFIER_PDR_SERVICE))
 		audio_notifier_reg_all_clients();
 
 	mutex_unlock(&notifier_mutex);
+	mutex_unlock(&registration_mutex);
 	return 0;
 }
 
