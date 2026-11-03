@@ -1277,9 +1277,11 @@ static int rpmh_rsc_cpu_pm_callback(struct notifier_block *nfb,
  */
 int rpmh_rsc_mode_solver_set(struct rsc_drv *drv, bool enable)
 {
+	unsigned long flags;
 	int ret = -EBUSY;
 
-	if (spin_trylock(&drv->lock)) {
+	/* tcs_tx_done() takes this lock in hard interrupt context */
+	if (spin_trylock_irqsave(&drv->lock, flags)) {
 		if (!enable || !rpmh_rsc_ctrlr_is_busy(drv)) {
 			drv->in_solver_mode = enable;
 			trace_rpmh_solver_set(drv, enable);
@@ -1289,7 +1291,7 @@ int rpmh_rsc_mode_solver_set(struct rsc_drv *drv, bool enable)
 #endif
 			ret = 0;
 		}
-		spin_unlock(&drv->lock);
+		spin_unlock_irqrestore(&drv->lock, flags);
 	}
 
 	return ret;
@@ -1361,10 +1363,12 @@ int rpmh_rsc_switch_channel(struct rsc_drv *drv, int ch)
  */
 int rpmh_rsc_drv_enable(struct rsc_drv *drv, bool enable)
 {
+	unsigned long flags;
 	int ret = 0, ch;
 	u32 chn_en;
 
-	spin_lock(&drv->lock);
+	/* tcs_tx_done() takes this lock in hard interrupt context */
+	spin_lock_irqsave(&drv->lock, flags);
 
 	chn_en = readl_relaxed(drv->base + drv->regs[RSC_DRV_CHN_EN]);
 	if (chn_en == enable) {
@@ -1403,7 +1407,7 @@ int rpmh_rsc_drv_enable(struct rsc_drv *drv, bool enable)
 		writel_relaxed(enable, drv->base + drv->regs[RSC_DRV_CHN_EN]);
 	}
 exit:
-	spin_unlock(&drv->lock);
+	spin_unlock_irqrestore(&drv->lock, flags);
 	trace_rpmh_drv_enable(drv, enable, ret);
 #if IS_ENABLED(CONFIG_IPC_LOGGING)
 	ipc_log_string(drv->ipc_log_ctx, "drv enable: %d ret: %d", enable, ret);
