@@ -218,6 +218,13 @@ void cam_req_mgr_rwsem_read_op(enum cam_subdev_rwsem lock);
 bool  cam_req_mgr_is_open(void);
 
 /**
+ * cam_req_mgr_accepts_handles()
+ *
+ * @brief: True when a device handle may be created. Takes no lock.
+ */
+bool cam_req_mgr_accepts_handles(void);
+
+/**
  * cam_req_mgr_is_shutdown()
  *
  * @brief:    This common utility function returns the shutdown state

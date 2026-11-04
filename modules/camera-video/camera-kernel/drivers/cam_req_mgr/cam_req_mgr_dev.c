@@ -211,6 +211,7 @@ static int cam_req_mgr_close(struct file *filep)
 		return -EINVAL;
 	}
 
+	WRITE_ONCE(g_dev.closing, true);
 	cam_req_mgr_handle_core_shutdown();
 	g_dev.shutdown_state = true;
 
@@ -236,6 +237,7 @@ static int cam_req_mgr_close(struct file *filep)
 
 	cam_req_mgr_util_free_hdls();
 	cam_mem_mgr_deinit();
+	WRITE_ONCE(g_dev.closing, false);
 	mutex_unlock(&g_dev.cam_lock);
 
 	cam_req_mgr_rwsem_write_op(CAM_SUBDEV_UNLOCK);
@@ -885,6 +887,17 @@ bool cam_req_mgr_is_open(void)
 	return crm_status;
 }
 EXPORT_SYMBOL(cam_req_mgr_is_open);
+
+/*
+ * For handle creation, which runs under a device mutex that close also takes while it holds
+ * cam_lock, so this cannot take cam_lock. Close sets closing before it takes any device mutex.
+ * A creator that read false before that holds its device mutex, so close then releases the handle.
+ */
+bool cam_req_mgr_accepts_handles(void)
+{
+	return READ_ONCE(g_dev.open_cnt) && !READ_ONCE(g_dev.closing);
+}
+EXPORT_SYMBOL(cam_req_mgr_accepts_handles);
 
 bool cam_req_mgr_is_shutdown(void)
 {
