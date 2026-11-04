@@ -467,7 +467,7 @@ int msm_vidc_ctrl_handler_deinit(struct msm_vidc_inst *inst)
 	return 0;
 }
 
-int msm_vidc_ctrl_handler_init(struct msm_vidc_inst *inst, bool init)
+static int __msm_vidc_ctrl_handler_init(struct msm_vidc_inst *inst, bool init)
 {
 	int rc = 0;
 	struct msm_vidc_inst_cap *cap;
@@ -650,6 +650,26 @@ int msm_vidc_ctrl_handler_init(struct msm_vidc_inst *inst, bool init)
 	return 0;
 error:
 	msm_vidc_ctrl_handler_deinit(inst);
+
+	return rc;
+}
+
+int msm_vidc_ctrl_handler_init(struct msm_vidc_inst *inst, bool init)
+{
+	int rc;
+
+	if (init)
+		return __msm_vidc_ctrl_handler_init(inst, init);
+
+	/*
+	 * A format change holds these locks. The control framework calls s_ctrl with the
+	 * handler lock held and s_ctrl takes them, so take the handler lock without them.
+	 */
+	inst_unlock(inst, __func__);
+	client_unlock(inst, __func__);
+	rc = __msm_vidc_ctrl_handler_init(inst, init);
+	client_lock(inst, __func__);
+	inst_lock(inst, __func__);
 
 	return rc;
 }
