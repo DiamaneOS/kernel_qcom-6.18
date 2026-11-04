@@ -1720,16 +1720,19 @@ static phys_addr_t qsmmuv500_iova_to_phys(struct arm_smmu_domain *smmu_domain, d
 	if (!tbu)
 		return 0;
 
-	if (arm_smmu_power_on(tbu->pwr))
-		return 0;
-
 	if (iova >= (1ULL << tbu->iova_width)) {
 		dev_err_ratelimited(tbu->dev, "ECATS: address too large: %pad\n", &iova);
 		return 0;
 	}
 
+	if (arm_smmu_power_on(tbu->pwr))
+		return 0;
+
 	if (qsmmuv500_tbu_halt(tbu, smmu_domain))
 		goto out_power_off;
+
+	/* Only one concurrent atos operation */
+	spin_lock_irqsave(&data->atos_lock, spinlock_flags);
 
 	/*
 	 * ECATS can trigger the fault interrupt, so disable it temporarily
@@ -1757,9 +1760,6 @@ static phys_addr_t qsmmuv500_iova_to_phys(struct arm_smmu_domain *smmu_domain, d
 			arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_RESUME,
 					  ARM_SMMU_RESUME_TERMINATE);
 	}
-
-	/* Only one concurrent atos operation */
-	spin_lock_irqsave(&data->atos_lock, spinlock_flags);
 
 	/*
 	 * After a failed translation, the next successful translation will
