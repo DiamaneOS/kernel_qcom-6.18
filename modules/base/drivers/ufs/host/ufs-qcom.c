@@ -2606,6 +2606,7 @@ static int ufs_qcom_unvote_qos_all(struct ufs_hba *hba)
 	if (!host->ufs_qos)
 		return 0;
 
+	cancel_work_sync(&ufs_qos_req->unvote_work);
 	qcg = ufs_qos_req->qcg;
 	for (i = 0; i < ufs_qos_req->num_groups; i++, qcg++) {
 		flush_work(&qcg->vwork);
@@ -2729,7 +2730,12 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
 			err = ufs_qcom_set_bus_vote(hba, false);
 			if (err)
 				return err;
-			err = ufs_qcom_unvote_qos_all(hba);
+			/*
+			 * Not here: this runs from the clock gating work, which I/O waits for,
+			 * and PM QoS updates hold a global lock across their notifiers.
+			 */
+			if (host->ufs_qos)
+				queue_work(host->ufs_qos->workq, &host->ufs_qos->unvote_work);
 			idle_start = ktime_get();
 		} else {
 			err = ufs_qcom_phy_power_on(hba);
@@ -2948,6 +2954,23 @@ static void ufs_qcom_qos(struct ufs_hba *hba, int tag)
 	dev_dbg(hba->dev, "Queued QoS work- cpu: %d\n", cpu);
 }
 
+/* Runs on the same single thread queue as the votes, so they stay in order. */
+static void ufs_qcom_unvote_work(struct work_struct *work)
+{
+	struct ufs_qcom_qos_req *r = container_of(work, struct ufs_qcom_qos_req, unvote_work);
+	struct qos_cpu_group *qcg = r->qcg;
+	int i, err;
+
+	for (i = 0; i < r->num_groups; i++, qcg++) {
+		if (!qcg->voted)
+			continue;
+		err = ufs_qcom_update_qos_constraints(qcg, QOS_MAX);
+		if (err)
+			dev_err(qcg->host->hba->dev, "%s: remove qos group %d failed: %d\n",
+				__func__, i, err);
+	}
+}
+
 static void ufs_qcom_vote_work(struct work_struct *work)
 {
 	int err;
@@ -3017,6 +3040,7 @@ static int ufs_qcom_setup_qos(struct ufs_hba *hba)
 			INIT_DELAYED_WORK(&host->fwork, ufs_qcom_cpufreq_dwork);
 		}
 	}
+	INIT_WORK(&qr->unvote_work, ufs_qcom_unvote_work);
 	qr->workq = create_singlethread_workqueue("qc_ufs_qos_swq");
 	if (qr->workq)
 		return 0;

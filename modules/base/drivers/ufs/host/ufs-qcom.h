@@ -360,6 +360,7 @@ struct ufs_qcom_qos_req {
 	struct qos_cpu_group *qcg;
 	unsigned int num_groups;
 	struct workqueue_struct *workq;
+	struct work_struct unvote_work;
 };
 
 /* Check for QOS_POWER when added to DT */
