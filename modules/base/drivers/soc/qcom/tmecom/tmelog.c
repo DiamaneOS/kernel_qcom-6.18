@@ -32,7 +32,7 @@ int tmelog_process_request(uint32_t buf, uint32_t buf_capacity, uint32_t *buf_si
 {
 	struct tmelog_get_req_t *request;
 	struct tmelog_get_rsp_t *response;
-	size_t response_len = 0;
+	size_t response_len = sizeof(*response);
 	int ret = 0;
 
 	if (!buf || !buf_size) {

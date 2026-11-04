@@ -94,6 +94,7 @@ int tmecom_process_request(const void *reqbuf, size_t reqsize, void *respbuf,
 {
 	struct tmecom *tdev = tmedev;
 	long time_left = 0;
+	size_t capacity;
 	int ret = 0;
 
 	/*
@@ -104,7 +105,8 @@ int tmecom_process_request(const void *reqbuf, size_t reqsize, void *respbuf,
 		return -ENODEV;
 	}
 
-	if (!reqbuf || !reqsize || (reqsize > MBOX_MAX_MSG_LEN)) {
+	if (!reqbuf || !reqsize ||
+	    (reqsize > MBOX_MAX_MSG_LEN - TMECOM_TX_HDR_SIZE)) {
 		dev_err(tdev->dev, "invalid reqbuf or reqsize\n");
 		return -EINVAL;
 	}
@@ -113,6 +115,8 @@ int tmecom_process_request(const void *reqbuf, size_t reqsize, void *respbuf,
 		dev_err(tdev->dev, "invalid respbuf or respsize\n");
 		return -EINVAL;
 	}
+
+	capacity = *respsize;
 
 	mutex_lock(&tdev->lock);
 
@@ -134,7 +138,8 @@ int tmecom_process_request(const void *reqbuf, size_t reqsize, void *respbuf,
 		goto err_exit;
 	}
 
-	time_left = wait_event_interruptible_timeout(tdev->waitq,
+	/* A signal must not end this: the buffers still hold the request then. */
+	time_left = wait_event_timeout(tdev->waitq,
 			tmecom_check_rx_done(tdev), tdev->cl.tx_tout);
 
 	if (!time_left) {
@@ -149,7 +154,8 @@ int tmecom_process_request(const void *reqbuf, size_t reqsize, void *respbuf,
 	print_hex_dump_bytes("tmecom received bytes : ",
 			DUMP_PREFIX_ADDRESS, tdev->pkt.data, tdev->pkt.size);
 
-	if (tdev->pkt.size <= TMECOM_RX_HDR_SIZE) {
+	if (tdev->pkt.size <= TMECOM_RX_HDR_SIZE ||
+	    tdev->pkt.size - TMECOM_RX_HDR_SIZE > capacity) {
 		dev_err(tdev->dev, "invalid pkt.size received\n");
 		ret = -EPROTO;
 		goto err_exit;
@@ -171,7 +177,7 @@ static ssize_t tmecom_debugfs_write(struct file *file,
 		const char __user *userstr, size_t len, loff_t *pos)
 {
 	int ret = 0;
-	size_t rxlen = 0;
+	size_t rxlen = MBOX_MAX_MSG_LEN;
 	struct tme_ext_err_info *err_info = (struct tme_ext_err_info *)dpkt;
 
 
@@ -226,7 +232,7 @@ static void tmecom_receive_message(struct mbox_client *client, void *message)
 	tdev->pkt.data = pkt->data;
 	tdev->rx_done = true;
 tmecom_receive_end:
-	wake_up_interruptible(&tdev->waitq);
+	wake_up(&tdev->waitq);
 }
 
 static int tmecom_probe(struct platform_device *pdev)
