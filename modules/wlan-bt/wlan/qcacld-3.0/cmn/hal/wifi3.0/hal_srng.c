@@ -26,6 +26,8 @@
 #include <qdf_tracepoint.h>
 #include "qdf_ssr_driver_dump.h"
 
+static struct lock_class_key hal_srng_lock_key[MAX_RING_TYPES];
+
 struct tcl_data_cmd gtcl_data_symbol __attribute__((used));
 
 #ifdef QCA_WIFI_QCA8074
@@ -1933,6 +1935,8 @@ ce_setup:
 	}
 
 	SRNG_LOCK_INIT(&srng->lock);
+	/* A descriptor return takes one ring's lock under another's. */
+	lockdep_set_class(&srng->lock.lock.spinlock, &hal_srng_lock_key[ring_type]);
 
 	srng->srng_event = 0;
 
