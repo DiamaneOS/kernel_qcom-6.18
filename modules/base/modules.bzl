@@ -989,7 +989,6 @@ def register_modules(registry):
             "drivers/iommu/qcom-dma-iommu-generic.h",
             "drivers/iommu/qcom-io-pgtable-alloc.h",
             "drivers/iommu/qcom-iommu-util.c",
-            "drivers/iommu/qcom-iommu-pages.h",
         ],
         conditional_srcs = {
             "CONFIG_IOMMU_IO_PGTABLE_FAST": {

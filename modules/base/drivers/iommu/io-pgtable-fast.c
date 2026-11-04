@@ -19,7 +19,7 @@
 #include <linux/dma-mapping.h>
 #include <linux/qcom-iommu-util.h>
 #include <linux/qcom-io-pgtable.h>
-#include "qcom-iommu-pages.h"
+#include "drivers/iommu/iommu-pages.h"
 
 #define AV8L_FAST_MAX_ADDR_BITS		48
 
@@ -507,11 +507,10 @@ av8l_fast_prepopulate_pgtables(struct av8l_fast_io_pgtable *data,
 	if (!pages)
 		return -ENOMEM;
 
-	page = qcom_iommu_alloc_page((GFP_KERNEL | __GFP_ZERO));
-	if (!page)
+	data->pgd = iommu_alloc_pages_sz(GFP_KERNEL, PAGE_SIZE);
+	if (!data->pgd)
 		goto err_free_pages_arr;
-	pages[pg++] = page;
-	data->pgd = page_address(page);
+	pages[pg++] = virt_to_page(data->pgd);
 
 	/*
 	 * We need max 2048 entries at level 2 to map 4GB of VA space. A page
@@ -521,11 +520,11 @@ av8l_fast_prepopulate_pgtables(struct av8l_fast_io_pgtable *data,
 			++i, pud = pud_next(pud, end)) {
 		av8l_fast_iopte pte, *ptep;
 
-		page = qcom_iommu_alloc_page((GFP_KERNEL | __GFP_ZERO));
-		if (!page)
+		data->puds[i] = iommu_alloc_pages_sz(GFP_KERNEL, PAGE_SIZE);
+		if (!data->puds[i])
 			goto err_free_pages;
+		page = virt_to_page(data->puds[i]);
 		pages[pg++] = page;
-		data->puds[i] = page_address(page);
 		pte = page_to_phys(page) | AV8L_FAST_PTE_TYPE_TABLE;
 		ptep = ((av8l_fast_iopte *)data->pgd) + i;
 		*ptep = pte;
@@ -545,12 +544,12 @@ av8l_fast_prepopulate_pgtables(struct av8l_fast_io_pgtable *data,
 			av8l_fast_iopte pte, *pudp;
 			void *addr;
 
-			page = qcom_iommu_alloc_page((GFP_KERNEL | __GFP_ZERO));
-			if (!page)
+			addr = iommu_alloc_pages_sz(GFP_KERNEL, PAGE_SIZE);
+			if (!addr)
 				goto err_free_pages;
+			page = virt_to_page(addr);
 			pages[pg++] = page;
 
-			addr = page_address(page);
 			av8l_clean_range(cfg, addr, addr + SZ_4K);
 
 			pte = page_to_phys(page) | AV8L_FAST_PTE_TYPE_TABLE;
@@ -579,7 +578,7 @@ av8l_fast_prepopulate_pgtables(struct av8l_fast_io_pgtable *data,
 
 err_free_pages:
 	for (i = 0; i < pg; ++i)
-		qcom_iommu_free_page(pages[i]);
+		iommu_free_pages(page_address(pages[i]));
 err_free_pages_arr:
 	kvfree(pages);
 	return -ENOMEM;
@@ -678,7 +677,7 @@ static void av8l_fast_free_pgtable(struct io_pgtable *iop)
 
 	vunmap(data->pmds);
 	for (i = 0; i < data->nr_pages; ++i)
-		qcom_iommu_free_page(data->pages[i]);
+		iommu_free_pages(page_address(data->pages[i]));
 	kvfree(data->pages);
 	kfree(data);
 }
