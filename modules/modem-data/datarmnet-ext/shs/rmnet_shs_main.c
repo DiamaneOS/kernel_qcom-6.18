@@ -800,7 +800,7 @@ DATARMNET4793ed48af[DATARMNET42a992465f]=DATARMNET22feab5726;DATARMNET713717107f
 ,DATARMNETecc0627c70.DATARMNETf510b48c29);}void DATARMNET45d8cdb224(struct 
 net_device*dev,struct net_device*vnd){struct rps_map*map;int rc;u8 
 DATARMNET0e4304d903;u8 map_mask;u8 map_len;if(DATARMNETecc0627c70.
-DATARMNETfc89d842ae)return;map=rcu_dereference(vnd->_rx->rps_map);if(!map){
+DATARMNETfc89d842ae)return;map=rcu_dereference_rtnl(vnd->_rx->rps_map);if(!map){
 map_mask=(0xd2d+202-0xdf7);map_len=(0xd2d+202-0xdf7);}else{map_mask=
 DATARMNET928c931df9(map);map_len=DATARMNET310c3eb16e(map_mask);}
 DATARMNETecc0627c70.port=rmnet_get_port(dev);DATARMNETecc0627c70.map_mask=

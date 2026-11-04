@@ -411,7 +411,7 @@ DATARMNET9a4761f31c){case NETDEV_DOWN:aps_cb->DATARMNET91119c34ed=
 (0xd2d+202-0xdf7);mutex_lock(&DATARMNETd7b5a80f84);DATARMNET250448eb06(
 DATARMNET413e8dcf7b->ifindex);mutex_unlock(&DATARMNETd7b5a80f84);break;case 
 NETDEV_UNREGISTER:mutex_lock(&DATARMNETd7b5a80f84);DATARMNET250448eb06(
-DATARMNET413e8dcf7b->ifindex);DATARMNET81b03d6be4=rcu_dereference(aps_cb->
+DATARMNET413e8dcf7b->ifindex);DATARMNET81b03d6be4=rcu_dereference_rtnl(aps_cb->
 DATARMNETac8d594fb6);if(DATARMNET81b03d6be4){WARN_ON(!list_empty(&
 DATARMNET81b03d6be4->DATARMNET46c1c4375f));rcu_assign_pointer(aps_cb->
 DATARMNETac8d594fb6,NULL);kfree_rcu(DATARMNET81b03d6be4,DATARMNET28bfe9e6ad);}

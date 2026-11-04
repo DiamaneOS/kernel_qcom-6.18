@@ -16,6 +16,7 @@
  */
 
 #include <linux/etherdevice.h>
+#include <net/netdev_lock.h>
 #include <net/gso.h>
 #include <linux/if_arp.h>
 #include <linux/ip.h>
@@ -238,6 +239,9 @@ static int rmnet_vnd_init(struct net_device *dev)
 	struct rmnet_priv *priv = netdev_priv(dev);
 	int err;
 
+	/* This device sits on another of the same type, so its xmit locks need their own class. */
+	netdev_lockdep_set_classes(dev);
+
 	priv->pcpu_stats = alloc_percpu(struct rmnet_pcpu_stats);
 	if (!priv->pcpu_stats)
 		return -ENOMEM;
@@ -259,7 +263,7 @@ static void rmnet_vnd_uninit(struct net_device *dev)
 	gro_cells_destroy(&priv->gro_cells);
 	free_percpu(priv->pcpu_stats);
 
-	qos = rcu_dereference(priv->qos_info);
+	qos = rtnl_dereference(priv->qos_info);
 	RCU_INIT_POINTER(priv->qos_info, NULL);
 	qmi_rmnet_qos_exit_pre(qos);
 }
