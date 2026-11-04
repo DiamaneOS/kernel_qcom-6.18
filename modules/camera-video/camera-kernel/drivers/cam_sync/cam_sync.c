@@ -549,7 +549,7 @@ int cam_sync_get_obj_ref(int32_t sync_obj)
 	if ((sync_obj >= CAM_SYNC_MAX_OBJS) || (sync_obj <= 0))
 		return -EINVAL;
 
-	spin_lock(&sync_dev->row_spinlocks[sync_obj]);
+	spin_lock_bh(&sync_dev->row_spinlocks[sync_obj]);
 	row = sync_dev->sync_table + sync_obj;
 
 	if (row->state != CAM_SYNC_STATE_ACTIVE) {
@@ -561,14 +561,14 @@ int cam_sync_get_obj_ref(int32_t sync_obj)
 	}
 
 	atomic_inc(&row->ref_cnt);
-	spin_unlock(&sync_dev->row_spinlocks[sync_obj]);
+	spin_unlock_bh(&sync_dev->row_spinlocks[sync_obj]);
 	CAM_DBG(CAM_SYNC, "get ref for obj %d", sync_obj);
 
 	return 0;
 
 monitor_dump:
 	cam_sync_dump_monitor_array(row);
-	spin_unlock(&sync_dev->row_spinlocks[sync_obj]);
+	spin_unlock_bh(&sync_dev->row_spinlocks[sync_obj]);
 	return rc;
 }
 
@@ -1721,7 +1721,7 @@ static int cam_sync_synx_associate_obj(int32_t sync_obj, uint32_t synx_obj,
 		return rc;
 
 	row = sync_dev->sync_table + sync_obj;
-	spin_lock(&sync_dev->row_spinlocks[sync_obj]);
+	spin_lock_bh(&sync_dev->row_spinlocks[sync_obj]);
 	if (row->state != CAM_SYNC_STATE_ACTIVE) {
 		signal_synx_obj.status = row->state;
 		signal_synx_obj.synx_obj = synx_obj;
@@ -1736,11 +1736,11 @@ static int cam_sync_synx_associate_obj(int32_t sync_obj, uint32_t synx_obj,
 			row->name, sync_obj, row->synx_obj_info.synx_obj);
 	}
 
-	spin_unlock(&sync_dev->row_spinlocks[sync_obj]);
+	spin_unlock_bh(&sync_dev->row_spinlocks[sync_obj]);
 	return rc;
 
 signal_synx:
-	spin_unlock(&sync_dev->row_spinlocks[sync_obj]);
+	spin_unlock_bh(&sync_dev->row_spinlocks[sync_obj]);
 	return cam_synx_obj_signal_obj(&signal_synx_obj);
 }
 

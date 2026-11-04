@@ -373,7 +373,9 @@ int cam_sync_init_group_object(struct sync_table_row *table,
 	 */
 	for (i = 0; i < num_objs; i++) {
 		child_row = table + sync_objs[i];
-		spin_lock_bh(&sync_dev->row_spinlocks[sync_objs[i]]);
+		/* One child at a time, under the parent's lock. */
+		local_bh_disable();
+		spin_lock_nested(&sync_dev->row_spinlocks[sync_objs[i]], SINGLE_DEPTH_NESTING);
 
 		/* validate child */
 		if ((child_row->type == CAM_SYNC_TYPE_GROUP) ||
