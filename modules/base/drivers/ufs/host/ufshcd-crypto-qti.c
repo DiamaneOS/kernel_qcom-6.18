@@ -9,6 +9,7 @@
 #include <linux/platform_device.h>
 #include <linux/crypto-qti-common.h>
 
+#include <linux/sched/mm.h>
 #include <ufs/ufshcd-crypto-qti.h>
 #include "ufs-qcom.h"
 
@@ -35,11 +36,16 @@ static void get_mmio_data(struct ice_mmio_data *data,
 #endif
 }
 
+/*
+ * These run with the crypto profile lock held for writing, and every read bio takes it
+ * for reading. Reclaim here could evict an inode, which reads, so it must not do I/O.
+ */
 static int ufshcd_crypto_qti_keyslot_program(
 					     struct blk_crypto_profile *profile,
 					     const struct blk_crypto_key *key,
 					     unsigned int slot)
 {
+	unsigned int noio;
 	struct ufs_hba *hba =
 			container_of(profile, struct ufs_hba, crypto_profile);
 	int err = 0;
@@ -80,8 +86,10 @@ static int ufshcd_crypto_qti_keyslot_program(
 	ufshcd_hold(hba);
 
 	get_mmio_data(&mmio_data, host);
+	noio = memalloc_noio_save();
 	err = crypto_qti_keyslot_program(&mmio_data, key, slot,
 					data_unit_mask, cap_idx, UFS_CE);
+	memalloc_noio_restore(noio);
 	if (err)
 		pr_err("%s: failed with error %d\n", __func__, err);
 
@@ -95,6 +103,7 @@ static int ufshcd_crypto_qti_keyslot_evict(
 					   const struct blk_crypto_key *key,
 					   unsigned int slot)
 {
+	unsigned int noio;
 	int err = 0;
 	struct ufs_hba *hba =
 			container_of(profile, struct ufs_hba, crypto_profile);
@@ -110,7 +119,9 @@ static int ufshcd_crypto_qti_keyslot_evict(
 	ufshcd_hold(hba);
 
 	get_mmio_data(&mmio_data, host);
+	noio = memalloc_noio_save();
 	err = crypto_qti_keyslot_evict(&mmio_data, slot, UFS_CE);
+	memalloc_noio_restore(noio);
 	if (err)
 		pr_err("%s: failed with error %d\n", __func__, err);
 
@@ -123,6 +134,7 @@ static int ufshcd_crypto_qti_derive_raw_secret(
 					       const u8 *eph_key, size_t eph_key_size,
 					       u8 sw_secret[BLK_CRYPTO_SW_SECRET_SIZE])
 {
+	unsigned int noio;
 	int err = 0;
 	struct ufs_hba *hba =
 			container_of(profile, struct ufs_hba, crypto_profile);
@@ -138,8 +150,10 @@ static int ufshcd_crypto_qti_derive_raw_secret(
 	ufshcd_hold(hba);
 
 	get_mmio_data(&mmio_data, host);
+	noio = memalloc_noio_save();
 	err =  crypto_qti_derive_raw_secret(&mmio_data, eph_key, eph_key_size,
 				sw_secret, BLK_CRYPTO_SW_SECRET_SIZE);
+	memalloc_noio_restore(noio);
 	if (err)
 		pr_err("%s: failed with error %d\n", __func__, err);
 
