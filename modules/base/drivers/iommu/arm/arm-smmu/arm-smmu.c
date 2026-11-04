@@ -476,26 +476,32 @@ out:
 	return -EINVAL;
 }
 
-static void arm_smmu_tlb_sync_global(struct arm_smmu_device *smmu)
+static int arm_smmu_tlb_sync_global(struct arm_smmu_device *smmu)
 {
 	unsigned long flags;
+	int ret;
 
 	spin_lock_irqsave(&smmu->global_sync_lock, flags);
-	if (__arm_smmu_tlb_sync(smmu, ARM_SMMU_GR0, ARM_SMMU_GR0_sTLBGSYNC,
-				ARM_SMMU_GR0_sTLBGSTATUS))
+	ret = __arm_smmu_tlb_sync(smmu, ARM_SMMU_GR0, ARM_SMMU_GR0_sTLBGSYNC,
+				  ARM_SMMU_GR0_sTLBGSTATUS);
+	if (ret)
 		dev_err_ratelimited(smmu->dev,
 				    "TLB global sync failed!\n");
 	spin_unlock_irqrestore(&smmu->global_sync_lock, flags);
+	return ret;
 }
 
 static void arm_smmu_tlb_sync_context(struct arm_smmu_domain *smmu_domain)
 {
 	struct arm_smmu_device *smmu = smmu_domain->smmu;
 	unsigned long flags;
+	int ret;
 
 	spin_lock_irqsave(&smmu_domain->sync_lock, flags);
-	if (__arm_smmu_tlb_sync(smmu, ARM_SMMU_CB(smmu, smmu_domain->cfg.cbndx),
-				ARM_SMMU_CB_TLBSYNC, ARM_SMMU_CB_TLBSTATUS))
+	ret = __arm_smmu_tlb_sync(smmu, ARM_SMMU_CB(smmu, smmu_domain->cfg.cbndx),
+				  ARM_SMMU_CB_TLBSYNC, ARM_SMMU_CB_TLBSTATUS);
+	WRITE_ONCE(smmu_domain->tlb_sync_failed, ret != 0);
+	if (ret)
 		dev_err_ratelimited(smmu->dev,
 				"TLB sync on cb%d failed for device %s\n",
 				smmu_domain->cfg.cbndx,
@@ -526,7 +532,7 @@ static void arm_smmu_tlb_inv_context_s2(void *cookie)
 	/* See above */
 	wmb();
 	arm_smmu_gr0_write(smmu, ARM_SMMU_GR0_TLBIVMID, smmu_domain->cfg.vmid);
-	arm_smmu_tlb_sync_global(smmu);
+	WRITE_ONCE(smmu_domain->tlb_sync_failed, arm_smmu_tlb_sync_global(smmu) != 0);
 }
 
 static void arm_smmu_tlb_inv_range_s1(unsigned long iova, size_t size,
@@ -2562,6 +2568,20 @@ static void __arm_smmu_flush_iotlb_all(struct iommu_domain *domain, bool force)
 	}
 
 	smmu_domain->flush_ops->tlb_flush_all(smmu_domain);
+
+	/*
+	 * The SMMU may still walk the tables on the free list, and a table reused
+	 * as other memory would be read as page table entries. Keep them until a
+	 * later flush succeeds. This leak is small and only follows a timeout.
+	 */
+	if (READ_ONCE(smmu_domain->tlb_sync_failed)) {
+		if (smmu_domain->freelist)
+			dev_err_ratelimited(smmu_domain->smmu->dev,
+					    "keeping page tables of %s after a failed TLB sync\n",
+					    dev_name(smmu_domain->dev));
+		spin_unlock_irqrestore(&smmu_domain->iotlb_gather_lock, flags);
+		return;
+	}
 
 	smmu_domain->deferred_flush = false;
 

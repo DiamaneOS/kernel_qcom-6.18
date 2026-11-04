@@ -522,6 +522,7 @@ struct arm_smmu_domain {
 	spinlock_t			iotlb_gather_lock;
 	struct list_head		*freelist;
 	bool				deferred_flush;
+	bool				tlb_sync_failed;
 
 	struct iommu_domain		domain;
 	struct qcom_io_pgtable_info	pgtbl_info;
