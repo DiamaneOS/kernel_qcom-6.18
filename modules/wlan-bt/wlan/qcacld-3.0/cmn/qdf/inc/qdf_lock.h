@@ -273,7 +273,13 @@ QDF_STATUS qdf_mutex_create(qdf_mutex_t *lock, const char *func, int line);
  *
  * Return: QDF_STATUS_SUCCESS on success, else QDF_STATUS failure
  */
-#define qdf_mutex_create(lock) qdf_mutex_create(lock, __func__, __LINE__)
+#define qdf_mutex_create(lock) ({ \
+	static struct lock_class_key __qdf_key; \
+	QDF_STATUS __qdf_status = qdf_mutex_create(lock, __func__, __LINE__); \
+	if (QDF_IS_STATUS_SUCCESS(__qdf_status)) \
+		lockdep_set_class_and_name(&(lock)->m_lock, &__qdf_key, #lock); \
+	__qdf_status; \
+})
 
 /**
  * qdf_mutex_acquire() - acquire a QDF lock
@@ -342,7 +348,11 @@ static inline void qdf_spinlock_create(qdf_spinlock_t *lock, const char *func,
  *
  * Return: none
  */
-#define qdf_spinlock_create(lock) qdf_spinlock_create(lock, __func__, __LINE__)
+#define qdf_spinlock_create(_lock) do { \
+	static struct lock_class_key __qdf_key; \
+	qdf_spinlock_create(_lock, __func__, __LINE__); \
+	lockdep_set_class_and_name(&(_lock)->lock.spinlock, &__qdf_key, #_lock); \
+} while (0)
 
 /**
  * qdf_spinlock_destroy() - Delete a spinlock
