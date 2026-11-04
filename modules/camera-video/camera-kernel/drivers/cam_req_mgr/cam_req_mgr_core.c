@@ -4760,14 +4760,16 @@ static int __cam_req_mgr_unlink(
 	/* Destroy timer of link */
 	crm_timer_exit(&link->watchdog);
 	spin_unlock_bh(&link->link_state_spin_lock);
-	/* Release session mutex for workq processing */
+	/* Release session mutex for workq processing, and keep the order session then link */
+	mutex_unlock(&link->lock);
 	mutex_unlock(&session->lock);
 	/* Destroy workq of link */
 	cam_req_mgr_workq_destroy(&link->workq);
+	/* Cleanup request tables and unlink devices. The worker takes the session under this lock. */
+	__cam_req_mgr_destroy_link_info(link);
 	/* Acquire session mutex after workq flush */
 	mutex_lock(&session->lock);
-	/* Cleanup request tables and unlink devices */
-	__cam_req_mgr_destroy_link_info(link);
+	mutex_lock(&link->lock);
 	/* Free memory holding data of linked devs */
 
 	__cam_req_mgr_destroy_subdev(&link->l_dev);
@@ -4915,7 +4917,13 @@ int cam_req_mgr_link(struct cam_req_mgr_ver_info *link_info)
 	}
 
 	/* Using device ops query connected devs, prepare request tables */
+	/*
+	 * Devices add requests under their own lock, which takes this lock, and setup calls
+	 * them and takes the request lock. Nothing can use the link until setup is finished.
+	 */
+	mutex_unlock(&link->lock);
 	rc = __cam_req_mgr_setup_link_info(link, link_info);
+	mutex_lock(&link->lock);
 	if (rc < 0)
 		goto setup_failed;
 
@@ -5026,7 +5034,13 @@ int cam_req_mgr_link_v2(struct cam_req_mgr_ver_info *link_info)
 	}
 
 	/* Using device ops query connected devs, prepare request tables */
+	/*
+	 * Devices add requests under their own lock, which takes this lock, and setup calls
+	 * them and takes the request lock. Nothing can use the link until setup is finished.
+	 */
+	mutex_unlock(&link->lock);
 	rc = __cam_req_mgr_setup_link_info(link, link_info);
+	mutex_lock(&link->lock);
 	if (rc < 0)
 		goto setup_failed;
 
@@ -5580,12 +5594,18 @@ int cam_req_mgr_link_control(struct cam_req_mgr_link_control *control)
 			link->watchdog->pause_timer = true;
 			spin_unlock_bh(&link->link_state_spin_lock);
 			/* notify nodes */
+			/* Devices take this lock under their own. crm_lock keeps the link. */
+			mutex_unlock(&link->lock);
 			__cam_req_mgr_send_evt(0, CAM_REQ_MGR_LINK_EVT_RESUME,
 				CRM_KMD_ERR_MAX, link);
+			mutex_lock(&link->lock);
 		} else if (control->ops == CAM_REQ_MGR_LINK_DEACTIVATE) {
 			/* notify nodes */
+			/* Devices take this lock under their own. crm_lock keeps the link. */
+			mutex_unlock(&link->lock);
 			__cam_req_mgr_send_evt(0, CAM_REQ_MGR_LINK_EVT_PAUSE,
 				CRM_KMD_ERR_MAX, link);
+			mutex_lock(&link->lock);
 
 			/* Destroy SOF watchdog timer */
 			spin_lock_bh(&link->link_state_spin_lock);
@@ -5645,7 +5665,10 @@ int cam_req_mgr_link_properties(struct cam_req_mgr_link_properties *properties)
 		evt_data.u.properties_mask = link->properties_mask;
 
 		if (dev->ops && dev->ops->process_evt) {
+			/* A device adds requests under its own lock, which takes this one. crm_lock keeps the link. */
+			mutex_unlock(&link->lock);
 			rc = dev->ops->process_evt(&evt_data);
+			mutex_lock(&link->lock);
 			if (rc) {
 				CAM_ERR(CAM_CRM,
 					"Failed to set properties on link 0x%x dev 0x%x",
