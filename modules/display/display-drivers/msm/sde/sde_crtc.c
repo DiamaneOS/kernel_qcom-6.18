@@ -5353,6 +5353,7 @@ static void _sde_crtc_reset(struct drm_crtc *crtc)
 
 static void sde_crtc_disable(struct drm_crtc *crtc)
 {
+	struct sde_power_event *power_event;
 	struct sde_kms *sde_kms;
 	struct sde_crtc *sde_crtc;
 	struct sde_crtc_state *cstate;
@@ -5466,11 +5467,9 @@ static void sde_crtc_disable(struct drm_crtc *crtc)
 			sde_encoder_control_idle_pc(encoder, true);
 	}
 
-	if (sde_crtc->power_event) {
-		sde_power_handle_unregister_event(&priv->phandle,
-				sde_crtc->power_event);
-		sde_crtc->power_event = NULL;
-	}
+	/* Unregistered after the unlock: the power lock is taken before crtc_lock in the callback. */
+	power_event = sde_crtc->power_event;
+	sde_crtc->power_event = NULL;
 
 	/**
 	 * All callbacks are unregistered and frame done waits are complete
@@ -5500,6 +5499,9 @@ static void sde_crtc_disable(struct drm_crtc *crtc)
 		memset(&sde_crtc->previous_opr_value, 0, sizeof(struct sde_opr_value));
 
 	mutex_unlock(&sde_crtc->crtc_lock);
+
+	if (power_event)
+		sde_power_handle_unregister_event(&priv->phandle, power_event);
 }
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
