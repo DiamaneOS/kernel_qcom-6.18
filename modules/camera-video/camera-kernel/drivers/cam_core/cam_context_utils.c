@@ -182,11 +182,11 @@ int cam_context_buf_done_from_hw(struct cam_context *ctx,
 	if (rc)
 		return rc;
 
-	spin_lock(&ctx->lock);
+	spin_lock_bh(&ctx->lock);
 	if (list_empty(&ctx->active_req_list)) {
 		CAM_ERR(CAM_CTXT, "[%s][%d] no active request",
 			ctx->dev_name, ctx->ctx_id);
-		spin_unlock(&ctx->lock);
+		spin_unlock_bh(&ctx->lock);
 		return -EIO;
 	}
 	req = list_first_entry(&ctx->active_req_list,
@@ -199,7 +199,7 @@ int cam_context_buf_done_from_hw(struct cam_context *ctx,
 			"[%s][%d] mismatch: done req[%lld], active req[%lld]",
 			ctx->dev_name, ctx->ctx_id,
 			done->request_id, req->request_id);
-		spin_unlock(&ctx->lock);
+		spin_unlock_bh(&ctx->lock);
 		return -EIO;
 	}
 
@@ -210,7 +210,7 @@ int cam_context_buf_done_from_hw(struct cam_context *ctx,
 		cam_smmu_buffer_tracker_putref(&req->buf_tracker);
 		list_add_tail(&req->list, &ctx->free_req_list);
 		req->ctx = NULL;
-		spin_unlock(&ctx->lock);
+		spin_unlock_bh(&ctx->lock);
 		return -EIO;
 	}
 
@@ -219,7 +219,7 @@ int cam_context_buf_done_from_hw(struct cam_context *ctx,
 	 * list, so hold the lock
 	 */
 	list_del_init(&req->list);
-	spin_unlock(&ctx->lock);
+	spin_unlock_bh(&ctx->lock);
 
 	cam_smmu_buffer_tracker_putref(&req->buf_tracker);
 
@@ -279,14 +279,14 @@ int cam_context_buf_done_from_hw(struct cam_context *ctx,
 	 * another thread may be adding/removing from free list,
 	 * so hold the lock
 	 */
-	spin_lock(&ctx->lock);
+	spin_lock_bh(&ctx->lock);
 	if (req->packet) {
 		cam_common_mem_free(req->packet);
 		req->packet = NULL;
 	}
 	list_add_tail(&req->list, &ctx->free_req_list);
 	req->ctx = NULL;
-	spin_unlock(&ctx->lock);
+	spin_unlock_bh(&ctx->lock);
 
 	return 0;
 }
@@ -305,10 +305,10 @@ static int cam_context_apply_req_to_hw(struct cam_ctx_request *req,
 		goto end;
 	}
 
-	spin_lock(&ctx->lock);
+	spin_lock_bh(&ctx->lock);
 	list_del_init(&req->list);
 	list_add_tail(&req->list, &ctx->active_req_list);
-	spin_unlock(&ctx->lock);
+	spin_unlock_bh(&ctx->lock);
 
 	if (cam_debug_ctx_req_list & ctx->dev_id)
 		CAM_INFO(CAM_CTXT,
@@ -326,14 +326,14 @@ static int cam_context_apply_req_to_hw(struct cam_ctx_request *req,
 	rc = ctx->hw_mgr_intf->hw_config(ctx->hw_mgr_intf->hw_mgr_priv, &cfg);
 	if (rc) {
 		cam_smmu_buffer_tracker_putref(&req->buf_tracker);
-		spin_lock(&ctx->lock);
+		spin_lock_bh(&ctx->lock);
 		list_del_init(&req->list);
 		if (req->packet) {
 			cam_common_mem_free(req->packet);
 			req->packet = NULL;
 		}
 		list_add_tail(&req->list, &ctx->free_req_list);
-		spin_unlock(&ctx->lock);
+		spin_unlock_bh(&ctx->lock);
 
 		if (cam_debug_ctx_req_list & ctx->dev_id)
 			CAM_INFO(CAM_CTXT,
@@ -396,14 +396,14 @@ static void cam_context_sync_callback(int32_t sync_obj, int status, void *data)
 			req->flushed = 0;
 			req->ctx = NULL;
 			mutex_unlock(&ctx->sync_mutex);
-			spin_lock(&ctx->lock);
+			spin_lock_bh(&ctx->lock);
 			list_del_init(&req->list);
 			if (req->packet) {
 				cam_common_mem_free(req->packet);
 				req->packet = NULL;
 			}
 			list_add_tail(&req->list, &ctx->free_req_list);
-			spin_unlock(&ctx->lock);
+			spin_unlock_bh(&ctx->lock);
 
 			if (cam_debug_ctx_req_list & ctx->dev_id)
 				CAM_INFO(CAM_CTXT,
@@ -539,13 +539,13 @@ int32_t cam_context_prepare_dev_to_hw(struct cam_context *ctx,
 	if (rc)
 		return rc;
 
-	spin_lock(&ctx->lock);
+	spin_lock_bh(&ctx->lock);
 	if (!list_empty(&ctx->free_req_list)) {
 		req = list_first_entry(&ctx->free_req_list,
 			struct cam_ctx_request, list);
 		list_del_init(&req->list);
 	}
-	spin_unlock(&ctx->lock);
+	spin_unlock_bh(&ctx->lock);
 
 	if (!req) {
 		CAM_ERR(CAM_CTXT, "[%s][%d] No more request obj free",
@@ -630,9 +630,9 @@ int32_t cam_context_prepare_dev_to_hw(struct cam_context *ctx,
 		}
 	}
 
-	spin_lock(&ctx->lock);
+	spin_lock_bh(&ctx->lock);
 	list_add_tail(&req->list, &ctx->pending_req_list);
-	spin_unlock(&ctx->lock);
+	spin_unlock_bh(&ctx->lock);
 	if (cam_debug_ctx_req_list & ctx->dev_id)
 		CAM_INFO(CAM_CTXT,
 			"[%s][%d] : Moving req[%llu] from free_list to pending_list",
@@ -643,9 +643,9 @@ int32_t cam_context_prepare_dev_to_hw(struct cam_context *ctx,
 			rc = cam_sync_check_valid(
 				req->in_map_entries[j].sync_id);
 			if (rc) {
-				spin_lock(&ctx->lock);
+				spin_lock_bh(&ctx->lock);
 				list_del_init(&req->list);
-				spin_unlock(&ctx->lock);
+				spin_unlock_bh(&ctx->lock);
 				CAM_ERR(CAM_CTXT,
 					"invalid in map sync object %d",
 					req->in_map_entries[j].sync_id);
@@ -664,9 +664,9 @@ int32_t cam_context_prepare_dev_to_hw(struct cam_context *ctx,
 					"[%s][%d] Failed register fence cb: %d ret = %d",
 					ctx->dev_name, ctx->ctx_id,
 					req->in_map_entries[j].sync_id, rc);
-				spin_lock(&ctx->lock);
+				spin_lock_bh(&ctx->lock);
 				list_del_init(&req->list);
-				spin_unlock(&ctx->lock);
+				spin_unlock_bh(&ctx->lock);
 
 				if (cam_debug_ctx_req_list & ctx->dev_id)
 					CAM_INFO(CAM_CTXT,
@@ -703,14 +703,14 @@ put_ref:
 	}
 free_req:
 	cam_smmu_buffer_tracker_putref(&req->buf_tracker);
-	spin_lock(&ctx->lock);
+	spin_lock_bh(&ctx->lock);
 	if (packet)
 		cam_common_mem_free(packet);
 
 	req->packet = NULL;
 	list_add_tail(&req->list, &ctx->free_req_list);
 	req->ctx = NULL;
-	spin_unlock(&ctx->lock);
+	spin_unlock_bh(&ctx->lock);
 
 	return rc;
 }
@@ -844,9 +844,9 @@ int32_t cam_context_flush_ctx_to_hw(struct cam_context *ctx)
 	 */
 	mutex_lock(&ctx->sync_mutex);
 	INIT_LIST_HEAD(&temp_list);
-	spin_lock(&ctx->lock);
+	spin_lock_bh(&ctx->lock);
 	list_splice_init(&ctx->pending_req_list, &temp_list);
-	spin_unlock(&ctx->lock);
+	spin_unlock_bh(&ctx->lock);
 
 	if (cam_debug_ctx_req_list & ctx->dev_id)
 		CAM_INFO(CAM_CTXT,
@@ -920,13 +920,13 @@ int32_t cam_context_flush_ctx_to_hw(struct cam_context *ctx)
 		 */
 		if (free_req) {
 			req->ctx = NULL;
-			spin_lock(&ctx->lock);
+			spin_lock_bh(&ctx->lock);
 			if (req->packet) {
 				cam_common_mem_free(req->packet);
 				req->packet = NULL;
 			}
 			list_add_tail(&req->list, &ctx->free_req_list);
-			spin_unlock(&ctx->lock);
+			spin_unlock_bh(&ctx->lock);
 		}
 
 		if (cam_debug_ctx_req_list & ctx->dev_id)
@@ -947,7 +947,7 @@ int32_t cam_context_flush_ctx_to_hw(struct cam_context *ctx)
 		 * any buf done's from HW is serviced before the flush
 		 * makes it to the HW layer
 		 */
-		spin_lock(&ctx->lock);
+		spin_lock_bh(&ctx->lock);
 		list_for_each(list, &ctx->active_req_list)
 			num_entries++;
 
@@ -955,7 +955,7 @@ int32_t cam_context_flush_ctx_to_hw(struct cam_context *ctx)
 			flush_args.flush_req_active =
 				kcalloc(num_entries, sizeof(void *), GFP_ATOMIC);
 			if (!flush_args.flush_req_active) {
-				spin_unlock(&ctx->lock);
+				spin_unlock_bh(&ctx->lock);
 				CAM_ERR(CAM_CTXT, "[%s][%d] : Flush array memory alloc fail",
 					ctx->dev_name, ctx->ctx_id);
 				rc = -ENOMEM;
@@ -967,7 +967,7 @@ int32_t cam_context_flush_ctx_to_hw(struct cam_context *ctx)
 					req->req_priv;
 			}
 		}
-		spin_unlock(&ctx->lock);
+		spin_unlock_bh(&ctx->lock);
 
 		if (flush_args.num_req_pending || flush_args.num_req_active) {
 			flush_args.ctxt_to_hw_map = ctx->ctxt_to_hw_map;
@@ -978,9 +978,9 @@ int32_t cam_context_flush_ctx_to_hw(struct cam_context *ctx)
 	}
 
 	INIT_LIST_HEAD(&temp_list);
-	spin_lock(&ctx->lock);
+	spin_lock_bh(&ctx->lock);
 	list_splice_init(&ctx->active_req_list, &temp_list);
-	spin_unlock(&ctx->lock);
+	spin_unlock_bh(&ctx->lock);
 
 	if (cam_debug_ctx_req_list & ctx->dev_id)
 		CAM_INFO(CAM_CTXT,
@@ -1015,14 +1015,14 @@ int32_t cam_context_flush_ctx_to_hw(struct cam_context *ctx)
 			}
 		}
 
-		spin_lock(&ctx->lock);
+		spin_lock_bh(&ctx->lock);
 		if (req->packet) {
 			cam_common_mem_free(req->packet);
 			req->packet = NULL;
 		}
 		req->ctx = NULL;
 		list_add_tail(&req->list, &ctx->free_req_list);
-		spin_unlock(&ctx->lock);
+		spin_unlock_bh(&ctx->lock);
 
 		if (cam_debug_ctx_req_list & ctx->dev_id)
 			CAM_INFO(CAM_CTXT,
@@ -1060,7 +1060,7 @@ int32_t cam_context_flush_req_to_hw(struct cam_context *ctx,
 		goto end;
 	}
 	mutex_lock(&ctx->sync_mutex);
-	spin_lock(&ctx->lock);
+	spin_lock_bh(&ctx->lock);
 	list_for_each_entry(req, &ctx->pending_req_list, list) {
 		if (req->request_id != cmd->req_id)
 			continue;
@@ -1077,7 +1077,7 @@ int32_t cam_context_flush_req_to_hw(struct cam_context *ctx,
 			req->req_priv;
 		break;
 	}
-	spin_unlock(&ctx->lock);
+	spin_unlock_bh(&ctx->lock);
 	mutex_unlock(&ctx->sync_mutex);
 
 	if (ctx->hw_mgr_intf->hw_flush) {
@@ -1090,7 +1090,7 @@ int32_t cam_context_flush_req_to_hw(struct cam_context *ctx,
 				goto end;
 			}
 
-			spin_lock(&ctx->lock);
+			spin_lock_bh(&ctx->lock);
 			list_for_each_entry(req, &ctx->active_req_list, list) {
 				if (req->request_id != cmd->req_id)
 					continue;
@@ -1100,7 +1100,7 @@ int32_t cam_context_flush_req_to_hw(struct cam_context *ctx,
 						"[%s][%d] : Flushing active request id: %llu is not supported",
 						ctx->dev_name, ctx->ctx_id, req->request_id);
 					rc = -EPERM;
-					spin_unlock(&ctx->lock);
+					spin_unlock_bh(&ctx->lock);
 					goto end;
 				}
 
@@ -1110,7 +1110,7 @@ int32_t cam_context_flush_req_to_hw(struct cam_context *ctx,
 					req->req_priv;
 				break;
 			}
-			spin_unlock(&ctx->lock);
+			spin_unlock_bh(&ctx->lock);
 		}
 
 		if (flush_args.num_req_pending || flush_args.num_req_active) {
@@ -1158,13 +1158,13 @@ int32_t cam_context_flush_req_to_hw(struct cam_context *ctx,
 			}
 			if (flush_args.num_req_active || free_req) {
 				req->ctx = NULL;
-				spin_lock(&ctx->lock);
+				spin_lock_bh(&ctx->lock);
 				if (req->packet) {
 					cam_common_mem_free(req->packet);
 					req->packet = NULL;
 				}
 				list_add_tail(&req->list, &ctx->free_req_list);
-				spin_unlock(&ctx->lock);
+				spin_unlock_bh(&ctx->lock);
 
 				if (cam_debug_ctx_req_list & ctx->dev_id)
 					CAM_INFO(CAM_CTXT,
@@ -1625,7 +1625,7 @@ static int cam_context_user_dump(struct cam_context *ctx,
 	dump_args->offset += hdr->size +
 		sizeof(struct cam_context_dump_header);
 
-	spin_lock(&ctx->lock);
+	spin_lock_bh(&ctx->lock);
 	/* Dump waiting requests */
 	if (!list_empty(&ctx->wait_req_list)) {
 		list_for_each_entry_safe(req, req_temp, &ctx->wait_req_list, list) {
@@ -1749,7 +1749,7 @@ static int cam_context_user_dump(struct cam_context *ctx,
 		}
 	}
 cleanup:
-	spin_unlock(&ctx->lock);
+	spin_unlock_bh(&ctx->lock);
 	cam_mem_put_cpu_buf(dump_args->buf_handle);
 	return rc;
 }
