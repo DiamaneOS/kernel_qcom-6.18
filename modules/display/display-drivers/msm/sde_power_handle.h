@@ -161,6 +161,7 @@ struct sde_power_mmrm_reserve {
  * struct sde_power_handle: power handle main struct
  * @mp:		module power for clock and regulator
  * @phandle_lock: lock to synchronize the enable/disable
+ * @event_lock: lock for the event list and its callbacks
  * @dev: pointer to device structure
  * @reg_bus_handle: context structure for reg bus control
  * @data_bus_handle: context structure for data bus control
@@ -174,6 +175,7 @@ struct sde_power_mmrm_reserve {
 struct sde_power_handle {
 	struct dss_module_power mp;
 	struct mutex phandle_lock;
+	struct mutex event_lock;
 	struct device *dev;
 	struct sde_power_reg_bus_handle reg_bus_handle;
 	struct sde_power_data_bus_handle data_bus_handle

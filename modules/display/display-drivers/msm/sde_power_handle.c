@@ -44,12 +44,13 @@ const char *sde_power_handle_get_dbus_name(u32 bus_id)
 	return NULL;
 }
 
-static int sde_power_event_trigger_locked(struct sde_power_handle *phandle,
+static int sde_power_event_trigger(struct sde_power_handle *phandle,
 		u32 event_type)
 {
 	struct sde_power_event *event;
 	int ret = -EPERM;
 
+	mutex_lock(&phandle->event_lock);
 	phandle->last_event_handled = event_type;
 	list_for_each_entry(event, &phandle->event_list, list) {
 		if (event->event_type & event_type) {
@@ -57,6 +58,24 @@ static int sde_power_event_trigger_locked(struct sde_power_handle *phandle,
 			ret = 0;
 		}
 	}
+	mutex_unlock(&phandle->event_lock);
+
+	return ret;
+}
+
+/*
+ * Not under phandle_lock: the callbacks take the CRTC lock, which is held over paths that
+ * take phandle_lock. These events come at the ends of an enable or disable, and runtime PM
+ * serializes those.
+ */
+static int sde_power_event_trigger_locked(struct sde_power_handle *phandle,
+		u32 event_type)
+{
+	int ret;
+
+	mutex_unlock(&phandle->phandle_lock);
+	ret = sde_power_event_trigger(phandle, event_type);
+	mutex_lock(&phandle->phandle_lock);
 
 	return ret;
 }
@@ -597,7 +616,7 @@ int sde_power_mmrm_set_clk_limit(struct dss_clk *clk,
 
 	SDE_EVT32_VERBOSE(SDE_EVTLOG_FUNC_ENTRY,
 		clk->mmrm.mmrm_requested_clk);
-	ret = sde_power_event_trigger_locked(phandle,
+	ret = sde_power_event_trigger(phandle,
 		SDE_POWER_EVENT_MMRM_CALLBACK);
 	if (ret) {
 		/* no crtc's present, we cannot process the cb */
@@ -738,6 +757,7 @@ int sde_power_resource_init(struct platform_device *pdev,
 	phandle->rsc_client_init = false;
 
 	mutex_init(&phandle->phandle_lock);
+	mutex_init(&phandle->event_lock);
 
 	return rc;
 
@@ -773,7 +793,7 @@ void sde_power_resource_deinit(struct platform_device *pdev,
 	}
 	mp = &phandle->mp;
 
-	mutex_lock(&phandle->phandle_lock);
+	mutex_lock(&phandle->event_lock);
 	list_for_each_entry_safe(curr_event, next_event,
 			&phandle->event_list, list) {
 		pr_err("event:%d, client:%s still registered\n",
@@ -782,7 +802,7 @@ void sde_power_resource_deinit(struct platform_device *pdev,
 		curr_event->active = false;
 		list_del(&curr_event->list);
 	}
-	mutex_unlock(&phandle->phandle_lock);
+	mutex_unlock(&phandle->event_lock);
 
 	sde_power_bus_unregister(phandle);
 
@@ -1134,9 +1154,9 @@ struct sde_power_event *sde_power_handle_register_event(
 	strscpy(event->client_name, client_name, MAX_CLIENT_NAME_LEN);
 	event->active = true;
 
-	mutex_lock(&phandle->phandle_lock);
+	mutex_lock(&phandle->event_lock);
 	list_add(&event->list, &phandle->event_list);
-	mutex_unlock(&phandle->phandle_lock);
+	mutex_unlock(&phandle->event_lock);
 
 	return event;
 }
@@ -1151,9 +1171,9 @@ void sde_power_handle_unregister_event(
 		pr_err("power handle deinit already done\n");
 		kfree(event);
 	} else {
-		mutex_lock(&phandle->phandle_lock);
+		mutex_lock(&phandle->event_lock);
 		list_del_init(&event->list);
-		mutex_unlock(&phandle->phandle_lock);
+		mutex_unlock(&phandle->event_lock);
 		kfree(event);
 	}
 }
