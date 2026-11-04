@@ -16,6 +16,7 @@
 #include <linux/of_platform.h>
 #include <linux/platform_device.h>
 #include <linux/pm_runtime.h>
+#include <linux/sched/mm.h>
 #include <linux/dma-mapping.h>
 #include <linux/soc/qcom/geni-se.h>
 #include <linux/qcom-geni-se-common.h>
@@ -189,6 +190,7 @@ struct geni_i2c_dev {
 	struct geni_se i2c_rsc;
 	struct clk *m_ahb_clk;
 	struct clk *s_ahb_clk;
+	bool clks_prepared;
 	struct clk *core_clk;
 	int cur_wr;
 	int cur_rd;
@@ -834,6 +836,102 @@ static int do_pending_cancel(struct geni_i2c_dev *gi2c)
 	return timeout;
 }
 
+/*
+ * A transfer can run under a regulator lock when a PMIC sits on this bus. Preparing a
+ * clock votes a regulator, so the clocks stay prepared while the system is awake and
+ * runtime PM only enables them.
+ */
+static int geni_i2c_clks_prepare(struct geni_i2c_dev *gi2c)
+{
+	int ret;
+
+	if (gi2c->is_le_vm || gi2c->clks_prepared)
+		return 0;
+
+	ret = clk_prepare(gi2c->m_ahb_clk);
+	if (ret)
+		return ret;
+	ret = clk_prepare(gi2c->s_ahb_clk);
+	if (ret)
+		goto m_ahb;
+	ret = clk_prepare(gi2c->i2c_rsc.clk);
+	if (ret)
+		goto s_ahb;
+
+	gi2c->clks_prepared = true;
+	return 0;
+
+s_ahb:
+	clk_unprepare(gi2c->s_ahb_clk);
+m_ahb:
+	clk_unprepare(gi2c->m_ahb_clk);
+	return ret;
+}
+
+static void geni_i2c_clks_unprepare(struct geni_i2c_dev *gi2c)
+{
+	if (!gi2c->clks_prepared)
+		return;
+
+	clk_unprepare(gi2c->i2c_rsc.clk);
+	clk_unprepare(gi2c->s_ahb_clk);
+	clk_unprepare(gi2c->m_ahb_clk);
+	gi2c->clks_prepared = false;
+}
+
+static int geni_i2c_clks_enable(struct geni_i2c_dev *gi2c)
+{
+	int ret;
+
+	ret = clk_enable(gi2c->m_ahb_clk);
+	if (ret)
+		return ret;
+	ret = clk_enable(gi2c->s_ahb_clk);
+	if (ret)
+		goto m_ahb;
+	ret = clk_enable(gi2c->i2c_rsc.clk);
+	if (ret)
+		goto s_ahb;
+	return 0;
+
+s_ahb:
+	clk_disable(gi2c->s_ahb_clk);
+m_ahb:
+	clk_disable(gi2c->m_ahb_clk);
+	return ret;
+}
+
+static void geni_i2c_clks_disable(struct geni_i2c_dev *gi2c)
+{
+	clk_disable(gi2c->i2c_rsc.clk);
+	clk_disable(gi2c->s_ahb_clk);
+	clk_disable(gi2c->m_ahb_clk);
+}
+
+static int geni_i2c_resources_on(struct geni_i2c_dev *gi2c)
+{
+	int ret;
+
+	ret = geni_i2c_clks_enable(gi2c);
+	if (ret)
+		return ret;
+
+	ret = pinctrl_pm_select_default_state(gi2c->dev);
+	if (ret)
+		geni_i2c_clks_disable(gi2c);
+	return ret;
+}
+
+static void geni_i2c_resources_off(struct geni_i2c_dev *gi2c)
+{
+	int ret;
+
+	ret = pinctrl_pm_select_sleep_state(gi2c->dev);
+	if (ret)
+		dev_warn(gi2c->dev, "sleep pin state failed: %d\n", ret);
+	geni_i2c_clks_disable(gi2c);
+}
+
 static int geni_i2c_prepare(struct geni_i2c_dev *gi2c)
 {
 	if (gi2c->se_mode == UNINITIALIZED) {
@@ -843,7 +941,7 @@ static int geni_i2c_prepare(struct geni_i2c_dev *gi2c)
 		if (proto != GENI_SE_I2C) {
 			dev_err(gi2c->dev, "Invalid proto %d\n", proto);
 			if (!gi2c->is_le_vm) {
-				geni_se_resources_off(&gi2c->i2c_rsc);
+				geni_i2c_resources_off(gi2c);
 				geni_icc_disable(&gi2c->i2c_rsc);
 				if (gi2c->is_i2c_hub)
 					clk_disable_unprepare(gi2c->core_clk);
@@ -2937,7 +3035,7 @@ geni_i2c_execute_xfer_exit:
  *
  * Return: 0 on success OR negative error code for failure.
  */
-static int geni_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+static int __geni_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
 								int num)
 {
 	struct geni_i2c_dev *gi2c = i2c_get_adapdata(adap);
@@ -3088,6 +3186,16 @@ geni_i2c_txn_ret:
 static u32 geni_i2c_func(struct i2c_adapter *adap)
 {
 	return I2C_FUNC_I2C | (I2C_FUNC_SMBUS_EMUL & ~I2C_FUNC_SMBUS_QUICK);
+}
+
+/* Memory reclaim must not wait for I/O here: the bus can sit under a regulator lock. */
+static int geni_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
+{
+	unsigned int noio = memalloc_noio_save();
+	int ret = __geni_i2c_xfer(adap, msgs, num);
+
+	memalloc_noio_restore(noio);
+	return ret;
 }
 
 static const struct i2c_algorithm geni_i2c_algo = {
@@ -3269,6 +3377,35 @@ static int geni_i2c_resources_init(struct platform_device *pdev, struct geni_i2c
 
 	return 0;
 }
+static int geni_i2c_transfer_setup_begin(struct geni_i2c_dev *gi2c)
+{
+	if (!gi2c->ipcl)
+		gi2c->ipcl = ipc_log_context_create(2, dev_name(gi2c->dev), 0);
+
+	return geni_i2c_clks_prepare(gi2c);
+}
+
+/* Find the SE mode and get DMA channels now, so that no transfer has to allocate them. */
+static int geni_i2c_transfer_setup(struct geni_i2c_dev *gi2c)
+{
+	int ret;
+
+	if (gi2c->is_le_vm || gi2c->pm_ctrl_client)
+		return 0;
+
+	ret = pm_runtime_resume_and_get(gi2c->dev);
+	if (ret < 0)
+		return ret;
+
+	if (gi2c->se_mode == GSI_ONLY && !gi2c->req_chan &&
+	    geni_i2c_gsi_request_channel(gi2c))
+		ret = -EPROBE_DEFER;
+
+	pm_runtime_mark_last_busy(gi2c->dev);
+	pm_runtime_put_autosuspend(gi2c->dev);
+	return ret;
+}
+
 static int geni_i2c_probe(struct platform_device *pdev)
 {
 	struct geni_i2c_dev *gi2c;
@@ -3398,6 +3535,10 @@ static int geni_i2c_probe(struct platform_device *pdev)
 
 	strscpy(gi2c->adap.name, "Geni-I2C", sizeof(gi2c->adap.name));
 
+	ret = geni_i2c_transfer_setup_begin(gi2c);
+	if (ret)
+		return ret;
+
 	pm_runtime_set_suspended(gi2c->dev);
 	/* for levm and PM control clients skip auto suspend timer */
 	if (!gi2c->is_le_vm && !gi2c->pm_ctrl_client) {
@@ -3405,10 +3546,15 @@ static int geni_i2c_probe(struct platform_device *pdev)
 		pm_runtime_use_autosuspend(gi2c->dev);
 	}
 	pm_runtime_enable(gi2c->dev);
+
+	ret = geni_i2c_transfer_setup(gi2c);
+	if (ret)
+		goto err_setup;
+
 	ret = i2c_add_adapter(&gi2c->adap);
 	if (ret) {
 		dev_err(gi2c->dev, "Add adapter failed, ret=%d\n", ret);
-		return ret;
+		goto err_setup;
 	}
 
 	device_create_file(gi2c->dev, &dev_attr_capture_kpi);
@@ -3421,6 +3567,14 @@ static int geni_i2c_probe(struct platform_device *pdev)
 	pr_info("boot_kpi: M - DRIVER GENI_I2C_%d Ready\n", gi2c->adap.nr);
 	dev_info(gi2c->dev, "I2C probed\n");
 	return 0;
+
+err_setup:
+	pm_runtime_suspend(gi2c->dev);
+	pm_runtime_disable(gi2c->dev);
+	geni_i2c_clks_unprepare(gi2c);
+	if (gi2c->ipcl)
+		ipc_log_context_destroy(gi2c->ipcl);
+	return ret;
 }
 
 static void geni_i2c_remove(struct platform_device *pdev)
@@ -3463,6 +3617,8 @@ static void geni_i2c_remove(struct platform_device *pdev)
 	arr_idx = 0;
 
 	device_remove_file(gi2c->dev, &dev_attr_capture_kpi);
+
+	geni_i2c_clks_unprepare(gi2c);
 
 	if (gi2c->ipc_log_kpi)
 		ipc_log_context_destroy(gi2c->ipc_log_kpi);
@@ -3520,7 +3676,7 @@ static int geni_i2c_resume_early(struct device *device)
 		gi2c->se_mode = UNINITIALIZED;
 	}
 #endif
-	return 0;
+	return geni_i2c_clks_prepare(gi2c);
 }
 
 static int geni_i2c_hib_resume_noirq(struct device *device)
@@ -3529,7 +3685,7 @@ static int geni_i2c_hib_resume_noirq(struct device *device)
 
 	I2C_LOG_DBG(gi2c->ipcl, false, gi2c->dev, "%s line:%d\n", __func__, __LINE__);
 	gi2c->se_mode = UNINITIALIZED;
-	return 0;
+	return geni_i2c_clks_prepare(gi2c);
 }
 
 /*
@@ -3610,10 +3766,9 @@ static int geni_i2c_runtime_suspend(struct device *dev)
 	if (gi2c->skip_bw_vote) {
 		if (gi2c->is_shared) {
 			/* Do not unconfigure GPIOs if shared se */
-			geni_se_common_clks_off(gi2c->i2c_rsc.clk,
-						gi2c->m_ahb_clk, gi2c->s_ahb_clk);
+			geni_i2c_clks_disable(gi2c);
 		} else if (!gi2c->is_le_vm) {
-			geni_se_resources_off(&gi2c->i2c_rsc);
+			geni_i2c_resources_off(gi2c);
 		}
 
 		goto skip_bw_vote;
@@ -3638,13 +3793,13 @@ static int geni_i2c_runtime_suspend(struct device *dev)
 		 * case 2: Client driver don't control runtime PM of the parent.
 		 * In that case, only is_shared = true.
 		 */
-		geni_se_common_clks_off(gi2c->i2c_rsc.clk, gi2c->m_ahb_clk, gi2c->s_ahb_clk);
+		geni_i2c_clks_disable(gi2c);
 		ret = geni_icc_disable(&gi2c->i2c_rsc);
 		if (ret)
 			I2C_LOG_DBG(gi2c->ipcl, false, gi2c->dev,
 			"%s failing at geni_icc_disable ret=%d\n", __func__, ret);
 	} else if (!gi2c->is_le_vm) {
-		geni_se_resources_off(&gi2c->i2c_rsc);
+		geni_i2c_resources_off(gi2c);
 		ret = geni_icc_disable(&gi2c->i2c_rsc);
 		if (ret)
 			I2C_LOG_DBG(gi2c->ipcl, false, gi2c->dev,
@@ -3669,13 +3824,6 @@ static int geni_i2c_runtime_resume(struct device *dev)
 
 	start_time = geni_capture_start_time(&gi2c->i2c_rsc, gi2c->ipc_log_kpi, __func__,
 					     gi2c->i2c_kpi);
-
-	if (!gi2c->ipcl) {
-		char ipc_name[I2C_NAME_SIZE];
-
-		snprintf(ipc_name, I2C_NAME_SIZE, "%s", dev_name(gi2c->dev));
-		gi2c->ipcl = ipc_log_context_create(2, ipc_name, 0);
-	}
 
 	if (!gi2c->is_le_vm) {
 		if (gi2c->skip_bw_vote)
@@ -3706,7 +3854,7 @@ skip_bw_vote:
 		}
 
 		/* Do not control clk/gpio/icb for LE-VM */
-		ret = geni_se_resources_on(&gi2c->i2c_rsc);
+		ret = geni_i2c_resources_on(gi2c);
 		if (ret)
 			return ret;
 
@@ -3828,6 +3976,8 @@ static int geni_i2c_suspend_late(struct device *device)
 		pm_runtime_enable(device);
 	}
 	i2c_unlock_bus(&gi2c->adap, I2C_LOCK_SEGMENT);
+	/* Outside the bus lock: this drops a regulator vote, and a PMIC's regulator locks go over the bus. */
+	geni_i2c_clks_unprepare(gi2c);
 	I2C_LOG_DBG(gi2c->ipcl, false, gi2c->dev, "%s ret=%d\n", __func__, ret);
 	geni_capture_stop_time(&gi2c->i2c_rsc, gi2c->ipc_log_kpi, __func__,
 			       gi2c->i2c_kpi, start_time, 0, 0);
