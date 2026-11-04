@@ -1566,6 +1566,7 @@ struct platform_driver qsmmuv500_tbu_driver = {
 	.driver	= {
 		.name		= "qsmmuv500-tbu",
 		.of_match_table	= of_match_ptr(qsmmuv500_tbu_of_match),
+		.suppress_bind_attrs = true,
 	},
 	.probe	= qsmmuv500_tbu_probe,
 };
