@@ -1669,7 +1669,7 @@ int cam_hw_cdm_reset_hw(struct cam_hw_info *cdm_hw, uint32_t handle)
 	cdm_core = (struct cam_cdm *)cdm_hw->core_info;
 
 	for (i = 0; i < cdm_core->offsets->reg_data->num_bl_fifo; i++)
-		mutex_lock(&cdm_core->bl_fifo[i].fifo_lock);
+		mutex_lock_nested(&cdm_core->bl_fifo[i].fifo_lock, i);
 
 	set_bit(CAM_CDM_RESET_HW_STATUS, &cdm_core->cdm_status);
 
@@ -1741,7 +1741,7 @@ int cam_hw_cdm_handle_error_info(
 	cdm_core = (struct cam_cdm *)cdm_hw->core_info;
 
 	for (i = 0; i < cdm_core->offsets->reg_data->num_bl_fifo; i++)
-		mutex_lock(&cdm_core->bl_fifo[i].fifo_lock);
+		mutex_lock_nested(&cdm_core->bl_fifo[i].fifo_lock, i);
 
 	reinit_completion(&cdm_core->reset_complete);
 	set_bit(CAM_CDM_RESET_HW_STATUS, &cdm_core->cdm_status);
@@ -2076,7 +2076,7 @@ int cam_hw_cdm_pf_deinit(void *hw_priv,
 	cdm_core = (struct cam_cdm *)cdm_hw->core_info;
 
 	for (i = 0; i < cdm_core->offsets->reg_data->num_bl_fifo; i++)
-		mutex_lock(&cdm_core->bl_fifo[i].fifo_lock);
+		mutex_lock_nested(&cdm_core->bl_fifo[i].fifo_lock, i);
 
 	/* clear bl request */
 	cam_hw_cdm_clear_bl_requests(cdm_core);
@@ -2117,7 +2117,7 @@ int cam_hw_cdm_deinit(void *hw_priv,
 	cdm_core = (struct cam_cdm *)cdm_hw->core_info;
 
 	for (i = 0; i < cdm_core->offsets->reg_data->num_bl_fifo; i++)
-		mutex_lock(&cdm_core->bl_fifo[i].fifo_lock);
+		mutex_lock_nested(&cdm_core->bl_fifo[i].fifo_lock, i);
 
 	/*clear bl request */
 	cam_hw_cdm_clear_bl_requests(cdm_core);
