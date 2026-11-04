@@ -632,6 +632,7 @@ struct gpii {
 	struct mutex ctrl_lock;
 	enum gpi_ev_state ev_state;
 	bool configured_irq;
+	bool irq_on;
 	enum gpi_pm_state pm_state;
 	rwlock_t pm_lock;
 	struct gpi_ring *ev_ring;
@@ -1125,6 +1126,26 @@ void gpi_update_multi_desc_flag(struct dma_chan *chan, bool is_multi_descriptor,
 }
 EXPORT_SYMBOL_GPL(gpi_update_multi_desc_flag);
 
+/*
+ * The interrupt is requested once at probe, since requesting it takes locks that
+ * allocate and the control lock is on the I2C transfer path. All calls hold that lock.
+ */
+static void gpi_irq_on(struct gpii *gpii)
+{
+	if (!gpii->irq_on) {
+		enable_irq(gpii->irq);
+		gpii->irq_on = true;
+	}
+}
+
+static void gpi_irq_off(struct gpii *gpii)
+{
+	if (gpii->irq_on) {
+		disable_irq(gpii->irq);
+		gpii->irq_on = false;
+	}
+}
+
 static void gpi_disable_interrupts(struct gpii *gpii)
 {
 	struct {
@@ -1193,7 +1214,7 @@ static void gpi_disable_interrupts(struct gpii *gpii)
 				    default_reg[i].shift,
 				    default_reg[i].val);
 	gpii->cntxt_type_irq_msk = 0;
-	free_irq(gpii->irq, gpii);
+	gpi_irq_off(gpii);
 	gpii->configured_irq = false;
 }
 
@@ -1202,7 +1223,6 @@ static int gpi_config_interrupts(struct gpii *gpii,
 				 enum gpii_irq_settings settings,
 				 bool mask)
 {
-	int ret;
 	int i;
 	const u32 def_type = (GPI_GPII_n_CNTXT_TYPE_IRQ_MSK_GENERAL |
 			      GPI_GPII_n_CNTXT_TYPE_IRQ_MSK_IEOB |
@@ -1307,16 +1327,8 @@ static int gpi_config_interrupts(struct gpii *gpii,
 		  (settings == DEFAULT_IRQ_SETTINGS) ? "default" : "user_spec",
 		  (mask) ? 'T' : 'F');
 
-	if (!gpii->configured_irq) {
-		ret = request_irq(gpii->irq, gpi_handle_irq, IRQF_TRIGGER_HIGH,
-				  gpii->label, gpii);
-		if (ret < 0) {
-			GPII_CRITIC(gpii, GPI_DBG_COMMON,
-				    "error request irq:%d ret:%d\n",
-				    gpii->irq, ret);
-			return ret;
-		}
-	}
+	if (!gpii->configured_irq)
+		gpi_irq_on(gpii);
 
 	if (settings == MASK_IEOB_SETTINGS) {
 		/*
@@ -3661,7 +3673,7 @@ static int gpi_pause(struct dma_chan *chan)
 		}
 	}
 	GPII_INFO(gpii, gpii_chan->chid, "iter:%d\n", iter);
-	disable_irq(gpii->irq);
+	gpi_irq_off(gpii);
 	gpii->is_resumed = false;
 	mutex_unlock(&gpii->ctrl_lock);
 	return 0;
@@ -3684,7 +3696,7 @@ static int gpi_resume(struct dma_chan *chan)
 		mutex_unlock(&gpii->ctrl_lock);
 		return 0;
 	}
-	enable_irq(gpii->irq);
+	gpi_irq_on(gpii);
 
 	/* We are updating is_resumed flag in middle of function, because
 	 * enable_irq should happen only one time otherwise we may get
@@ -4469,9 +4481,6 @@ static void gpi_setup_debug(struct gpi_dev *gpi_dev)
 			continue;
 
 		gpii = &gpi_dev->gpiis[i];
-		snprintf(gpii->label, sizeof(gpii->label),
-			 "%s%llx_gpii%d",
-			 GPI_DMA_DRV_NAME, (u64)gpi_dev->res->start, i);
 		gpii->ilctxt = ipc_log_context_create(IPC_LOG_PAGES,
 						      gpii->label, 0);
 		gpii->ipc_log_lvl = DEFAULT_IPC_LOG_LVL;
@@ -4694,6 +4703,21 @@ static int gpi_probe(struct platform_device *pdev)
 			return ret;
 		}
 		gpii->irq = ret;
+
+		snprintf(gpii->label, sizeof(gpii->label),
+			 "%s%llx_gpii%d",
+			 GPI_DMA_DRV_NAME, (u64)gpi_dev->res->start, i);
+		/* Other instances belong to other execution environments. */
+		if (((1 << i) & gpi_dev->gpii_mask) || ((1 << i) & gpi_dev->static_gpii_mask)) {
+			ret = devm_request_irq(gpi_dev->dev, gpii->irq, gpi_handle_irq,
+					       IRQF_TRIGGER_HIGH | IRQF_NO_AUTOEN,
+					       gpii->label, gpii);
+			if (ret) {
+				GPI_ERR(gpi_dev, "could not request irq:%d ret:%d\n",
+					gpii->irq, ret);
+				return ret;
+			}
+		}
 
 		/* set up channel specific register info */
 		for (chan = 0; chan < MAX_CHANNELS_PER_GPII; chan++) {
