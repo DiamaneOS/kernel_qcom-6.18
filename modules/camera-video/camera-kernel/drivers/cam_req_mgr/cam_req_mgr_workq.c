@@ -8,6 +8,9 @@
 #include "cam_debug_util.h"
 #include "cam_common_util.h"
 
+static struct lock_class_key workq_irq_lock_key;
+static struct lock_class_key workq_bh_lock_key;
+
 #define WORKQ_ACQUIRE_LOCK(workq, flags) {\
 	if ((workq)->in_irq) \
 		spin_lock_irqsave(&(workq)->lock_bh, (flags)); \
@@ -230,6 +233,9 @@ int cam_req_mgr_workq_create(char *name, int32_t num_tasks,
 		strscpy(crm_workq->workq_name, buf, sizeof(crm_workq->workq_name));
 		INIT_WORK(&crm_workq->work, func);
 		spin_lock_init(&crm_workq->lock_bh);
+		/* Each queue is either IRQ safe or BH only, see WORKQ_ACQUIRE_LOCK */
+		lockdep_set_class(&crm_workq->lock_bh,
+				  in_irq ? &workq_irq_lock_key : &workq_bh_lock_key);
 		CAM_DBG(CAM_CRM, "LOCK_DBG workq %s lock %pK",
 			name, &crm_workq->lock_bh);
 
