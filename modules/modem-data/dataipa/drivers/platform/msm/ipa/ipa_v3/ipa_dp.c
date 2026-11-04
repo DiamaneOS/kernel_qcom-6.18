@@ -2947,7 +2947,7 @@ static struct ipa3_rx_pkt_wrapper * ipa3_get_free_page
 		atomic_set(&sys->common_sys->page_avilable, 0);
 		tasklet_schedule(&sys->common_sys->tasklet_find_freepage);
 		++ipa3_ctx->stats.num_sort_tasklet_sched[stats_i];
-		spin_lock(&ipa3_ctx->notifier_lock);
+		spin_lock_bh(&ipa3_ctx->notifier_lock);
 		if(ipa3_ctx->ipa_rmnet_notifier_enabled &&
 		   !ipa3_ctx->free_page_task_scheduled) {
 				atomic_inc(&ipa3_ctx->stats.num_free_page_task_scheduled);
@@ -2961,7 +2961,7 @@ static struct ipa3_rx_pkt_wrapper * ipa3_get_free_page
 				}
 				ipa3_ctx->free_page_task_scheduled = true;
 			}
-			spin_unlock(&ipa3_ctx->notifier_lock);
+			spin_unlock_bh(&ipa3_ctx->notifier_lock);
 	}
 	return NULL;
 }
@@ -2971,11 +2971,11 @@ int ipa_register_notifier(void *fn_ptr)
 	struct ipa_notifier_block_data *ipa_notifier_block;
 	if (fn_ptr == NULL)
 		return -EFAULT;
-	spin_lock(&ipa3_ctx->notifier_lock);
+	spin_lock_bh(&ipa3_ctx->notifier_lock);
 	ipa_notifier_block = (struct ipa_notifier_block_data *)kzalloc(sizeof(struct ipa_notifier_block_data), GFP_KERNEL);
 	if (ipa_notifier_block == NULL) {
 		IPAWANERR("Buffer threshold notifier failure\n");
-		spin_unlock(&ipa3_ctx->notifier_lock);
+		spin_unlock_bh(&ipa3_ctx->notifier_lock);
 		return -EFAULT;
 	}
 	ipa_notifier_block->ipa_rmnet_notifier.notifier_call = fn_ptr;
@@ -2985,7 +2985,7 @@ int ipa_register_notifier(void *fn_ptr)
 	IPAWANERR("Registered noifier for buffer threshold\n");
 
 	ipa3_ctx->ipa_rmnet_notifier_enabled = true;
-	spin_unlock(&ipa3_ctx->notifier_lock);
+	spin_unlock_bh(&ipa3_ctx->notifier_lock);
 	return 0;
 }
 EXPORT_SYMBOL(ipa_register_notifier);
@@ -2995,7 +2995,7 @@ int ipa_unregister_notifier(void *fn_ptr)
 	struct ipa_notifier_block_data *ipa_notifier_block, *temp;
 	if (fn_ptr == NULL)
 		return -EFAULT;
-	spin_lock(&ipa3_ctx->notifier_lock);
+	spin_lock_bh(&ipa3_ctx->notifier_lock);
 	/* Find the client pointer, unregister and remove from the list */
 	list_for_each_entry_safe(ipa_notifier_block, temp, &ipa3_ctx->notifier_block_list_head, entry) {
 		if (ipa_notifier_block->ipa_rmnet_notifier.notifier_call == fn_ptr) {
@@ -3004,11 +3004,11 @@ int ipa_unregister_notifier(void *fn_ptr)
 			list_del(&ipa_notifier_block->entry);
 			kfree(ipa_notifier_block);
 			IPAWANERR("Client removed from list and unregistered succesfully\n");
-			spin_unlock(&ipa3_ctx->notifier_lock);
+			spin_unlock_bh(&ipa3_ctx->notifier_lock);
 			return 0;
 		}
 	}
-	spin_unlock(&ipa3_ctx->notifier_lock);
+	spin_unlock_bh(&ipa3_ctx->notifier_lock);
 	IPAWANERR("Unable to find the client in the list\n");
 	return 0;
 }
@@ -3120,7 +3120,7 @@ EXPORT_SYMBOL(ipa_unregister_notifier);
 	if (rx_len_cached <= IPA_DEFAULT_SYS_YELLOW_WM) {
 		if (sys->ep->client == IPA_CLIENT_APPS_WAN_CONS) {
 			IPA_STATS_INC_CNT(ipa3_ctx->stats.wan_rx_empty);
-			spin_lock(&ipa3_ctx->notifier_lock);
+			spin_lock_bh(&ipa3_ctx->notifier_lock);
 			if (ipa3_ctx->ipa_rmnet_notifier_enabled
 				&& !ipa3_ctx->buff_below_thresh_for_def_pipe_notified) {
 				atomic_inc(&ipa3_ctx->stats.num_buff_below_thresh_for_def_pipe_notified);
@@ -3129,11 +3129,11 @@ EXPORT_SYMBOL(ipa_unregister_notifier);
 				ipa3_ctx->buff_above_thresh_for_def_pipe_notified = false;
 				ipa3_ctx->buff_below_thresh_for_def_pipe_notified = true;
 			}
-			spin_unlock(&ipa3_ctx->notifier_lock);
+			spin_unlock_bh(&ipa3_ctx->notifier_lock);
 		}
 		else if (sys->ep->client == IPA_CLIENT_APPS_WAN_COAL_CONS) {
 			IPA_STATS_INC_CNT(ipa3_ctx->stats.wan_rx_empty_coal);
-			spin_lock(&ipa3_ctx->notifier_lock);
+			spin_lock_bh(&ipa3_ctx->notifier_lock);
 			if (ipa3_ctx->ipa_rmnet_notifier_enabled
 				&& !ipa3_ctx->buff_below_thresh_for_coal_pipe_notified) {
 				atomic_inc(&ipa3_ctx->stats.num_buff_below_thresh_for_coal_pipe_notified);
@@ -3142,7 +3142,7 @@ EXPORT_SYMBOL(ipa_unregister_notifier);
 				ipa3_ctx->buff_above_thresh_for_coal_pipe_notified = false;
 				ipa3_ctx->buff_below_thresh_for_coal_pipe_notified = true;
 			}
-			spin_unlock(&ipa3_ctx->notifier_lock);
+			spin_unlock_bh(&ipa3_ctx->notifier_lock);
 		}
 		else if (sys->ep->client == IPA_CLIENT_APPS_LAN_CONS)
 			IPA_STATS_INC_CNT(ipa3_ctx->stats.lan_rx_empty);
@@ -3150,7 +3150,7 @@ EXPORT_SYMBOL(ipa_unregister_notifier);
 			IPA_STATS_INC_CNT(ipa3_ctx->stats.lan_rx_empty_coal);
 		else if (sys->ep->client == IPA_CLIENT_APPS_WAN_LOW_LAT_DATA_CONS) {
 			IPA_STATS_INC_CNT(ipa3_ctx->stats.rmnet_ll_rx_empty);
-			spin_lock(&ipa3_ctx->notifier_lock);
+			spin_lock_bh(&ipa3_ctx->notifier_lock);
 			if (ipa3_ctx->ipa_rmnet_notifier_enabled
 				&& !ipa3_ctx->buff_below_thresh_for_ll_pipe_notified) {
 				atomic_inc(&ipa3_ctx->stats.num_buff_below_thresh_for_ll_pipe_notified);
@@ -3159,7 +3159,7 @@ EXPORT_SYMBOL(ipa_unregister_notifier);
 				ipa3_ctx->buff_above_thresh_for_ll_pipe_notified = false;
 				ipa3_ctx->buff_below_thresh_for_ll_pipe_notified = true;
 			}
-			spin_unlock(&ipa3_ctx->notifier_lock);
+			spin_unlock_bh(&ipa3_ctx->notifier_lock);
 		}
 		else
 			WARN_ON(1);
@@ -3167,7 +3167,7 @@ EXPORT_SYMBOL(ipa_unregister_notifier);
 
 	if (rx_len_cached >= IPA_BUFF_THRESHOLD_HIGH) {
 		if (sys->ep->client == IPA_CLIENT_APPS_WAN_CONS) {
-			spin_lock(&ipa3_ctx->notifier_lock);
+			spin_lock_bh(&ipa3_ctx->notifier_lock);
 			if(ipa3_ctx->ipa_rmnet_notifier_enabled &&
 				!ipa3_ctx->buff_above_thresh_for_def_pipe_notified) {
 				atomic_inc(&ipa3_ctx->stats.num_buff_above_thresh_for_def_pipe_notified);
@@ -3176,9 +3176,9 @@ EXPORT_SYMBOL(ipa_unregister_notifier);
 				ipa3_ctx->buff_above_thresh_for_def_pipe_notified = true;
 				ipa3_ctx->buff_below_thresh_for_def_pipe_notified = false;
 			}
-			spin_unlock(&ipa3_ctx->notifier_lock);
+			spin_unlock_bh(&ipa3_ctx->notifier_lock);
 		} else if (sys->ep->client == IPA_CLIENT_APPS_WAN_COAL_CONS) {
-			spin_lock(&ipa3_ctx->notifier_lock);
+			spin_lock_bh(&ipa3_ctx->notifier_lock);
 			if(ipa3_ctx->ipa_rmnet_notifier_enabled &&
 				!ipa3_ctx->buff_above_thresh_for_coal_pipe_notified) {
 				atomic_inc(&ipa3_ctx->stats.num_buff_above_thresh_for_coal_pipe_notified);
@@ -3187,9 +3187,9 @@ EXPORT_SYMBOL(ipa_unregister_notifier);
 				ipa3_ctx->buff_above_thresh_for_coal_pipe_notified = true;
 				ipa3_ctx->buff_below_thresh_for_coal_pipe_notified = false;
 			}
-			spin_unlock(&ipa3_ctx->notifier_lock);
+			spin_unlock_bh(&ipa3_ctx->notifier_lock);
 		} else if (sys->ep->client == IPA_CLIENT_APPS_WAN_LOW_LAT_DATA_CONS) {
-			spin_lock(&ipa3_ctx->notifier_lock);
+			spin_lock_bh(&ipa3_ctx->notifier_lock);
 			if(ipa3_ctx->ipa_rmnet_notifier_enabled &&
 				!ipa3_ctx->buff_above_thresh_for_ll_pipe_notified) {
 				atomic_inc(&ipa3_ctx->stats.num_buff_above_thresh_for_ll_pipe_notified);
@@ -3198,7 +3198,7 @@ EXPORT_SYMBOL(ipa_unregister_notifier);
 				ipa3_ctx->buff_above_thresh_for_ll_pipe_notified = true;
 				ipa3_ctx->buff_below_thresh_for_ll_pipe_notified = false;
 			}
-			spin_unlock(&ipa3_ctx->notifier_lock);
+			spin_unlock_bh(&ipa3_ctx->notifier_lock);
 		}
 	}
 
