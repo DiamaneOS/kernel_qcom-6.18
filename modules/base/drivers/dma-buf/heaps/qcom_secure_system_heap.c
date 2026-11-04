@@ -387,7 +387,8 @@ vmperm_release:
 
 hyp_unassign:
 	/* We check PagePrivate() below to see if we've reclaimed a particular page */
-	hyp_ret = hyp_unassign_sg_from_flags(&non_secure_table, sys_heap->vmid, true);
+	if (num_non_secure_pages)
+		hyp_ret = hyp_unassign_sg_from_flags(&non_secure_table, sys_heap->vmid, true);
 
 free_non_secure_sg:
 	if (num_non_secure_pages)

@@ -115,8 +115,10 @@ static struct dma_buf *cma_heap_allocate(struct dma_heap *heap,
 
 	helper_buffer->vmperm = mem_buf_vmperm_alloc(&helper_buffer->sg_table,
 					qcom_sg_release, (void *)helper_buffer);
-	if (IS_ERR(helper_buffer->vmperm))
+	if (IS_ERR(helper_buffer->vmperm)) {
+		ret = PTR_ERR(helper_buffer->vmperm);
 		goto free_sgtable;
+	}
 
 	if (helper_buffer->uncached) {
 		dma_map_sgtable(dma_heap_get_dev(heap), &helper_buffer->sg_table,
