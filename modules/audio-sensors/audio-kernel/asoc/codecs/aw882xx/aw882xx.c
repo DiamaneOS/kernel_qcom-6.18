@@ -1090,13 +1090,13 @@ static void aw882xx_request_firmware(struct work_struct *work)
 		return;
 	}
 
-	/*create kcontrol by profile*/
-	aw882xx_dynamic_create_controls(aw882xx);
-
 	aw882xx->fw_status = AW_DEV_FW_OK;
 	aw882xx->fw_retry_cnt = 0;
 
 	mutex_unlock(&aw882xx->lock);
+
+	/* Outside the lock: reading a control holds the card's control lock, then takes this one. */
+	aw882xx_dynamic_create_controls(aw882xx);
 }
 
 static void aw882xx_startup_work(struct work_struct *work)
