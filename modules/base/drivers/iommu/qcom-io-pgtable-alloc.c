@@ -289,7 +289,9 @@ static unsigned long io_pgtable_alloc_scan_objects(struct shrinker *shrinker,
 	u32 vmid;
 	LIST_HEAD(freelist);
 
-	mutex_lock(&page_pool_xa_lock);
+	/* Registration allocates under this lock, so reclaim must not wait for it. */
+	if (!mutex_trylock(&page_pool_xa_lock))
+		return SHRINK_STOP;
 	xa_for_each(&page_pool_xa, index, pool) {
 		count += scan_page_pool(pool, &freelist, nr_to_scan - count);
 		if (count >= nr_to_scan)
