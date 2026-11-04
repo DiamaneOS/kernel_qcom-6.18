@@ -13,6 +13,7 @@
 #include <linux/of_address.h>
 #include <linux/component.h>
 #include <linux/slab.h>
+#include <linux/lockdep.h>
 #include <linux/mutex.h>
 #include <linux/of_platform.h>
 #include <linux/delay.h>
@@ -1738,6 +1739,8 @@ static const struct component_ops sde_rsc_comp_ops = {
 	.unbind = sde_rsc_unbind,
 };
 
+static struct lock_class_key sde_rsc_phandle_key;
+
 static int sde_rsc_probe(struct platform_device *pdev)
 {
 	int ret;
@@ -1799,6 +1802,11 @@ static int sde_rsc_probe(struct platform_device *pdev)
 		rsc->profiling_supp = true;
 
 	ret = sde_power_resource_init(pdev, &rsc->phandle);
+	/*
+	 * Not the display's power handle. The order is display handle, RSC client lock,
+	 * this handle, and lockdep cannot tell the two handles apart otherwise.
+	 */
+	lockdep_set_class(&rsc->phandle.phandle_lock, &sde_rsc_phandle_key);
 	if (ret) {
 		pr_err("sde rsc:power resource init failed ret:%d\n", ret);
 		goto sde_rsc_fail;
