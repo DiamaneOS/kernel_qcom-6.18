@@ -20,6 +20,7 @@
 #include <linux/of.h>
 #include <linux/of_address.h>
 #include <linux/of_dma.h>
+#include <linux/sched/mm.h>
 #include <linux/of_irq.h>
 #include <linux/platform_device.h>
 #include <linux/scatterlist.h>
@@ -3961,6 +3962,7 @@ error_alloc_ev_ring:
 static int gpi_config(struct dma_chan *chan,
 		      struct dma_slave_config *config)
 {
+	unsigned int noio;
 	struct gpii_chan *gpii_chan = to_gpii_chan(chan);
 	struct gpii *gpii = gpii_chan->gpii;
 	struct msm_gpi_ctrl *gpi_ctrl = chan->private;
@@ -3977,6 +3979,7 @@ static int gpi_config(struct dma_chan *chan,
 	}
 
 	mutex_lock(&gpii->ctrl_lock);
+	noio = memalloc_noio_save();
 
 	switch (gpi_ctrl->cmd) {
 	case MSM_GPI_INIT:
@@ -4096,6 +4099,7 @@ static int gpi_config(struct dma_chan *chan,
 		ret = -EINVAL;
 	}
 
+	memalloc_noio_restore(noio);
 	mutex_unlock(&gpii->ctrl_lock);
 	return ret;
 
@@ -4113,6 +4117,7 @@ error_alloc_ev_ring:
 error_config_int:
 	gpi_free_ring(gpii->ev_ring, gpii);
 exit_gpi_init:
+	memalloc_noio_restore(noio);
 	mutex_unlock(&gpii->ctrl_lock);
 	return ret;
 }
@@ -4197,6 +4202,7 @@ exit_free:
 /* allocate channel resources */
 static int gpi_alloc_chan_resources(struct dma_chan *chan)
 {
+	unsigned int noio;
 	struct gpii_chan *gpii_chan = to_gpii_chan(chan);
 	struct gpii *gpii = gpii_chan->gpii;
 	int ret;
@@ -4204,6 +4210,7 @@ static int gpi_alloc_chan_resources(struct dma_chan *chan)
 	GPII_INFO(gpii, gpii_chan->chid, "enter\n");
 
 	mutex_lock(&gpii->ctrl_lock);
+	noio = memalloc_noio_save();
 
 	/* allocate memory for transfer ring */
 	ret = gpi_alloc_ring(gpii_chan->ch_ring, gpii_chan->req_tres,
@@ -4213,10 +4220,12 @@ static int gpi_alloc_chan_resources(struct dma_chan *chan)
 			 "error allocating xfer ring, ret:%d\n", ret);
 		goto xfer_alloc_err;
 	}
+	memalloc_noio_restore(noio);
 	mutex_unlock(&gpii->ctrl_lock);
 
 	return 0;
 xfer_alloc_err:
+	memalloc_noio_restore(noio);
 	mutex_unlock(&gpii->ctrl_lock);
 
 	return ret;
