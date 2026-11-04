@@ -301,7 +301,7 @@ static inline int rollback_batched_assign(struct sg_table *table, unsigned int n
 
 	int ret;
 
-	new_source_nelems = sizeof(*destvms) / destvms_size_bytes;
+	new_source_nelems = destvms_size_bytes / sizeof(*destvms);
 	new_source_vm_list = kmalloc_array(new_source_nelems,
 					   sizeof(*new_source_vm_list),
 					   GFP_KERNEL);
@@ -423,8 +423,8 @@ static int batched_hyp_assign(struct sg_table *table, unsigned int nents,
 				break;
 			}
 
-			/* Attempt to reclaim the i - 1 entries we already assigned */
-			reclaim_ret = rollback_batched_assign(table, batch_start - 1, destvms,
+			/* Attempt to reclaim the entries we already assigned */
+			reclaim_ret = rollback_batched_assign(table, batch_start, destvms,
 							      destvms_size_bytes);
 
 			if (reclaim_ret) {
