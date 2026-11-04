@@ -822,6 +822,7 @@ static int ce_poll_reap_by_id(struct hif_softc *scn, enum ce_id_type ce_id)
 int hif_drain_fw_diag_ce(struct hif_softc *scn)
 {
 	uint8_t ce_id;
+	int ret;
 	struct HIF_CE_state *hif_ce_state = (struct HIF_CE_state *)scn;
 	struct ce_tasklet_entry *tasklet_entry;
 
@@ -837,7 +838,12 @@ int hif_drain_fw_diag_ce(struct hif_softc *scn)
 	    test_bit(TASKLET_STATE_RUN, &tasklet_entry->intr_tq.state))
 		return -EBUSY;
 
-	return ce_poll_reap_by_id(scn, ce_id);
+	/* The CE tasklet takes the same lock, and this runs from runtime suspend. */
+	local_bh_disable();
+	ret = ce_poll_reap_by_id(scn, ce_id);
+	local_bh_enable();
+
+	return ret;
 }
 #endif
 
