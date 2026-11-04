@@ -285,13 +285,11 @@ static int spf_core_probe(struct gpr_device *adev)
 		pr_err("%s: spf_core platform probe not yet done\n", __func__);
 		return -EPROBE_DEFER;
 	}
-	mutex_lock(&spf_core_priv->lock);
 	core = kzalloc(sizeof(*core), GFP_KERNEL);
-	if (!core) {
-		mutex_unlock(&spf_core_priv->lock);
+	if (!core)
 		return -ENOMEM;
-	}
 
+	mutex_lock(&spf_core_priv->lock);
 	dev_set_drvdata(&adev->dev, core);
 
 	mutex_init(&core->lock);
