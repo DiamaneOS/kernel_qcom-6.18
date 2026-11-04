@@ -128,7 +128,7 @@ static QDF_STATUS wlan_serialization_psoc_create_handler(
 		ser_err("Obj attach failed");
 		goto error;
 	}
-	wlan_serialization_create_lock(&soc_ser_obj->timer_lock);
+	qdf_spinlock_create(&soc_ser_obj->timer_lock);
 	ser_debug("ser psoc obj created");
 	status = QDF_STATUS_SUCCESS;
 
@@ -242,7 +242,7 @@ static QDF_STATUS wlan_serialization_pdev_create_handler(
 	for (index = 0; index < SER_PDEV_QUEUE_COMP_MAX; index++) {
 		pdev_queue = &ser_pdev_obj->pdev_q[index];
 
-		wlan_serialization_create_lock(&pdev_queue->pdev_queue_lock);
+		qdf_spinlock_create(&pdev_queue->pdev_queue_lock);
 
 		switch (index) {
 		case SER_PDEV_QUEUE_COMP_SCAN:
