@@ -93,7 +93,11 @@ static int insert_range(const __be32 *p, int naddr, int nsize, void *arg)
 	struct list_head *head = arg;
 	struct iommu_resv_region *region, *new;
 	u64 start = of_read_number(p, naddr);
-	u64 end = start + of_read_number(p + naddr, nsize) - 1;
+	u64 size = of_read_number(p + naddr, nsize);
+	u64 end = start + size - 1;
+
+	if (!size || end < start)
+		return -EINVAL;
 
 	list_for_each_entry(region, head, list) {
 		if (check_overlap(region, start, end))
@@ -216,13 +220,15 @@ void qcom_iommu_generate_resv_regions(struct device *dev,
 	int ret;
 
 	ret = qcom_iommu_generate_dma_regions(dev, &dma_regions);
-	if (ret)
-		return;
-
-	ret = invert_regions(&dma_regions, &resv_regions);
+	if (!ret)
+		ret = invert_regions(&dma_regions, &resv_regions);
 	iommu_put_resv_regions(dev, &dma_regions);
-	if (ret)
+	if (ret) {
+		/* The device then gets IOVAs from the whole aperture. */
+		if (ret != -ENODEV)
+			dev_err(dev, "IOVA window not applied: %d\n", ret);
 		return;
+	}
 
 	list_for_each_entry(region, &resv_regions, list) {
 		dev_dbg(dev, "Reserved region %llx-%llx\n",
