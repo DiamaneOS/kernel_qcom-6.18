@@ -47,18 +47,12 @@ static bool qrtr_imsdcm_publisher_allowed(struct sock *sk)
 }
 #endif
 
-/* An endpoint speaks for neither this node nor the broadcast address */
-static bool qrtr_imsdcm_node_reserved(u32 local_nid, u32 node)
-{
-	return node == local_nid || node == QRTR_NODE_BCAST;
-}
-
 bool qrtr_imsdcm_ep_post_denied(u32 local_nid, u32 src_node, u32 src_port,
 				u32 dst_port, u8 type, const void *payload,
 				size_t size)
 {
-	/* An endpoint may bridge other remote nodes, but it can never impersonate
-	 * this AP's source identity or use its name-service port-zero alias.
+	/* An endpoint can never impersonate this AP's source identity or use its
+	 * name-service port-zero alias. A record it sends is about its own node.
 	 */
 	if (src_node == local_nid || src_node == QRTR_NODE_BCAST ||
 	    !src_port || !dst_port)
@@ -75,13 +69,13 @@ bool qrtr_imsdcm_ep_post_denied(u32 local_nid, u32 src_node, u32 src_port,
 		    size < qrtr_ctrl_min_size(command))
 			return true;
 		if ((command == QRTR_TYPE_NEW_SERVER || command == QRTR_TYPE_DEL_SERVER) &&
-		    qrtr_imsdcm_node_reserved(local_nid, le32_to_cpu(control->server.node)))
+		    le32_to_cpu(control->server.node) != src_node)
 			return true;
 		if (command == QRTR_TYPE_DEL_CLIENT &&
-		    qrtr_imsdcm_node_reserved(local_nid, le32_to_cpu(control->client.node)))
+		    le32_to_cpu(control->client.node) != src_node)
 			return true;
 		if (command == QRTR_TYPE_DEL_PROC &&
-		    qrtr_imsdcm_node_reserved(local_nid, le32_to_cpu(control->proc.node)))
+		    le32_to_cpu(control->proc.node) != src_node)
 			return true;
 	}
 	return false;

@@ -929,30 +929,28 @@ static void qrtr_node_assign(struct qrtr_node *node, unsigned int nid)
 	spin_unlock_irqrestore(&qrtr_nodes_lock, flags);
 }
 
-#if IS_ENABLED(CONFIG_QRTR_IMSDCM_OWNERSHIP)
-/* A packet for the DCM port must come from the endpoint that owns its source node */
-static bool qrtr_imsdcm_src_foreign(struct qrtr_node *node, u32 src_node,
-				    u32 dst_node, u32 dst_port)
+/* An endpoint speaks only for the node its first packet named. A remote processor
+ * cannot pass for another one, such as the modem, which services pin by node id.
+ * No FP6 remote processor bridges others, and a node stays taken while its
+ * endpoint is alive.
+ */
+static bool qrtr_ep_src_foreign(struct qrtr_node *node, u32 src_node)
 {
 	struct qrtr_node *owner;
 	unsigned long flags;
-
-	if (dst_node != qrtr_local_nid || dst_port != QRTR_IMSDCM_PORT)
-		return false;
+	bool foreign;
 
 	spin_lock_irqsave(&qrtr_nodes_lock, flags);
-	owner = radix_tree_lookup(&qrtr_nodes, src_node);
+	if (node->nid != QRTR_EP_NID_AUTO) {
+		foreign = src_node != node->nid;
+	} else {
+		owner = radix_tree_lookup(&qrtr_nodes, src_node);
+		foreign = owner && owner != node && READ_ONCE(owner->ep);
+	}
 	spin_unlock_irqrestore(&qrtr_nodes_lock, flags);
 
-	return owner && owner != node;
+	return foreign;
 }
-#else
-static bool qrtr_imsdcm_src_foreign(struct qrtr_node *node, u32 src_node,
-				    u32 dst_node, u32 dst_port)
-{
-	return false;
-}
-#endif
 
 /**
  * qrtr_peek_pkt_size() - Peek into the packet header to get potential pkt size
@@ -1155,18 +1153,13 @@ int qrtr_endpoint_post(struct qrtr_endpoint *ep, const void *data, size_t len)
 	skb->len = size;
 	skb_store_bits(skb, 0, data + hdrlen, size);
 
-	qrtr_node_assign(node, cb->src_node);
-
-	if (qrtr_imsdcm_src_foreign(node, cb->src_node, cb->dst_node, cb->dst_port))
+	if (qrtr_ep_src_foreign(node, cb->src_node)) {
+		pr_warn_ratelimited("qrtr: endpoint of node %d sent as node %u, refused\n",
+				    node->nid, cb->src_node);
 		goto err;
-
-	if (cb->type == QRTR_TYPE_NEW_SERVER) {
-		/* Remote node endpoint can bridge other distant nodes */
-		const struct qrtr_ctrl_pkt *pkt;
-
-		pkt = data + hdrlen;
-		qrtr_node_assign(node, le32_to_cpu(pkt->server.node));
 	}
+
+	qrtr_node_assign(node, cb->src_node);
 
 	qrtr_log_rx_msg(node, skb);
 
