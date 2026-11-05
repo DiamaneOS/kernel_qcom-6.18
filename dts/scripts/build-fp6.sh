@@ -1,6 +1,6 @@
 #!/bin/bash
 # Builds the FP6 device tree from this directory the way the 6.1 build did, with the 6.18 tree's dtc and DT
-# binding headers: the base fp6.dtb, the FP6 SKU overlays, the techpack overlays for the volcano SoC, and
+# binding headers: the base trees and board overlays of vendor/fps_overlay/Makefile, the techpack overlays, and
 # scripts/merge_dtbs.py to merge them with Qualcomm's fdtoverlay and fdtoverlaymerge (qcom-dtc/). The 6.18 libfdt
 # inserts each added subnode before the existing ones, which reverses the children of every parent that techpack
 # nodes join, so the 6.18 fdtoverlay is not used.
@@ -15,7 +15,8 @@
 # Result in OUT:
 #   fp6.dtb          the merged base device tree (what vendor_boot carries)
 #   fp6-sku-<n>.dtb  the base with the overlay for SKU <n> applied (what the kernel sees after the bootloader)
-#   merged/          the merged blobs of merge_dtbs.py, including the overlays the dtbo image carries
+#   merged/          the merged blobs of merge_dtbs.py. Its .dtbo files in name order are the dtbo image, and the
+#                    bootloader finds an FP6 overlay in it by SoC, board and oem,sku
 #   bin/             dtc built from KERNEL_COMMON, fdtoverlay and fdtoverlaymerge built from qcom-dtc/
 set -eu
 
@@ -69,11 +70,16 @@ compile() {
 		-i "$inc" -i "$(dirname "$src")" -o "$out" "$OUT/obj/pp.dts" 2>"$OUT/obj/dtc.err" || { cat "$OUT/obj/dtc.err" >&2; return 1; }
 }
 
-# The base and the SKU overlays of the FP6.
+# The base trees and the board overlays. The dtbo image keeps Qualcomm's boards beside the FP6 SKUs, with the entry
+# numbers it always had. volcano-mtp-pm7550ba was never in it, and adding it would move the later entries.
 F=$DTS/vendor/fps_overlay
-compile "$F/fp6.dts" "$OUT/base/fp6.dtb" "$F"
-for f in "$F"/fp6-sku-*-overlay.dts; do
-	compile "$f" "$OUT/base/$(basename "${f%.dts}").dtbo" "$F"
+for d in $(cd "$F" && make -s -f - <<'EOF' 2>/dev/null
+include Makefile
+all:; @echo $(PINEAPPLE_BASE_DTB) $(PINEAPPLE_APQ_BASE_DTB) $(PINEAPPLE_BOARDS) $(NOAPQ_PINEAPPLE_BOARDS) $(CLIFFS_BASE_DTB) $(CLIFFS_APQ_BASE_DTB) $(CLIFFS_BOARDS) $(NOAPQ_CLIFFS_BOARDS) $(VOLCANO_BASE_DTB) $(VOLCANO_APQ_BASE_DTB) $(VOLCANO_BOARDS) $(NOAPQ_VOLCANO_BOARDS) $(FPS_BASE_DTB) $(FPS_BOARDS)
+EOF
+); do
+	[ "$d" = volcano-mtp-pm7550ba-overlay.dtbo ] && continue
+	compile "$F/${d%.*}.dts" "$OUT/base/$d" "$F"
 done
 
 # The techpack overlays for the volcano SoC, as their Kbuild files list them. The camera and synx lists
@@ -96,13 +102,19 @@ EOF
 		s=$t/${d%.dtbo}.dts
 		[ -e "$s" ] || continue
 		# Other SoCs' overlays are built too, and merge_dtbs.py leaves out the ones the FP6 does not match.
-		mkdir -p "$OUT/techpack/$n"
-		compile "$s" "$OUT/techpack/$n/$(basename "$d")" "$t"
+		# In the techpack's own folders: nxp/ and st/ have overlays of the same name.
+		mkdir -p "$(dirname "$OUT/techpack/$n/$d")"
+		compile "$s" "$OUT/techpack/$n/$d" "$t"
 	done
 done
 
 # merge_dtbs.py takes the tools by name. It merges the techpack overlays into the base and into each SKU overlay.
-PATH=$BIN:$PATH python3 -I "$DTS/scripts/merge_dtbs.py" -b "$OUT/base" -t "$OUT/techpack" -o "$OUT/merged" \
+# Its check that an overlay applies runs for the FP6 tree only: the other base trees are built for the merge and
+# do not ship.
+mkdir -p "$OUT/obj/check"
+printf '#!/bin/sh\ncase "$1" in */fp6.dtb) exec "%s/ufdt_apply_overlay" "$@";; esac\n' "$BIN" > "$OUT/obj/check/ufdt_apply_overlay"
+chmod +x "$OUT/obj/check/ufdt_apply_overlay"
+PATH=$OUT/obj/check:$BIN:$PATH python3 -I "$DTS/scripts/merge_dtbs.py" -b "$OUT/base" -t "$OUT/techpack" -o "$OUT/merged" \
 	--loglevel warn > "$OUT/merge.log" 2>&1 || { cat "$OUT/merge.log" >&2; exit 1; }
 cp "$OUT/merged/fp6.dtb" "$OUT/fp6.dtb"
 
