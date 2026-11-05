@@ -43,7 +43,7 @@
 #define SCMI_VENDOR_MSG_MODULE_START   (16)
 #define INVALID_IDX		0xFF
 #define MAX_NAME_LEN		20
-#define MAX_MAP_ENTRIES 14
+#define MAX_MAP_ENTRIES 12
 
 enum scmi_memlat_protocol_cmd {
 	MEMLAT_SET_LOG_LEVEL = SCMI_VENDOR_MSG_START,
@@ -88,6 +88,9 @@ struct map_param_msg {
 	uint32_t nr_rows;
 	struct map_table tbl[MAX_MAP_ENTRIES];
 } __packed;
+
+/* The CPUCP firmware's table, as the FP6's 6.1 driver sends it. */
+static_assert(sizeof(struct map_param_msg) == 12 + 12 * sizeof(struct map_table));
 
 struct node_msg {
 	uint32_t cpumask;

@@ -1514,6 +1514,11 @@
 		mboxes = <&cpucp 0>;
 		mbox-names = "tx";
 		shmem = <&cpu_scp_lpri>;
+		/*
+		 * The Qualcomm vendor protocol asks for 128 byte replies, as the 6.1
+		 * transport allowed. The 6.18 default of 104 refuses every such call.
+		 */
+		arm,max-msg-size = <128>;
 
 		scmi_qcom: protocol@80 {
 			reg = <0x80>;
