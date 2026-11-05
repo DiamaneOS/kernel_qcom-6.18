@@ -122,6 +122,8 @@ enum battery_property_id {
 	BATT_CHG_CTRL_START_THR,
 	BATT_CHG_CTRL_END_THR,
 	BATT_CURR_AVG,
+	BATT_CHGMODE_FCC,
+	BATT_DISPLAY_FCC,
 	BATT_CHG_DISABLE_CHARGING,
 	BATT_PROP_MAX,
 };
@@ -163,6 +165,13 @@ enum wireless_property_id {
 	WLS_CONN_TEMP,
 	WLS_PROP_MAX,
 };
+
+/* The firmware's numbers: an entry missing above would shift the ones after it. */
+static_assert(BATT_CURR_AVG == 27);
+static_assert(BATT_CHG_DISABLE_CHARGING == 30);
+static_assert(USB_SUSPEND_INPUT_CURRENT == 16);
+static_assert(USB_NUM_PORTS == 18);
+static_assert(WLS_CONN_TEMP == 10);
 
 enum {
 	QTI_POWER_SUPPLY_USB_TYPE_HVDCP = 0x80,
