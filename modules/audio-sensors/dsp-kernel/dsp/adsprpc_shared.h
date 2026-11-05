@@ -86,7 +86,7 @@
 #define CDSP1_DOMAIN_ID (4)
 
 #define NUM_CHANNELS	5	/* adsp, mdsp, slpi, cdsp, cdsp1*/
-#define NUM_SESSIONS	14	/* max 11 compute, 3 cpz */
+#define NUM_SESSIONS	15	/* max 12 compute, 3 cpz */
 
 /* Default maximum sessions allowed per process */
 #define DEFAULT_MAX_SESS_PER_PROC 4
