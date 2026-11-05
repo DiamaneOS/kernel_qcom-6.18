@@ -2,7 +2,7 @@
 
 Imported from `DiamaneOS/kernel_qcom-6.1` at `d7053a61b803` with the DiamaneOS
 fixes (clock debug and FM radio nodes off, EUD off, the pstore region and boot
-arguments, the panel brightness tables). `diamaneos kernel618 build` compiles
+arguments, the panel brightness tables). `diamaneos kernel build` compiles
 it with the 6.18 tree's dtc and DT binding headers and merges it as the 6.1
 build did.
 
