@@ -1546,6 +1546,8 @@
 		compatible = "qcom,cpucp-log";
 		reg = <0x81840000 0x10000>, <0x81850000 0x10000>;
 		mboxes = <&cpucp 1>;
+		/* Firmware debug logs only, and the driver needs a log type this node never had. */
+		status = "disabled";
 	};
 
 	qcom_pmu: qcom,pmu {
