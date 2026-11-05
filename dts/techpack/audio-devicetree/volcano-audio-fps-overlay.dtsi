@@ -1,4 +1,7 @@
 /* fps audio dtsi */
+&lpass_bt_swr {
+	status = "disabled";
+};
 &lpass_cdc {
        qcom,num-macros = <3>;
 };
