@@ -275,7 +275,11 @@ int qtee_shmbridge_driver_init(void)
 	if (IS_ENABLED(CONFIG_QCOM_TZMEM_LOW_MEMORY))
 		pool_config.initial_size = SZ_256K - SZ_32K; /* 224K */
 	else
-		pool_config.initial_size = SZ_512K;
+		/*
+		 * 4M at boot, as on 6.1, so a trusted app call of about 1M (fingerprint
+		 * enrolment) never needs an order 9 allocation once memory is fragmented.
+		 */
+		pool_config.initial_size = SZ_4M;
 	pool_config.policy = QCOM_TZMEM_POLICY_STATIC;
 	pool_config.max_size = pool_config.initial_size;
 	pool_config.is_cached = true;
