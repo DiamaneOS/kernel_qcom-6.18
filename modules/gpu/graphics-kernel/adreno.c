@@ -1199,7 +1199,7 @@ static int adreno_probe_llcc(struct adreno_device *adreno_dev,
 		if (ret == -EPROBE_DEFER)
 			return ret;
 
-		if (ret != -ENOENT)
+		if (ret != -ENOENT && ret != -ENODEV)
 			dev_warn(&pdev->dev,
 				"Unable to get the GPU LLC slice: %d\n", ret);
 	} else
@@ -1214,7 +1214,7 @@ static int adreno_probe_llcc(struct adreno_device *adreno_dev,
 			return ret;
 		}
 
-		if (ret != -ENOENT)
+		if (ret != -ENOENT && ret != -ENODEV)
 			dev_warn(&pdev->dev,
 				"Unable to get GPU HTW LLC slice: %d\n", ret);
 	} else
