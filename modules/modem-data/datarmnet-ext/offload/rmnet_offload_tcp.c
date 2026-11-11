@@ -16,6 +16,7 @@
 #include "rmnet_offload_engine.h"
 #include "rmnet_offload_stats.h"
 #include "rmnet_offload_knob.h"
+#include "rmnet_offload_tcp.h"
 union DATARMNETe0a7777e12{struct DATARMNETd2991e8952 DATARMNETe31a04a369;u8 
 DATARMNET021aa8e68d[(0xf07+1090-0x130d)];};static bool DATARMNET2818ea93ec(
 struct DATARMNETd812bcdbb5*DATARMNET5fe4c722a8){struct DATARMNETd2991e8952*

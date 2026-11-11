@@ -30,6 +30,7 @@
 #include "rmnet_shs_modules.h"
 #include "rmnet_shs_common.h"
 #include "rmnet_trace.h"
+#include "rmnet_shs_ll.h"
 #include <linux/icmp.h>
 #include <linux/inet.h>
 DEFINE_HASHTABLE(DATARMNET58fe8ac797,DATARMNET25437d35fd);DEFINE_HASHTABLE(
@@ -55,7 +56,7 @@ DATARMNETefe3dcad0a,
 DATARMNET75ae82094a,uint,(0xdb7+6665-0x261c));MODULE_PARM_DESC(
 DATARMNET75ae82094a,
 "\x4c\x4c\x20\x66\x69\x6c\x74\x65\x72\x20\x63\x6f\x75\x6e\x74\x20\x73\x65\x65\x6e\x20\x69\x6e\x20\x6c\x6c\x20\x72\x6d\x6e\x65\x74\x5f\x73\x68\x73"
-);int DATARMNETf4aefff4c2(struct sk_buff*skb){int DATARMNETbd864aa442=
+);static int DATARMNETf4aefff4c2(struct sk_buff*skb){int DATARMNETbd864aa442=
 (0xd2d+202-0xdf7);struct iphdr*ip4h,DATARMNETc00baf31c3;struct ipv6hdr*ip6h,
 DATARMNETcf1d9e2c1e;const struct ipv6_opt_hdr*DATARMNET7b34b7b5be;struct 
 ipv6_opt_hdr DATARMNET1688a97aa4;switch(skb->protocol){case htons(ETH_P_IP):ip4h
@@ -100,7 +101,7 @@ DATARMNET7b34b7b5be&&DATARMNET7b34b7b5be->nexthdr==NEXTHDR_ESP){skb->hash=
 DATARMNETaa0602144b;skb->sw_hash=(0xd26+209-0xdf6);}}DATARMNETf623862dd4:break;
 default:break;}DATARMNETda96251102(DATARMNETcd24fca747,DATARMNET116c96c236,
 DATARMNETbd864aa442,(0x16e8+787-0xc0c),(0x16e8+787-0xc0c),(0x16e8+787-0xc0c),skb
-,NULL);return DATARMNETbd864aa442;}int DATARMNET71b0abb49e(struct sk_buff*skb,
+,NULL);return DATARMNETbd864aa442;}static int DATARMNET71b0abb49e(struct sk_buff*skb,
 struct ipv6hdr*DATARMNET5d09fca14e,struct DATARMNETbf4d34b241*
 DATARMNET54338da2ff){struct tcphdr*tp,DATARMNETd1ff6cd568;struct udphdr*up,
 DATARMNETc82d2f4e16;int DATARMNETb3ce3d0107,DATARMNETb16a9be210,
@@ -130,7 +131,7 @@ DATARMNET54338da2ff->DATARMNET5a5907dd87||up->source==(DATARMNET54338da2ff->
 src_port);DATARMNETf13f5dee10=!DATARMNET54338da2ff->DATARMNET1c959e10ca||up->
 dest==(DATARMNET54338da2ff->DATARMNET1e49bc75c8);}}}if((DATARMNETb3ce3d0107)&&(
 DATARMNETb16a9be210)&&(DATARMNET5a94751027)&&(DATARMNETad7ab41bc8)&&(
-DATARMNETf13f5dee10))ret=true;return ret;}int DATARMNETb9e0ebf153(struct sk_buff
+DATARMNETf13f5dee10))ret=true;return ret;}static int DATARMNETb9e0ebf153(struct sk_buff
 *skb,struct iphdr*skb_ip4h,struct DATARMNETbf4d34b241*DATARMNET54338da2ff){int 
 ret=false;struct tcphdr*tp,DATARMNETd1ff6cd568;struct udphdr*up,
 DATARMNETc82d2f4e16;u16 DATARMNET43b01ff41b=skb_ip4h->ihl*(0xd11+230-0xdf3);int 
@@ -157,7 +158,7 @@ DATARMNET1c959e10ca||up->dest==(DATARMNET54338da2ff->DATARMNET1e49bc75c8);}}}if(
 DATARMNETad7ab41bc8)&&(DATARMNETf13f5dee10))ret=true;rm_err(
 "\x53\x48\x53\x5f\x4c\x4c\x3a\x20\x56\x34\x20\x73\x61\x64\x64\x72\x20\x6d\x61\x74\x63\x68\x20\x25\x75\x20\x64\x61\x64\x64\x72\x20\x6d\x61\x74\x63\x68\x20\x25\x75\x2c\x20\x70\x72\x6f\x74\x6f\x20\x6d\x61\x74\x63\x68\x20\x25\x75\x2c\x20\x73\x72\x63\x20\x70\x6f\x72\x74\x20\x25\x75\x2c\x20\x64\x65\x73\x74\x20\x70\x6f\x72\x74\x20\x6d\x61\x74\x63\x68\x20\x25\x75\x20\x20\x70\x72\x6f\x74\x6f\x20\x25\x75" "\n"
 ,DATARMNETb3ce3d0107,DATARMNETb16a9be210,DATARMNET5a94751027,DATARMNETad7ab41bc8
-,DATARMNETf13f5dee10,skb_ip4h->protocol);return ret;}int DATARMNET8fc45abdc4(
+,DATARMNETf13f5dee10,skb_ip4h->protocol);return ret;}static int DATARMNET8fc45abdc4(
 struct DATARMNET0331d6732d*DATARMNET63b1a086d5,struct DATARMNET0331d6732d*
 DATARMNET82190d5ee0){struct DATARMNETbf4d34b241*DATARMNET54338da2ff=&
 DATARMNET63b1a086d5->DATARMNET54338da2ff;struct DATARMNETbf4d34b241*
@@ -230,7 +231,7 @@ DATARMNETfbdbab2ef6);kfree(DATARMNET63b1a086d5);DATARMNETecc0627c70.
 DATARMNET110549da6f--;DATARMNET75ae82094a--;rm_err(
 "\x53\x48\x53\x5f\x4c\x4c\x3a\x20\x25\x73",
 "\x20\x55\x6e\x69\x6e\x73\x74\x61\x6c\x6c\x65\x64\x20\x4c\x4c\x20\x66\x69\x6c\x74\x65\x72"
-);}void DATARMNET1e918c8e0d(struct DATARMNET0331d6732d*DATARMNET63b1a086d5){
+);}static void DATARMNET1e918c8e0d(struct DATARMNET0331d6732d*DATARMNET63b1a086d5){
 struct DATARMNETbf4d34b241*DATARMNET54338da2ff=&DATARMNET63b1a086d5->
 DATARMNET54338da2ff;pr_info(
 "\x53\x48\x53\x5f\x4c\x4c\x3a\x20\x70\x72\x6f\x74\x6f\x20\x76\x61\x6c\x69\x64\x20\x25\x75\x20\x73\x72\x63\x20\x61\x64\x64\x72\x20\x76\x61\x6c\x69\x64\x20\x25\x75\x2c\x20\x64\x65\x73\x74\x20\x61\x64\x64\x72\x20\x76\x61\x6c\x69\x64\x20\x25\x75\x2c\x20\x64\x65\x73\x74\x20\x70\x6f\x72\x74\x20\x76\x61\x6c\x69\x64\x20\x25\x75\x2c\x20\x73\x72\x63\x70\x6f\x72\x74\x20\x76\x61\x6c\x69\x64\x20\x25\x75\x2c\x20\x69\x70\x20\x76\x65\x72\x73\x69\x6f\x6e\x20\x25\x75\x20\x73\x65\x71\x20\x25\x75"
@@ -300,7 +301,7 @@ DATARMNET80eb31d7b8){DATARMNETd2a694d52a->DATARMNET63b1a086d5->
 DATARMNET80eb31d7b8=DATARMNET64165df74d;}}spin_unlock_bh(&DATARMNETfbdbab2ef6);
 rm_err("\x53\x48\x53\x5f\x4c\x4c\x3a\x20\x25\x73" "\n",
 "\x49\x6e\x73\x74\x61\x6c\x6c\x65\x64\x20\x4c\x4c\x20\x66\x69\x6c\x74\x65\x72");
-}void DATARMNET337eca0417(struct sk_buff*skb,struct DATARMNET63d7680df2*
+}static void DATARMNET337eca0417(struct sk_buff*skb,struct DATARMNET63d7680df2*
 DATARMNET63b1a086d5){u32 DATARMNET1fcbf046ec=(0xd2d+202-0xdf7);u8 map=
 (0xd2d+202-0xdf7),DATARMNET0258668025=(0xd2d+202-0xdf7);u16 index;if(!
 DATARMNET63b1a086d5->DATARMNETfbbec4c537){map=DATARMNETecc0627c70.map_mask;

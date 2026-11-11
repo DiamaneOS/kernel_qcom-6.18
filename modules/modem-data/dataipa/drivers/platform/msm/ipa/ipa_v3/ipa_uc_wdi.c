@@ -1214,7 +1214,7 @@ fail_alloc_channel:
 }
 
 
-int ipa3_connect_gsi_wdi_pipe(struct ipa_wdi_in_params *in,
+static int ipa3_connect_gsi_wdi_pipe(struct ipa_wdi_in_params *in,
 	struct ipa_wdi_out_params *out)
 {
 	u32 len;
@@ -2726,7 +2726,7 @@ int ipa3_resume_gsi_wdi_pipe(u32 clnt_hdl)
 						HOLB_MONITOR_MASK, holb_max_cnt,
 						IPA_EE_AP);
 		if (res)
-			IPAERR("Add HOLB monitor failed for gsi ch %d\n",
+			IPAERR("Add HOLB monitor failed for gsi ch %lu\n",
 					ep->gsi_chan_hdl);
 	}
 	pcmd_t = &ipa3_ctx->gsi_info[IPA_HW_PROTOCOL_WDI];
@@ -2833,7 +2833,7 @@ uc_timeout:
 }
 EXPORT_SYMBOL(ipa_resume_wdi_pipe);
 
-int ipa3_suspend_gsi_wdi_pipe(u32 clnt_hdl)
+static int ipa3_suspend_gsi_wdi_pipe(u32 clnt_hdl)
 {
 	int ipa_ep_idx;
 	struct ipa3_ep_context *ep;

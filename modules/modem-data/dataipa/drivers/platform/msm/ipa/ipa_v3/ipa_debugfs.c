@@ -1556,7 +1556,7 @@ static ssize_t ipa3_read_stats(struct file *file, char __user *ubuf,
 		"flow_enable=%u\n"
 		"flow_disable=%u\n"
 		"rx_page_drop_cnt=%u\n"
-		"lower_order=%u\n"
+		"lower_order=%llu\n"
 		"rmnet_notifier_enabled=%u\n"
 		"num_buff_above_thresh_for_def_pipe_notified=%u\n"
 		"num_buff_below_thresh_for_def_pipe_notified=%u\n"
@@ -3700,7 +3700,7 @@ static ssize_t ipa_xr_add_flt_to_wlan(struct file *file,
 		flt_add_req.flt_info[0].dport = dst_port[i];
 		flt_add_req.flt_info[0].protocol = prot[i];
 
-		IPADBG("IPv4 saddr:%lu, daddr:%lu IPv4 sport:%u, dport:%u protocol:%u\n",
+		IPADBG("IPv4 saddr:%u, daddr:%u IPv4 sport:%u, dport:%u protocol:%u\n",
 				flt_add_req.flt_info[0].ipv4_addr.ipv4_saddr,
 				flt_add_req.flt_info[0].ipv4_addr.ipv4_daddr,
 				flt_add_req.flt_info[0].sport,

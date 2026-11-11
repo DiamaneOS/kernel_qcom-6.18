@@ -113,7 +113,7 @@ void rmnet_ctl_endpoint_post(const void *data, size_t len)
 	}
 }
 
-void *rmnet_ctl_register_client(struct rmnet_ctl_client_hooks *hook)
+static void *rmnet_ctl_register_client(struct rmnet_ctl_client_hooks *hook)
 {
 	struct rmnet_ctl_client *client;
 
@@ -142,9 +142,8 @@ void *rmnet_ctl_register_client(struct rmnet_ctl_client_hooks *hook)
 
 	return client;
 }
-EXPORT_SYMBOL(rmnet_ctl_register_client);
 
-int rmnet_ctl_unregister_client(void *handle)
+static int rmnet_ctl_unregister_client(void *handle)
 {
 	struct rmnet_ctl_client *client = (struct rmnet_ctl_client *)handle;
 
@@ -166,9 +165,8 @@ int rmnet_ctl_unregister_client(void *handle)
 
 	return 0;
 }
-EXPORT_SYMBOL(rmnet_ctl_unregister_client);
 
-int rmnet_ctl_send_client(void *handle, struct sk_buff *skb)
+static int rmnet_ctl_send_client(void *handle, struct sk_buff *skb)
 {
 	struct rmnet_ctl_client *client = (struct rmnet_ctl_client *)handle;
 	struct rmnet_ctl_dev *dev;
@@ -196,7 +194,6 @@ int rmnet_ctl_send_client(void *handle, struct sk_buff *skb)
 
 	return rc;
 }
-EXPORT_SYMBOL(rmnet_ctl_send_client);
 
 void rmnet_ctl_log(enum rmnet_ctl_log_lvl lvl, const char *msg,
 		   int rc, const void *data, unsigned int len)

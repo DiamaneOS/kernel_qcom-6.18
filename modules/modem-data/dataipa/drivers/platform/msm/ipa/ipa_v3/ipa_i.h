@@ -3303,6 +3303,7 @@ void ipa_init_ep_flt_bitmap(void);
 bool ipa_is_ep_support_flt(int pipe_idx);
 
 bool ipa3_get_modem_cfg_emb_pipe_flt(void);
+enum ipa_transport_type ipa3_get_transport_type(void);
 
 u8 ipa3_get_qmb_master_sel(enum ipa_client_type client);
 

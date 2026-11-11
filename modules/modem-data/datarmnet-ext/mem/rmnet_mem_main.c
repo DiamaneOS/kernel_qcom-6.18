@@ -44,7 +44,7 @@ EXPORT_SYMBOL(rmnet_mem_page_ref_inc_entry);struct rmnet_mem_notif_s{struct
 raw_notifier_head chain;spinlock_t lock;};struct rmnet_mem_notif_s 
 rmnet_mem_notifier={.chain=RAW_NOTIFIER_INIT(rmnet_mem_notifier.chain),.lock=
 __SPIN_LOCK_UNLOCKED(rmnet_mem_notifier.lock),};EXPORT_SYMBOL(rmnet_mem_notifier
-);int rmnet_mem_mode_notify(unsigned pool_size){unsigned long flags;
+);static int rmnet_mem_mode_notify(unsigned pool_size){unsigned long flags;
 spin_lock_irqsave(&rmnet_mem_notifier.lock,flags);raw_notifier_call_chain(&
 rmnet_mem_notifier.chain,pool_size,NULL);spin_unlock_irqrestore(&
 rmnet_mem_notifier.lock,flags);return NOTIFY_OK;}int rmnet_mem_register_notifier
@@ -56,13 +56,13 @@ rmnet_mem_unregister_notifier(struct notifier_block*nb){unsigned long flags;int
 ret;spin_lock_irqsave(&rmnet_mem_notifier.lock,flags);ret=
 raw_notifier_chain_unregister(&rmnet_mem_notifier.chain,nb);
 spin_unlock_irqrestore(&rmnet_mem_notifier.lock,flags);return ret;}
-EXPORT_SYMBOL_GPL(rmnet_mem_unregister_notifier);struct mem_info*
+EXPORT_SYMBOL_GPL(rmnet_mem_unregister_notifier);static struct mem_info*
 rmnet_mem_add_page(struct page*page,u8 pageorder){struct mem_info*mem_slot;
 mem_slot=(struct mem_info*)kzalloc(sizeof(*mem_slot),GFP_ATOMIC);if(!mem_slot)
 return NULL;static_pool_size[pageorder]++;mem_slot->order=pageorder;mem_slot->
 addr=(void*)page;INIT_LIST_HEAD(&mem_slot->mem_head);if(pageorder<POOL_LEN){
 list_add_rcu(&mem_slot->mem_head,&(rmnet_mem_pool[pageorder]));}return mem_slot;
-}void rmnet_mem_free_all(void){unsigned long flags;struct mem_info*mem_slot;
+}static void rmnet_mem_free_all(void){unsigned long flags;struct mem_info*mem_slot;
 struct list_head*ptr=NULL,*next=NULL;int i;spin_lock_irqsave(&rmnet_mem_lock,
 flags);for(i=(0xd2d+202-0xdf7);i<POOL_LEN;i++){list_for_each_safe(ptr,next,&
 rmnet_mem_pool[i]){mem_slot=list_entry(ptr,struct mem_info,mem_head);list_del(&
@@ -109,7 +109,7 @@ rmnet_mem_add_page(newpage,pageorder);}}else{list_for_each_safe(entry,next,&(
 rmnet_mem_pool[pageorder])){mem_slot=list_entry(entry,struct mem_info,mem_head);
 list_del(&mem_slot->mem_head);put_page(mem_slot->addr);kfree(mem_slot);
 static_pool_size[pageorder]--;if(static_pool_size[pageorder]==perm_size)break;}}
-spin_unlock_irqrestore(&rmnet_mem_lock,flags);}int __init rmnet_mem_module_init(
+spin_unlock_irqrestore(&rmnet_mem_lock,flags);}static int __init rmnet_mem_module_init(
 void){int rc=(0xd2d+202-0xdf7);int i=(0xd2d+202-0xdf7);pr_info(
 "\x25\x73\x28\x29\x3a\x20\x53\x74\x61\x72\x74\x69\x6e\x67\x20\x72\x6d\x6e\x65\x74\x20\x6d\x65\x6d\x20\x6d\x6f\x64\x75\x6c\x65" "\n"
 ,__func__);for(i=(0xd2d+202-0xdf7);i<POOL_LEN;i++){INIT_LIST_HEAD(&(
@@ -119,7 +119,7 @@ WQ_HIGHPRI,(0xd2d+202-0xdf7));if(!mem_wq){pr_err(
 ,__func__);return-ENOMEM;}INIT_WORK(&pool_adjust_work,mem_update_pool_work);rc=
 rmnet_mem_nl_register();if(rc){pr_err(
 "\x25\x73\x28\x29\x3a\x20\x46\x61\x69\x6c\x65\x64\x20\x74\x6f\x20\x72\x65\x67\x69\x73\x74\x65\x72\x20\x67\x65\x6e\x65\x72\x69\x63\x20\x6e\x65\x74\x6c\x69\x6e\x6b\x20\x66\x61\x6d\x69\x6c\x79" "\n"
-,__func__);return-ENOMEM;}return(0xd2d+202-0xdf7);}void __exit 
+,__func__);return-ENOMEM;}return(0xd2d+202-0xdf7);}static void __exit 
 rmnet_mem_module_exit(void){rmnet_mem_nl_unregister();if(mem_wq){
 cancel_work_sync(&pool_adjust_work);drain_workqueue(mem_wq);destroy_workqueue(
 mem_wq);mem_wq=NULL;}rmnet_mem_free_all();}module_init(rmnet_mem_module_init);

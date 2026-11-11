@@ -967,7 +967,7 @@ struct iommu_domain *ipa3_get_wlan_smmu_domain(void)
 	return ipa3_get_smmu_domain_by_type(IPA_SMMU_CB_WLAN);
 }
 
-struct iommu_domain *ipa3_get_rtp_smmu_domain(void)
+static struct iommu_domain *ipa3_get_rtp_smmu_domain(void)
 {
 	return ipa3_get_smmu_domain_by_type(IPA_SMMU_CB_RTP);
 }
@@ -988,7 +988,7 @@ struct iommu_domain *ipa3_get_eth1_smmu_domain(void)
 }
 
 
-struct iommu_domain *ipa3_get_11ad_smmu_domain(void)
+static struct iommu_domain *ipa3_get_11ad_smmu_domain(void)
 {
 	return ipa3_get_smmu_domain_by_type(IPA_SMMU_CB_11AD);
 }
@@ -2632,7 +2632,7 @@ static int ipa3_send_pkt_threshold(unsigned long usr_param)
 
 	if (((struct ipa_ioc_set_pkt_threshold *)buff1)->ioctl_data_size !=
 		sizeof(struct ipa_set_pkt_threshold)) {
-		IPAERR("IPA_IOC_SET_PKT_THRESHOLD size not match(%d,%d)!\n",
+		IPAERR("IPA_IOC_SET_PKT_THRESHOLD size not match(%d,%zu)!\n",
 		((struct ipa_ioc_set_pkt_threshold *)buff1)->ioctl_data_size,
 		sizeof(struct ipa_set_pkt_threshold));
 		kfree(buff1);
@@ -2693,7 +2693,7 @@ static int ipa3_send_sw_flt_list(unsigned long usr_param)
 
 	if (sw_flt_list.ioctl_data_size !=
 		sizeof(struct ipa_sw_flt_list_type)) {
-		IPAERR("IPA_IOC_SET_SW_FLT size not match(%d,%d)!\n",
+		IPAERR("IPA_IOC_SET_SW_FLT size not match(%d,%zu)!\n",
 		sw_flt_list.ioctl_data_size,
 		sizeof(struct ipa_sw_flt_list_type));
 		return -EFAULT;
@@ -2757,7 +2757,7 @@ static int ipa3_send_ippt_sw_flt_list(unsigned long usr_param)
 	/* Expect ipa_ippt_sw_flt_list_type struct*/
 	if (sw_flt_list.ioctl_data_size !=
 		sizeof(struct ipa_ippt_sw_flt_list_type)) {
-		IPAERR("IPA_IOC_SET_IPPT_SW_FLT size not match(%d,%d)!\n",
+		IPAERR("IPA_IOC_SET_IPPT_SW_FLT size not match(%d,%zu)!\n",
 		sw_flt_list.ioctl_data_size,
 		sizeof(struct ipa_ippt_sw_flt_list_type));
 		return -EFAULT;
@@ -4486,7 +4486,7 @@ send:
  * -ENOMEM: failed to allocate memory
  * -EPERM: failed to add the tables
  */
-int ipa3_setup_dflt_rt_tables(void)
+static int ipa3_setup_dflt_rt_tables(void)
 {
 	struct ipa_ioc_add_rt_rule *rt_rule;
 	struct ipa_rt_rule_add *rt_rule_entry;
@@ -6477,7 +6477,7 @@ static long compat_ipa3_nat_ipv6ct_alloc_table(unsigned long arg,
 	return retval;
 }
 
-long compat_ipa3_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+static long compat_ipa3_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
 	long retval = 0;
 	struct ipa3_ioc_nat_alloc_mem32 nat_mem32;
@@ -7023,7 +7023,7 @@ static void ipa3_handle_gsi_differ_irq(void)
  * ipa3_active_clks_status() - update the current msm bus clock vote
  * status
  */
-int ipa3_active_clks_status(void)
+static int ipa3_active_clks_status(void)
 {
 	return atomic_read(&ipa3_ctx->ipa_clk_vote);
 }
@@ -9625,7 +9625,7 @@ static int ipa3_pre_init(const struct ipa3_plat_drv_res *resource_p,
 	}
 
 	IPADBG(
-	    "base(0x%x)+offset(0x%x)=(0x%x) mapped to (0x%x) with len (0x%x)\n",
+	    "base(0x%x)+offset(0x%x)=(0x%x) mapped to (%pK) with len (0x%x)\n",
 	    resource_p->ipa_mem_base,
 	    ipa3_ctx->ctrl->ipa_reg_base_ofst,
 	    resource_p->ipa_mem_base + ipa3_ctx->ctrl->ipa_reg_base_ofst,

@@ -762,7 +762,7 @@ static int ipa_usb_set_lock_unlock(bool is_lock)
 	return 0;
 }
 
-int ipa_usb_init_teth_prot(enum ipa_usb_teth_prot teth_prot,
+static int ipa_usb_init_teth_prot(enum ipa_usb_teth_prot teth_prot,
 			   struct ipa_usb_teth_params *teth_params,
 			   int (*ipa_usb_notify_cb)(enum ipa_usb_notify_event,
 			   void *),
@@ -981,7 +981,6 @@ bad_params:
 	mutex_unlock(&ipa3_usb_ctx->general_mutex);
 	return result;
 }
-EXPORT_SYMBOL(ipa_usb_init_teth_prot);
 
 static void ipa3_usb_gsi_evt_err_cb(struct gsi_evt_err_notify *notify)
 {
@@ -1984,7 +1983,7 @@ static void ipa_usb_debugfs_init(void){}
 static void ipa_usb_debugfs_remove(void){}
 #endif /* CONFIG_DEBUG_FS */
 
-int ipa_usb_xdci_connect(struct ipa_usb_xdci_chan_params *ul_chan_params,
+static int ipa_usb_xdci_connect(struct ipa_usb_xdci_chan_params *ul_chan_params,
 			 struct ipa_usb_xdci_chan_params *dl_chan_params,
 			 struct ipa_req_chan_out_params *ul_out_params,
 			 struct ipa_req_chan_out_params *dl_out_params,
@@ -2066,7 +2065,6 @@ bad_params:
 	mutex_unlock(&ipa3_usb_ctx->general_mutex);
 	return result;
 }
-EXPORT_SYMBOL(ipa_usb_xdci_connect);
 
 static int ipa3_usb_check_disconnect_prot(enum ipa_usb_teth_prot teth_prot)
 {
@@ -2152,7 +2150,7 @@ static int ipa_usb_xdci_dismiss_channels(u32 ul_clnt_hdl, u32 dl_clnt_hdl,
 	return 0;
 }
 
-int ipa_usb_xdci_disconnect(u32 ul_clnt_hdl, u32 dl_clnt_hdl,
+static int ipa_usb_xdci_disconnect(u32 ul_clnt_hdl, u32 dl_clnt_hdl,
 			    enum ipa_usb_teth_prot teth_prot)
 {
 	int result = 0;
@@ -2262,9 +2260,8 @@ bad_params:
 	return result;
 
 }
-EXPORT_SYMBOL(ipa_usb_xdci_disconnect);
 
-int ipa_usb_deinit_teth_prot(enum ipa_usb_teth_prot teth_prot)
+static int ipa_usb_deinit_teth_prot(enum ipa_usb_teth_prot teth_prot)
 {
 	int result = -EFAULT;
 	enum ipa3_usb_transport_type ttype;
@@ -2388,7 +2385,6 @@ bad_params:
 	mutex_unlock(&ipa3_usb_ctx->general_mutex);
 	return result;
 }
-EXPORT_SYMBOL(ipa_usb_deinit_teth_prot);
 
 /* Assumes lock already acquired */
 static int ipa3_usb_suspend_no_remote_wakeup(u32 ul_clnt_hdl, u32 dl_clnt_hdl,
@@ -2474,7 +2470,7 @@ fail_exit:
 	return result;
 }
 
-int ipa_usb_xdci_suspend(u32 ul_clnt_hdl, u32 dl_clnt_hdl,
+static int ipa_usb_xdci_suspend(u32 ul_clnt_hdl, u32 dl_clnt_hdl,
 	enum ipa_usb_teth_prot teth_prot, bool with_remote_wakeup)
 {
 	int result = 0;
@@ -2553,7 +2549,6 @@ bad_params:
 	mutex_unlock(&ipa3_usb_ctx->general_mutex);
 	return result;
 }
-EXPORT_SYMBOL(ipa_usb_xdci_suspend);
 
 /* Assumes lock already acquired */
 static int ipa3_usb_resume_no_remote_wakeup(u32 ul_clnt_hdl, u32 dl_clnt_hdl,
@@ -2633,7 +2628,7 @@ fail_exit:
 	return result;
 }
 
-int ipa_usb_xdci_resume(u32 ul_clnt_hdl, u32 dl_clnt_hdl,
+static int ipa_usb_xdci_resume(u32 ul_clnt_hdl, u32 dl_clnt_hdl,
 	enum ipa_usb_teth_prot teth_prot)
 {
 	int result = -EFAULT;
@@ -2742,7 +2737,6 @@ bad_params:
 	mutex_unlock(&ipa3_usb_ctx->general_mutex);
 	return result;
 }
-EXPORT_SYMBOL(ipa_usb_xdci_resume);
 
 bool ipa_usb_is_teth_prot_connected(enum ipa_usb_teth_prot usb_teth_prot)
 {
