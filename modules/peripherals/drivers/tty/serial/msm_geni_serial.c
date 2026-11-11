@@ -645,7 +645,7 @@ static void msm_geni_uart_gsi_rx_cb(void *ptr);
  *
  * Return: 0 on success, negative error code on failure.
  */
-int setup_timestamp_dma_tre(struct msm_geni_serial_port *msm_port, struct msm_gpi_tre *tre,
+static int setup_timestamp_dma_tre(struct msm_geni_serial_port *msm_port, struct msm_gpi_tre *tre,
 			    bool ieot, bool chain, dma_addr_t *ts_dma)
 {
 	int ret;
@@ -682,7 +682,7 @@ int setup_timestamp_dma_tre(struct msm_geni_serial_port *msm_port, struct msm_gp
  *
  * Return: None
  */
-void geni_se_dump_dbg_regs(struct uart_port *uport)
+static void geni_se_dump_dbg_regs(struct uart_port *uport)
 {
 	u32 m_cmd0 = 0, m_irq_status = 0, s_cmd0 = 0;
 	u32 s_irq_status = 0, geni_status = 0, geni_ios = 0;
@@ -856,7 +856,7 @@ void geni_se_dump_dbg_regs(struct uart_port *uport)
 
 }
 
-int msm_geni_serial_resources_on(struct msm_geni_serial_port *port)
+static int msm_geni_serial_resources_on(struct msm_geni_serial_port *port)
 {
 	int ret = 0;
 	struct msm_geni_serial_rsc *rsc = &port->serial_rsc;
@@ -919,7 +919,7 @@ err_pinctrl:
 	return ret;
 }
 
-int msm_geni_serial_resources_off(struct msm_geni_serial_port *port)
+static int msm_geni_serial_resources_off(struct msm_geni_serial_port *port)
 {
 	int ret = 0;
 	struct msm_geni_serial_rsc *rsc = &port->serial_rsc;
@@ -3067,7 +3067,7 @@ exit_gsi_xfer_rx:
  *
  * This function is used to initiate immediate DMA TX transfer.
  */
-void msm_geni_serial_tx_immediate_dma(struct geni_se *se, void *buf, size_t len)
+static void msm_geni_serial_tx_immediate_dma(struct geni_se *se, void *buf, size_t len)
 {
 	u32 val;
 	u8 *ptr = (u8 *)buf;

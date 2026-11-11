@@ -134,7 +134,7 @@ if (dev) \
 #define MAX_SPLIT_TRE_MSGS	QUP_MAX_SPLIT_TRE_MSGS
 
 /* FTRACE Logging */
-void i2c_trace_log(struct device *dev, const char *fmt, ...)
+static void i2c_trace_log(struct device *dev, const char *fmt, ...)
 {
 	struct va_format vaf = {
 		.fmt = fmt,
@@ -356,7 +356,7 @@ static int geni_i2c_clk_map_idx(struct geni_i2c_dev *gi2c)
  *
  * Return:	None
  */
-void geni_i2c_se_dump_dbg_regs(struct geni_se *se, void __iomem *base,
+static void geni_i2c_se_dump_dbg_regs(struct geni_se *se, void __iomem *base,
 				void *ipc)
 {
 	u32 m_cmd0 = 0;
@@ -1272,7 +1272,7 @@ static void gi2c_gsi_cb_err(struct msm_gpi_dma_async_tx_cb_param *cb,
  *
  * Return:  None.
  */
-void gi2c_gsi_tx_unmap(struct geni_i2c_dev *gi2c, u32 msg_idx, u32 wr_idx)
+static void gi2c_gsi_tx_unmap(struct geni_i2c_dev *gi2c, u32 msg_idx, u32 wr_idx)
 {
 	if (gi2c->msgs[msg_idx].len > IMMEDIATE_DMA_LEN) {
 		geni_se_common_iommu_unmap_buf(gi2c->wrapper_dev, &gi2c->tx_ph[wr_idx],
@@ -1576,7 +1576,7 @@ static struct msm_gpi_tre *setup_rx_tre(struct geni_i2c_dev *gi2c,
 	return rx_t;
 }
 
-void geni_i2c_get_immediate_dma_data(u8 *dword, int len, uint8_t *buf)
+static void geni_i2c_get_immediate_dma_data(u8 *dword, int len, uint8_t *buf)
 {
 	int i = 0;
 
@@ -2569,7 +2569,7 @@ static int geni_i2c_split_dma_tx_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg 
  *
  * Return: None
  */
-void geni_i2c_sg_init(struct geni_i2c_dev *gi2c, int msg_idx, int *segs, int *sg_index, int num,
+static void geni_i2c_sg_init(struct geni_i2c_dev *gi2c, int msg_idx, int *segs, int *sg_index, int num,
 		      struct msm_gpi_tre *lock_t)
 {
 	if (!gi2c->cfg_sent) {
@@ -2827,7 +2827,7 @@ static void gi2c_se_dma_clear_process(struct geni_i2c_dev *gi2c, struct i2c_msg 
  *
  * Return: None
  */
-void geni_i2c_fifo_dma_rw(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], u32 msg_idx,
+static void geni_i2c_fifo_dma_rw(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], u32 msg_idx,
 			  enum geni_se_xfer_mode *mode, dma_addr_t *rx_dma, dma_addr_t *tx_dma,
 			  u8 *dma_buf, u32 m_param)
 {

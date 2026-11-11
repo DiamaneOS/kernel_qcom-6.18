@@ -179,7 +179,7 @@ static inline void * btfmcodec_get_dai_drvdata(struct hwep_data *hwep_info)
 	return hwep_info->dai_drv;
 }
 
-int btfmcodec_hwep_startup(struct btfmcodec_data *btfmcodec)
+static int btfmcodec_hwep_startup(struct btfmcodec_data *btfmcodec)
 {
 	struct hwep_data *hwep_info = btfmcodec->hwep_info;
 	struct hwep_dai_driver *dai_drv = (struct hwep_dai_driver *)
@@ -212,7 +212,7 @@ static int btfmcodec_dai_startup(struct snd_pcm_substream *substream,
 	return 0;
 }
 
-int btfmcodec_hwep_shutdown(struct btfmcodec_data *btfmcodec, int id,
+static int btfmcodec_hwep_shutdown(struct btfmcodec_data *btfmcodec, int id,
 			    bool disable_master)
 {
 	struct hwep_data *hwep_info = btfmcodec->hwep_info;
@@ -344,7 +344,7 @@ static void btfmcodec_dai_shutdown(struct snd_pcm_substream *substream,
 	}
 }
 
-int btfmcodec_hwep_hw_params (struct btfmcodec_data *btfmcodec, uint32_t bps,
+static int btfmcodec_hwep_hw_params (struct btfmcodec_data *btfmcodec, uint32_t bps,
 			      uint32_t direction, uint8_t num_channels)
 {
 	struct hwep_data *hwep_info = btfmcodec->hwep_info;
@@ -563,7 +563,7 @@ static int btfmcodec_configure_dma(struct btfmcodec_data *btfmcodec, uint8_t id)
 	return ret;
 }
 
-int btfmcodec_hwep_prepare(struct btfmcodec_data *btfmcodec, uint32_t sampling_rate,
+static int btfmcodec_hwep_prepare(struct btfmcodec_data *btfmcodec, uint32_t sampling_rate,
 			uint32_t direction, int id)
 {
 	struct hwep_data *hwep_info = btfmcodec->hwep_info;
@@ -575,7 +575,7 @@ int btfmcodec_hwep_prepare(struct btfmcodec_data *btfmcodec, uint32_t sampling_r
 	if (dai_drv && dai_drv->dai_ops && dai_drv->dai_ops->hwep_prepare) {
 		ret = dai_drv->dai_ops->hwep_prepare((void *)hwep_info, sampling_rate,
 						      direction, id);
-		BTFMCODEC_ERR("%s: hwep info %d", __func__, hwep_info->flags);
+		BTFMCODEC_ERR("%s: hwep info %lu", __func__, hwep_info->flags);
 		if (ret == 0 && test_bit(BTADV_AUDIO_MASTER_CONFIG, &hwep_info->flags)) {
 			ret = btfmcodec_configure_master(btfmcodec, (uint8_t)id);
 			if (ret < 0) {
@@ -651,7 +651,7 @@ static int btfmcodec_dai_prepare(struct snd_pcm_substream *substream,
 	return ret;
 }
 
-int btfmcodec_hwep_set_channel_map(void *hwep_info, unsigned int tx_num,
+static int btfmcodec_hwep_set_channel_map(void *hwep_info, unsigned int tx_num,
 				const unsigned int *tx_slot, unsigned int rx_num,
 				const unsigned int *rx_slot)
 {
@@ -688,7 +688,7 @@ static int btfmcodec_dai_set_channel_map(struct snd_soc_dai *dai,
 }
 
 
-int btfmcodec_hwep_get_channel_map(void *hwep_info, unsigned int *tx_num,
+static int btfmcodec_hwep_get_channel_map(void *hwep_info, unsigned int *tx_num,
 				unsigned int *tx_slot, unsigned int *rx_num,
 				unsigned int *rx_slot, int id)
 {
@@ -724,7 +724,7 @@ static int btfmcodec_dai_get_channel_map(const struct snd_soc_dai *dai,
 	return 0;
 }
 
-void btfmcodec_wq_hwep_configure(struct work_struct *work)
+static void btfmcodec_wq_hwep_configure(struct work_struct *work)
 {
 	struct btfmcodec_char_device *btfmcodec_dev = container_of(work,
 						struct btfmcodec_char_device,
@@ -851,13 +851,13 @@ int btfm_register_codec(struct hwep_data *hwep_info)
 	BTFMCODEC_INFO("btfmcodec address :%p", btfmcodec);
 	BTFMCODEC_INFO("HWEPINFO address:%p", hwep_info);
 	BTFMCODEC_INFO("btfmcodec_dev INFO address:%p", btfmcodec->btfmcodec_dev);
-	BTFMCODEC_INFO("before wq_hwep_shutdown:%p", btfmcodec_dev->wq_hwep_shutdown);
-	BTFMCODEC_INFO("before wq_prepare_bearer:%p", btfmcodec_dev->wq_prepare_bearer);
+	BTFMCODEC_INFO("before wq_hwep_shutdown:%p", &btfmcodec_dev->wq_hwep_shutdown);
+	BTFMCODEC_INFO("before wq_prepare_bearer:%p", &btfmcodec_dev->wq_prepare_bearer);
 	INIT_WORK(&btfmcodec_dev->wq_hwep_shutdown, btfmcodec_wq_hwep_shutdown);
 	INIT_WORK(&btfmcodec_dev->wq_prepare_bearer, btfmcodec_wq_prepare_bearer);
 	INIT_WORK(&btfmcodec_dev->wq_hwep_configure, btfmcodec_wq_hwep_configure);
-	BTFMCODEC_INFO("after wq_hwep_shutdown:%p", btfmcodec_dev->wq_hwep_shutdown);
-	BTFMCODEC_INFO("after wq_prepare_bearer:%p", btfmcodec_dev->wq_prepare_bearer);
+	BTFMCODEC_INFO("after wq_hwep_shutdown:%p", &btfmcodec_dev->wq_hwep_shutdown);
+	BTFMCODEC_INFO("after wq_prepare_bearer:%p", &btfmcodec_dev->wq_prepare_bearer);
 	BTFMCODEC_INFO("btfmcodec_wq_prepare_bearer:%p", btfmcodec_wq_prepare_bearer);
 	BTFMCODEC_INFO("btfmcodec_wq_hwep_shutdown:%p", btfmcodec_wq_hwep_shutdown);
 

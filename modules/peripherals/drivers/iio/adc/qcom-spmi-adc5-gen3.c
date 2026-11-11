@@ -942,7 +942,7 @@ static const struct iio_info adc5_gen3_info = {
 };
 
 /* Used by thermal clients to read ADC channel temperature */
-int adc_tm_gen3_get_temp(struct thermal_zone_device *tz, int *temp)
+static int adc_tm_gen3_get_temp(struct thermal_zone_device *tz, int *temp)
 {
 	int ret;
 	struct adc5_channel_prop *prop = thermal_zone_device_priv(tz);
@@ -1242,7 +1242,7 @@ static int32_t adc_tm_gen3_manage_thresholds(struct adc5_channel_prop *prop)
 }
 
 /* Used to notify non-thermal clients of threshold crossing */
-void notify_adc_tm_fn(struct work_struct *work)
+static void notify_adc_tm_fn(struct work_struct *work)
 {
 	struct adc5_channel_prop *prop = container_of(work,
 		struct adc5_channel_prop, work);

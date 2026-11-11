@@ -170,7 +170,7 @@ if (dev) \
 #define MAX_IPC_LOG_SIZE	30
 
 /* FTRACE Logging */
-void spi_trace_log(struct device *dev, const char *fmt, ...)
+static void spi_trace_log(struct device *dev, const char *fmt, ...)
 {
 	struct va_format vaf = {
 		.fmt = fmt,
@@ -315,7 +315,7 @@ struct spi_geni_master {
  *
  * Return:	None
  */
-void geni_spi_se_dump_dbg_regs(struct geni_se *se, void __iomem *base,
+static void geni_spi_se_dump_dbg_regs(struct geni_se *se, void __iomem *base,
 				void *ipc)
 {
 	u32 m_cmd0 = 0;
@@ -3254,7 +3254,7 @@ static int spi_get_dt_property(struct platform_device *pdev, struct spi_geni_mas
 	return 0;
 }
 
-void create_ipc_context(struct spi_geni_master *geni_mas, struct device *dev)
+static void create_ipc_context(struct spi_geni_master *geni_mas, struct device *dev)
 {
 	char name[MAX_IPC_NAME_BUF];
 

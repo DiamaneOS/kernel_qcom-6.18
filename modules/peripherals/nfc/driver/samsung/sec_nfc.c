@@ -328,7 +328,7 @@ out:
     return ret;
 }
 
-void sec_nfc_i2c_irq_clear(struct sec_nfc_info *info)
+static void __maybe_unused sec_nfc_i2c_irq_clear(struct sec_nfc_info *info)
 {
     /* clear interrupt. Interrupt will be occurred at power off */
     mutex_lock(&info->i2c_info.read_mutex);
@@ -336,7 +336,7 @@ void sec_nfc_i2c_irq_clear(struct sec_nfc_info *info)
     mutex_unlock(&info->i2c_info.read_mutex);
 }
 
-int sec_nfc_i2c_probe(struct i2c_client *client)
+static int sec_nfc_i2c_probe(struct i2c_client *client)
 {
     struct device *dev = &client->dev;
     struct sec_nfc_info *info = dev_get_drvdata(dev);
@@ -405,7 +405,7 @@ err_irq_req:
     return ret;
 }
 
-void sec_nfc_i2c_remove(struct device *dev)
+static void sec_nfc_i2c_remove(struct device *dev)
 {
     struct sec_nfc_info *info = dev_get_drvdata(dev);
     struct i2c_client *client = info->i2c_info.i2c_dev;

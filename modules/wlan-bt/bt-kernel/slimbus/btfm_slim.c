@@ -512,7 +512,7 @@ int btfm_slim_hw_deinit(struct btfmslim *btfmslim)
 }
 
 #if IS_ENABLED (CONFIG_BTFM_SLIM)
-void btfm_slim_get_hwep_details(struct slim_device *dev, struct btfmslim *btfm_slim)
+static inline void btfm_slim_get_hwep_details(struct slim_device *dev, struct btfmslim *btfm_slim)
 {
 }
 #else

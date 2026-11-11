@@ -425,7 +425,7 @@ end:
 	return ret;
 }
 #else
-int perisec_cnss_bt_hw_disable_check(struct platform_pwr_data *plat_priv)
+static int perisec_cnss_bt_hw_disable_check(struct platform_pwr_data *plat_priv)
 {
 	return 0;
 }
@@ -1878,7 +1878,7 @@ static void update_sub_state(int state)
 	pwr_data->sub_state = state;
 }
 
-int power_enable (enum SubSystem SubSystemType)
+static int power_enable (enum SubSystem SubSystemType)
 {
 	int ret;
 
@@ -1919,7 +1919,7 @@ int power_enable (enum SubSystem SubSystemType)
 	return ret;
 }
 
-void send_signal_to_subsystem (int SubSystemType, int state) {
+static void send_signal_to_subsystem (int SubSystemType, int state) {
 	pwr_data->wrkq_signal_state = state;
 	if (SubSystemType == BLUETOOTH)
 		queue_work(pwr_data->workq, &pwr_data->bt_wq);
@@ -1927,7 +1927,7 @@ void send_signal_to_subsystem (int SubSystemType, int state) {
 		queue_work(pwr_data->workq, &pwr_data->uwb_wq);
 }
 
-int power_disable(enum SubSystem SubSystemType)
+static int power_disable(enum SubSystem SubSystemType)
 {
 	int ret = 0;
 	int ret_mode_state = btpower_get_retenion_mode_state();
@@ -2046,7 +2046,7 @@ static int client_state_notified(int SubSystemType) {
 	return 0;
 }
 
-void btpower_register_client(int client, int cmd)
+static void btpower_register_client(int client, int cmd)
 {
 	if (cmd == REG_BT_PID) {
 		pwr_data->reftask_bt = get_current();
@@ -2066,7 +2066,7 @@ void btpower_register_client(int client, int cmd)
 		client_state_notified(UWB);
 }
 
-void log_power_src_val(void)
+static __maybe_unused void log_power_src_val(void)
 {
 	int itr = 0;
 
@@ -2085,7 +2085,7 @@ void log_power_src_val(void)
 		set_pwr_srcs_status(&pwr_data->uwb_vregs[itr], UWB_CORE);
 }
 
-int btpower_retenion(enum plt_pwr_state client)
+static int btpower_retenion(enum plt_pwr_state client)
 {
 	int ret;
 	int current_pwr_state = get_pwr_state();
@@ -2130,12 +2130,12 @@ int btpower_retenion(enum plt_pwr_state client)
 	return ret;	
 }
 
-int btpower_off(enum plt_pwr_state client)
+static int btpower_off(enum plt_pwr_state client)
 {
 	return power_disable((client == POWER_OFF_BT) ? BLUETOOTH : UWB);
 }
 
-int btpower_on(enum plt_pwr_state client)
+static int btpower_on(enum plt_pwr_state client)
 {
 	int ret = 0;
 	int current_ssr_state = get_sub_state();
@@ -2168,13 +2168,13 @@ int btpower_on(enum plt_pwr_state client)
 	return ret;
 }
 
-int STREAM_TO_UINT32(struct sk_buff *skb)
+static int STREAM_TO_UINT32(struct sk_buff *skb)
 {
 	return (skb->data[0] | (skb->data[1] << 8) |
 		(skb->data[2] << 16) | (skb->data[3] << 24));
 }
 
-int btpower_access_ctrl(enum plt_pwr_state request)
+static int btpower_access_ctrl(enum plt_pwr_state request)
 {
 	enum grant_states grant_state = btpower_get_grant_state();
 	enum grant_states grant_pending = btpower_get_grant_pending_state();
@@ -2288,7 +2288,7 @@ static void bt_power_vote(struct work_struct *work)
 	}
 }
 
-int schedule_client_voting(enum plt_pwr_state request)
+static int schedule_client_voting(enum plt_pwr_state request)
 {
 	struct sk_buff *skb;
 	wait_queue_head_t *rsp_wait_q;
@@ -2323,7 +2323,7 @@ int schedule_client_voting(enum plt_pwr_state request)
 	return ret;
 }
 
-char* GetUwbSecondaryCrashReason(enum UwbSecondaryReasonCode reason)
+static char* GetUwbSecondaryCrashReason(enum UwbSecondaryReasonCode reason)
 {
 	for(int i =0; i < (int)(sizeof(uwbSecReasonMap)/sizeof(UwbSecondaryReasonMap)); i++)
 		if (uwbSecReasonMap[i].reason == reason)
@@ -2332,7 +2332,7 @@ char* GetUwbSecondaryCrashReason(enum UwbSecondaryReasonCode reason)
 	return CRASH_REASON_NOT_FOUND;
 }
 
-char* GetUwbPrimaryCrashReason(enum UwbPrimaryReasonCode reason)
+static char* GetUwbPrimaryCrashReason(enum UwbPrimaryReasonCode reason)
 {
 	for(int i =0; i < (int)(sizeof(uwbPriReasonMap)/sizeof(UwbPrimaryReasonMap)); i++)
 		if (uwbPriReasonMap[i].reason == reason)
@@ -2341,7 +2341,7 @@ char* GetUwbPrimaryCrashReason(enum UwbPrimaryReasonCode reason)
 	return CRASH_REASON_NOT_FOUND;
 }
 
-const char *GetSourceSubsystemString(uint32_t source_subsystem)
+static const char *GetSourceSubsystemString(uint32_t source_subsystem)
 {
 	switch (source_subsystem) {
 	case PERI_SS:
@@ -2355,7 +2355,7 @@ const char *GetSourceSubsystemString(uint32_t source_subsystem)
 	}
 }
 
-int btpower_handle_client_request(unsigned int cmd, int arg)
+static int btpower_handle_client_request(unsigned int cmd, int arg)
 {
 	int ret = -1;
 
@@ -2392,7 +2392,7 @@ int btpower_handle_client_request(unsigned int cmd, int arg)
 	return ret;
 }
 
-int btpower_process_access_req(unsigned int cmd, int req)
+static int btpower_process_access_req(unsigned int cmd, int req)
 {
 	int ret = -1;
 
@@ -2413,7 +2413,7 @@ int btpower_process_access_req(unsigned int cmd, int req)
 	return ret;
 }
 
-int bt_kernel_panic(char *arg) {
+static int bt_kernel_panic(char *arg) {
 	int ret = 0;
 
 	pr_info("%s\n", __func__);
@@ -2701,7 +2701,7 @@ driver_err:
  *
  * Return: 0 for success
  */
-int bt_aop_send_msg(struct platform_pwr_data *plat_priv, char *mbox_msg)
+static int bt_aop_send_msg(struct platform_pwr_data *plat_priv, char *mbox_msg)
 {
 	struct qmp_pkt pkt;
 	int ret = 0;
