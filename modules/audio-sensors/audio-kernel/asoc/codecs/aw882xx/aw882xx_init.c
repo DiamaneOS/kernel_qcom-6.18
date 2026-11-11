@@ -853,7 +853,7 @@ static void aw_pid_2308_dev_init(struct aw_device *aw_pa)
  * aw882xx_init common
  *
  ******************************************************/
-void aw_dev_init_cmm(struct aw_device *aw_pa)
+static void aw_dev_init_cmm(struct aw_device *aw_pa)
 {
 	/*call aw device init func*/
 	memset(aw_pa->monitor_name, 0, AW_NAME_MAX);

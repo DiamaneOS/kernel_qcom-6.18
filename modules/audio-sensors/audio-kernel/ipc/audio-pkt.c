@@ -153,7 +153,7 @@ struct audio_pkt_clnt_ch {
  * userspace client do a open() system call. All input arguments are
  * validated by the virtual file system before calling this function.
  */
-int audio_pkt_open(struct inode *inode, struct file *file)
+static int audio_pkt_open(struct inode *inode, struct file *file)
 {
 	struct audio_pkt_device *audpkt_dev = ap_priv->ap_dev;
 	AUDIO_PKT_INFO("%s: for %s \n", __func__,audpkt_dev->ch_name);
@@ -170,7 +170,7 @@ int audio_pkt_open(struct inode *inode, struct file *file)
  * userspace client do a close() system call. All input arguments are
  * validated by the virtual file system before calling this function.
  */
-int audio_pkt_release(struct inode *inode, struct file *file)
+static int audio_pkt_release(struct inode *inode, struct file *file)
 {
 	struct audio_pkt_priv *ap_priv = file->private_data;
 	struct audio_pkt_device *audpkt_dev = ap_priv->ap_dev;
@@ -239,7 +239,7 @@ static int audio_pkt_internal_release(struct platform_device *adev)
  * userspace client do a read() system call. All input arguments are
  * validated by the virtual file system before calling this function.
  */
-ssize_t audio_pkt_read(struct file *file, char __user *buf,
+static ssize_t audio_pkt_read(struct file *file, char __user *buf,
 		       size_t count, loff_t *ppos)
 {
 	struct audio_pkt_priv *ap_priv = file->private_data;
@@ -298,7 +298,7 @@ ssize_t audio_pkt_read(struct file *file, char __user *buf,
  * audpkt_update_physical_addr - Update physical address
  * audpkt_hdr:	Pointer to the file structure.
  */
-int audpkt_chk_and_update_physical_addr(struct audio_gpr_pkt *gpr_pkt)
+static int audpkt_chk_and_update_physical_addr(struct audio_gpr_pkt *gpr_pkt)
 {
 	int ret = 0;
         size_t pa_len = 0;
@@ -333,7 +333,7 @@ int audpkt_chk_and_update_physical_addr(struct audio_gpr_pkt *gpr_pkt)
  * userspace client do a write() system call. All input arguments are
  * validated by the virtual file system before calling this function.
  */
-ssize_t audio_pkt_write(struct file *file, const char __user *buf,
+static ssize_t audio_pkt_write(struct file *file, const char __user *buf,
 			size_t count, loff_t *ppos)
 {
 	struct audio_pkt_priv *ap_priv = NULL;

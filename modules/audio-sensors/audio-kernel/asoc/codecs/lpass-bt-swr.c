@@ -173,7 +173,7 @@ fail_pdev_add:
 }
 
 
-bool lpass_bt_swr_check_core_votes(struct lpass_bt_swr_priv *priv)
+static bool lpass_bt_swr_check_core_votes(struct lpass_bt_swr_priv *priv)
 {
 	bool ret = true;
 
@@ -528,7 +528,7 @@ static void lpass_bt_swr_remove(struct platform_device *pdev)
 }
 
 #ifdef CONFIG_PM
-int lpass_bt_swr_runtime_resume(struct device *dev)
+static int lpass_bt_swr_runtime_resume(struct device *dev)
 {
 	struct platform_device *pdev = to_platform_device(dev);
 	struct lpass_bt_swr_priv *priv = platform_get_drvdata(pdev);
@@ -576,7 +576,7 @@ done:
 	return 0;
 }
 
-int lpass_bt_swr_runtime_suspend(struct device *dev)
+static int lpass_bt_swr_runtime_suspend(struct device *dev)
 {
 	struct platform_device *pdev = to_platform_device(dev);
 	struct lpass_bt_swr_priv *priv = platform_get_drvdata(pdev);

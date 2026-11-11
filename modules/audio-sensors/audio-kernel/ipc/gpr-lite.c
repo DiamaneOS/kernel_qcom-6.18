@@ -58,7 +58,7 @@ enum gpr_subsys_state gpr_get_modem_state(void)
 EXPORT_SYMBOL(gpr_get_modem_state);
 
 
-void gpr_subsys_notif_register(char *client_name, int domain,
+static void gpr_subsys_notif_register(char *client_name, int domain,
 			   struct notifier_block *nb)
 {
 	int ret;
@@ -69,7 +69,7 @@ void gpr_subsys_notif_register(char *client_name, int domain,
 			__func__, domain, ret);
 }
 
-void gpr_subsys_notif_deregister(char *client_name)
+static void gpr_subsys_notif_deregister(char *client_name)
 {
 	int ret;
 
@@ -152,11 +152,10 @@ EXPORT_SYMBOL_GPL(gpr_send_pkt);
   * @state: State to update modem load status
   *
  */
-void gpr_set_modem_state(enum gpr_subsys_state state)
+static void gpr_set_modem_state(enum gpr_subsys_state state)
 {
 	atomic_set(&q6.modem_state, state);
 }
-EXPORT_SYMBOL(gpr_set_modem_state);
 
 
 static void gpr_modem_down(unsigned long opcode)
@@ -174,7 +173,7 @@ static void gpr_modem_up(void)
 }
 
 
-int gpr_set_q6_state(enum gpr_subsys_state state)
+static int gpr_set_q6_state(enum gpr_subsys_state state)
 {
 	dev_dbg(gpr_priv->dev,"%s: setting adsp state %d\n", __func__, state);
 	if (state < GPR_SUBSYS_DOWN || state > GPR_SUBSYS_LOADED)
@@ -182,7 +181,6 @@ int gpr_set_q6_state(enum gpr_subsys_state state)
 	atomic_set(&q6.q6_state, state);
 	return 0;
 }
-EXPORT_SYMBOL(gpr_set_q6_state);
 
 static void gpr_ssr_disable(struct device *dev, void *data)
 {
@@ -548,7 +546,7 @@ static int gpr_probe(struct rpmsg_device *rpdev)
 		GPR_DOMAIN_MODEM == gpr_priv->dest_domain_id) {
 		schedule_work(&gpr_priv->notifier_reg_work);
 	} else {
-		dev_err(dev, "%s: invalid dest_domain_id %s\n", __func__,
+		dev_err(dev, "%s: invalid dest_domain_id %d\n", __func__,
 		  gpr_priv->dest_domain_id);
 		return -EINVAL;
 	}
