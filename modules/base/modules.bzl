@@ -524,9 +524,6 @@ def register_modules(registry):
         deps = [
             "drivers/clk/qcom/clk-qcom",
         ],
-        copts = [
-            "-fstrict-flex-arrays=0",
-        ],
     )
     registry.register(
         name = "drivers/clk/qcom/dispcc-volcano",
@@ -538,9 +535,6 @@ def register_modules(registry):
         ],
         deps = [
             "drivers/clk/qcom/clk-qcom",
-        ],
-        copts = [
-            "-fstrict-flex-arrays=0",
         ],
     )
     registry.register(
@@ -554,9 +548,6 @@ def register_modules(registry):
         deps = [
             "drivers/clk/qcom/clk-qcom",
         ],
-        copts = [
-            "-fstrict-flex-arrays=0",
-        ],
     )
     registry.register(
         name = "drivers/clk/qcom/camcc-volcano",
@@ -568,9 +559,6 @@ def register_modules(registry):
         ],
         deps = [
             "drivers/clk/qcom/clk-qcom",
-        ],
-        copts = [
-            "-fstrict-flex-arrays=0",
         ],
     )
     registry.register(
@@ -584,9 +572,6 @@ def register_modules(registry):
         deps = [
             "drivers/clk/qcom/clk-qcom",
         ],
-        copts = [
-            "-fstrict-flex-arrays=0",
-        ],
     )
     registry.register(
         name = "drivers/clk/qcom/tcsrcc-pineapple",
@@ -598,9 +583,6 @@ def register_modules(registry):
         deps = [
             "drivers/clk/qcom/clk-qcom",
         ],
-        copts = [
-            "-fstrict-flex-arrays=0",
-        ],
     )
     registry.register(
         name = "drivers/clk/qcom/debugcc-volcano",
@@ -611,9 +593,6 @@ def register_modules(registry):
         ],
         deps = [
             "drivers/clk/qcom/clk-qcom",
-        ],
-        copts = [
-            "-fstrict-flex-arrays=0",
         ],
     )
     # pinctrl
@@ -633,9 +612,6 @@ def register_modules(registry):
             "drivers/pinctrl/qcom/pinctrl-msm.c",
             "drivers/pinctrl/qcom/pinctrl-msm.h",
         ],
-        copts = [
-            "-fstrict-flex-arrays=0",
-        ],
     )
     registry.register(
         name = "drivers/pinctrl/qcom/pinctrl-volcano",
@@ -646,9 +622,6 @@ def register_modules(registry):
         ],
         deps = [
             "drivers/pinctrl/qcom/pinctrl-msm",
-        ],
-        copts = [
-            "-fstrict-flex-arrays=0",
         ],
     )
     # interconnect
@@ -731,9 +704,6 @@ def register_modules(registry):
             "drivers/interconnect/qcom/icc-rpmh",
             "drivers/interconnect/qcom/qnoc-qos",
         ],
-        copts = [
-            "-fstrict-flex-arrays=0",
-        ],
     )
     # regulators
     registry.register(
@@ -811,9 +781,6 @@ def register_modules(registry):
         ],
         deps = [
             "drivers/regulator/debug-regulator",
-        ],
-        copts = [
-            "-fstrict-flex-arrays=0",
         ],
     )
     # spmi-pmic
@@ -1094,9 +1061,6 @@ def register_modules(registry):
         deps = [
             "drivers/phy/qualcomm/phy-qcom-ufs",
         ],
-        copts = [
-            "-fstrict-flex-arrays=0",
-        ],
     )
     registry.register(
         name = "drivers/ufs/host/ufshcd-crypto-qti",
@@ -1108,9 +1072,6 @@ def register_modules(registry):
         deps = [
             "drivers/ufs/host/ufs_qcom",
             "drivers/soc/qcom/crypto-qti",
-        ],
-        copts = [
-            "-fstrict-flex-arrays=0",
         ],
     )
     registry.register(
@@ -1124,9 +1085,6 @@ def register_modules(registry):
             "drivers/soc/qcom/crypto-qti-platform.h",
             "include/linux/crypto-qti-common.h",
         ],
-        copts = [
-            "-fstrict-flex-arrays=0",
-        ],
     )
     registry.register(
         name = "drivers/soc/qcom/hwkm",
@@ -1137,9 +1095,6 @@ def register_modules(registry):
             "drivers/soc/qcom/hwkm_serialize.h",
             "drivers/soc/qcom/hwkmregs.h",
             "include/linux/hwkm.h",
-        ],
-        copts = [
-            "-fstrict-flex-arrays=0",
         ],
     )
     registry.register(
@@ -1155,9 +1110,6 @@ def register_modules(registry):
             "include/linux/tme_hwkm_master.h",
             "include/linux/tme_hwkm_master_defs.h",
             "include/linux/tmelog.h",
-        ],
-        copts = [
-            "-fstrict-flex-arrays=0",
         ],
     )
     # usb
@@ -1880,9 +1832,6 @@ def register_modules(registry):
         deps = [
             "drivers/virt/gunyah/gh_rm_drv",
         ],
-        copts = [
-            "-fstrict-flex-arrays=0",
-        ],
     )
     # memory
     registry.register(
@@ -2076,9 +2025,7 @@ def register_modules(registry):
         local_defines = [
             "SMCINVOKE_TRACE_INCLUDE_PATH=.",
         ],
-        copts = [
-            "-Wno-#pragma-messages",
-        ],
+        copts = ["-Wno-#pragma-messages"],
     )
     # battery
     registry.register(

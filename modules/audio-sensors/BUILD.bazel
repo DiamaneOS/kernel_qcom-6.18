@@ -177,9 +177,6 @@ ddk_module(
     includes = [
         "drivers/misc/diamaneos_privsw",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -198,9 +195,6 @@ ddk_module(
     ],
     includes = [
         "drivers/misc/diamaneos_privsw",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -221,9 +215,6 @@ ddk_module(
     ],
     includes = [
         "audio-kernel/asoc/codecs/lpass-cdc",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -295,11 +286,6 @@ ddk_module(
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -370,11 +356,6 @@ ddk_module(
         "CONFIG_SND_SOC_AW882XX",
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -450,11 +431,6 @@ ddk_module(
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -527,11 +503,6 @@ ddk_module(
         "CONFIG_SND_SOC_AW882XX",
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -611,11 +582,6 @@ ddk_module(
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -685,11 +651,6 @@ ddk_module(
         "CONFIG_SND_SOC_AW882XX",
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -762,11 +723,6 @@ ddk_module(
         "CONFIG_SND_SOC_AW882XX",
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -847,11 +803,6 @@ ddk_module(
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -924,11 +875,6 @@ ddk_module(
         "CONFIG_SND_SOC_AW882XX",
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -1003,11 +949,6 @@ ddk_module(
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -1078,11 +1019,6 @@ ddk_module(
         "CONFIG_SND_SOC_AW882XX",
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -1157,11 +1093,6 @@ ddk_module(
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -1234,11 +1165,6 @@ ddk_module(
         "CONFIG_SND_SOC_AW882XX",
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -1313,11 +1239,6 @@ ddk_module(
         "CONFIG_SND_SOC_AW882XX",
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -1404,11 +1325,6 @@ ddk_module(
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -1480,11 +1396,6 @@ ddk_module(
         "CONFIG_SND_SOC_AW882XX",
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -1560,11 +1471,6 @@ ddk_module(
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -1635,11 +1541,6 @@ ddk_module(
         "CONFIG_SND_SOC_AW882XX",
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -1713,11 +1614,6 @@ ddk_module(
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -1788,11 +1684,6 @@ ddk_module(
         "CONFIG_SND_SOC_AW882XX",
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -1865,11 +1756,6 @@ ddk_module(
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -1941,11 +1827,6 @@ ddk_module(
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -2015,11 +1896,6 @@ ddk_module(
         "CONFIG_SND_SOC_AW882XX",
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -2094,11 +1970,6 @@ ddk_module(
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -2168,11 +2039,6 @@ ddk_module(
         "CONFIG_SND_SOC_AW882XX",
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -2245,11 +2111,6 @@ ddk_module(
         "CONFIG_SND_SOC_AW882XX",
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -2326,11 +2187,6 @@ ddk_module(
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -2406,11 +2262,6 @@ ddk_module(
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -2484,11 +2335,6 @@ ddk_module(
         "CONFIG_SND_SOC_AW882XX",
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -2564,11 +2410,6 @@ ddk_module(
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -2642,11 +2483,6 @@ ddk_module(
         "CONFIG_SND_SOC_AW882XX",
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -2723,11 +2559,6 @@ ddk_module(
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -2801,11 +2632,6 @@ ddk_module(
         "CONFIG_SND_SOC_AW882XX",
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -2881,11 +2707,6 @@ ddk_module(
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -2958,11 +2779,6 @@ ddk_module(
         "CONFIG_SND_SOC_AW882XX",
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -3038,11 +2854,6 @@ ddk_module(
         "CONFIG_SND_SOC_WCD9378",
         "CONFIG_SND_SOC_WCD9378_SLAVE",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -3070,11 +2881,6 @@ ddk_module(
     local_defines = [
         "DSP_TRACE_INCLUDE_PATH=.",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -3099,11 +2905,6 @@ ddk_module(
     ],
     includes = [
         "dsp-kernel/dsp",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",

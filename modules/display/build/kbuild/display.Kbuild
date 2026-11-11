@@ -31,5 +31,3 @@ ccflags-y += -DCONFIG_DEBUG_FS -DCONFIG_DRM_MSM -DCONFIG_DRM_MSM_DSI -DCONFIG_DR
 	-DCONFIG_QCOM_MDSS_PLL -DCONFIG_QCOM_SPEC_SYNC -DCONFIG_SYNC_FILE -DCONFIG_THERMAL_OF
 ccflags-y += $(addprefix -I$(FP6_TREE)/$(DD)/, include include/uapi/display msm msm/dp msm/dsi msm/sde rotator) \
 	-I$(FP6_TREE)/display/mm-drivers/hw_fence/include -I$(FP6_TREE)/display/mm-drivers/sync_fence/include
-# 6.1 sources: flexible trailing arrays as 6.1 built them (UBSAN bounds)
-ccflags-y += -fstrict-flex-arrays=0

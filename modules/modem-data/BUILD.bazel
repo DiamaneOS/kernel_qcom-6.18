@@ -192,9 +192,6 @@ ddk_module(
     includes = [
         "drivers/soc/qcom",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -411,9 +408,6 @@ ddk_module(
         "CONFIG_IPA_RMNET_MEM=y",
     ],
     copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
         "-Wno-string-concatenation",
     ],
     config = ":config",
@@ -463,9 +457,6 @@ ddk_module(
         "GSI_TRACE_INCLUDE_PATH=.",
     ],
     copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
         "-Wno-string-concatenation",
     ],
     config = ":config",
@@ -502,9 +493,6 @@ ddk_module(
         "RNDIS_TRACE_INCLUDE_PATH=.",
     ],
     copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
         "-Wno-string-concatenation",
     ],
     config = ":config",
@@ -550,9 +538,6 @@ ddk_module(
         "RMNET_TRACE_INCLUDE_PATH=.",
     ],
     copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
         "-Wno-string-concatenation",
     ],
     config = ":config",
@@ -608,9 +593,6 @@ ddk_module(
         "datarmnet/core",
     ],
     copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
         "-Wno-string-concatenation",
     ],
     config = ":config",
@@ -638,9 +620,6 @@ ddk_module(
     ],
     copts = [
         "-Wno-misleading-indentation",
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
         "-Wno-string-concatenation",
     ],
     config = ":config",
@@ -666,9 +645,6 @@ ddk_module(
     ],
     copts = [
         "-Wno-misleading-indentation",
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
         "-Wno-string-concatenation",
     ],
     config = ":config",
@@ -698,9 +674,6 @@ ddk_module(
     ],
     copts = [
         "-Wno-misleading-indentation",
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
         "-Wno-string-concatenation",
     ],
     config = ":config",
@@ -727,9 +700,6 @@ ddk_module(
     ],
     copts = [
         "-Wno-misleading-indentation",
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
         "-Wno-string-concatenation",
     ],
     config = ":config",
@@ -754,9 +724,6 @@ ddk_module(
     ],
     copts = [
         "-Wno-misleading-indentation",
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
         "-Wno-string-concatenation",
     ],
     config = ":config",
@@ -780,9 +747,6 @@ ddk_module(
     ],
     copts = [
         "-Wno-misleading-indentation",
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
         "-Wno-string-concatenation",
     ],
     config = ":config",
@@ -814,9 +778,6 @@ ddk_module(
     ],
     copts = [
         "-Wno-misleading-indentation",
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
         "-Wno-string-concatenation",
     ],
     config = ":config",
@@ -845,9 +806,6 @@ ddk_module(
     ],
     copts = [
         "-Wno-misleading-indentation",
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
         "-Wno-string-concatenation",
     ],
     config = ":config",

@@ -78,7 +78,6 @@ def register_modules(registry):
             "drivers/soc/qcom/system_health_monitor_v01.c",
             "drivers/soc/qcom/system_health_monitor.c",
         ],
-        copts = ["-fstrict-flex-arrays=0"],
         deps = ["qcom_ipc_logging", "qmi_helpers", "rproc_qcom_common"],
     )
     registry.register(
@@ -208,7 +207,7 @@ def register_modules(registry):
         },
         includes = ["dataipa/config", "dataipa/drivers/platform/msm/gsi", "dataipa/drivers/platform/msm/gsi/gsihal", "dataipa/drivers/platform/msm/include", "dataipa/drivers/platform/msm/include/linux", "dataipa/drivers/platform/msm/include/uapi", "dataipa/drivers/platform/msm/ipa", "dataipa/drivers/platform/msm/ipa/ipa_test_module", "dataipa/drivers/platform/msm/ipa/ipa_v3", "dataipa/drivers/platform/msm/ipa/ipa_v3/ipahal", "dataipa/drivers/platform/msm/ipa/ipa_clients", "datarmnet-ext/mem"],
         local_defines = ["GSI_TRACE_INCLUDE_PATH=.", "IPA_TRACE_INCLUDE_PATH=.", "RNDIS_TRACE_INCLUDE_PATH=.", "NCM_TRACE_INCLUDE_PATH=.", "CONFIG_IPA_RMNET_MEM=y"],
-        copts = ["-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format", "-Wno-string-concatenation"],
+        copts = ["-Wno-string-concatenation"],
         deps = ["gsim", "mdt_loader", "qcom-scm", "qcom_iommu_util", "qcom_ipc_logging", "qmi_helpers", "rmnet_mem", "rproc_qcom_common", "smem", "usb_f_gsi"],
     )
     registry.register(
@@ -227,7 +226,7 @@ def register_modules(registry):
         },
         includes = ["dataipa/drivers/platform/msm/gsi", "dataipa/drivers/platform/msm/gsi/gsihal", "dataipa/drivers/platform/msm/include", "dataipa/drivers/platform/msm/include/linux", "dataipa/drivers/platform/msm/include/uapi"],
         local_defines = ["GSI_TRACE_INCLUDE_PATH=."],
-        copts = ["-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format", "-Wno-string-concatenation"],
+        copts = ["-Wno-string-concatenation"],
         deps = ["qcom_ipc_logging"],
     )
     registry.register(
@@ -238,7 +237,7 @@ def register_modules(registry):
         ],
         includes = ["dataipa/config", "dataipa/drivers/platform/msm/gsi", "dataipa/drivers/platform/msm/gsi/gsihal", "dataipa/drivers/platform/msm/include", "dataipa/drivers/platform/msm/include/linux", "dataipa/drivers/platform/msm/include/uapi", "dataipa/drivers/platform/msm/ipa", "dataipa/drivers/platform/msm/ipa/ipa_test_module", "dataipa/drivers/platform/msm/ipa/ipa_v3", "dataipa/drivers/platform/msm/ipa/ipa_v3/ipahal", "dataipa/drivers/platform/msm/ipa/ipa_clients"],
         local_defines = ["RNDIS_TRACE_INCLUDE_PATH=."],
-        copts = ["-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format", "-Wno-string-concatenation"],
+        copts = ["-Wno-string-concatenation"],
         deps = ["ipam", "qcom_ipc_logging"],
     )
     registry.register(
@@ -264,7 +263,7 @@ def register_modules(registry):
         ],
         includes = ["datarmnet/core", "datarmnet-ext/mem", "dataipa/drivers/platform/msm/include", "dataipa/drivers/platform/msm/include/linux", "dataipa/drivers/platform/msm/include/uapi"],
         local_defines = ["RMNET_TRACE_INCLUDE_PATH=."],
-        copts = ["-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format", "-Wno-string-concatenation"],
+        copts = ["-Wno-string-concatenation"],
         deps = ["ipam", "qmi_helpers", "rmnet_ctl", "rmnet_mem"],
     )
     registry.register(
@@ -291,7 +290,7 @@ def register_modules(registry):
             },
         },
         includes = ["dataipa/drivers/platform/msm/include", "dataipa/drivers/platform/msm/include/linux", "dataipa/drivers/platform/msm/include/uapi"],
-        copts = ["-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format", "-Wno-string-concatenation"],
+        copts = ["-Wno-string-concatenation"],
         deps = ["ipam", "qcom_ipc_logging"],
     )
     registry.register(
@@ -302,7 +301,7 @@ def register_modules(registry):
             "datarmnet-ext/aps/rmnet_aps_main.c",
         ],
         includes = ["datarmnet-ext/aps/include", "datarmnet/core"],
-        copts = ["-Wno-misleading-indentation", "-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format", "-Wno-string-concatenation"],
+        copts = ["-Wno-misleading-indentation", "-Wno-string-concatenation"],
         deps = ["rmnet_core"],
     )
     registry.register(
@@ -314,7 +313,7 @@ def register_modules(registry):
             "datarmnet-ext/mem/rmnet_mem_pool.c",
         ],
         includes = ["datarmnet-ext/mem"],
-        copts = ["-Wno-misleading-indentation", "-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format", "-Wno-string-concatenation"],
+        copts = ["-Wno-misleading-indentation", "-Wno-string-concatenation"],
         deps = [],
     )
     registry.register(
@@ -330,7 +329,7 @@ def register_modules(registry):
             "datarmnet-ext/offload/rmnet_offload_udp.c",
         ],
         includes = ["datarmnet/core"],
-        copts = ["-Wno-misleading-indentation", "-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format", "-Wno-string-concatenation"],
+        copts = ["-Wno-misleading-indentation", "-Wno-string-concatenation"],
         deps = ["rmnet_core"],
     )
     registry.register(
@@ -342,7 +341,7 @@ def register_modules(registry):
             "datarmnet-ext/perf/rmnet_perf_udp.c",
         ],
         includes = ["datarmnet/core"],
-        copts = ["-Wno-misleading-indentation", "-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format", "-Wno-string-concatenation"],
+        copts = ["-Wno-misleading-indentation", "-Wno-string-concatenation"],
         deps = ["rmnet_core"],
     )
     registry.register(
@@ -352,7 +351,7 @@ def register_modules(registry):
             "datarmnet-ext/perf_tether/rmnet_perf_tether_main.c",
         ],
         includes = ["datarmnet/core"],
-        copts = ["-Wno-misleading-indentation", "-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format", "-Wno-string-concatenation"],
+        copts = ["-Wno-misleading-indentation", "-Wno-string-concatenation"],
         deps = ["rmnet_core"],
     )
     registry.register(
@@ -361,7 +360,7 @@ def register_modules(registry):
         srcs = [
             "datarmnet-ext/sch/rmnet_sch_main.c",
         ],
-        copts = ["-Wno-misleading-indentation", "-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format", "-Wno-string-concatenation"],
+        copts = ["-Wno-misleading-indentation", "-Wno-string-concatenation"],
         deps = [],
     )
     registry.register(
@@ -379,7 +378,7 @@ def register_modules(registry):
             "datarmnet-ext/shs/rmnet_shs_wq_mem.c",
         ],
         includes = ["datarmnet/core"],
-        copts = ["-Wno-misleading-indentation", "-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format", "-Wno-string-concatenation"],
+        copts = ["-Wno-misleading-indentation", "-Wno-string-concatenation"],
         deps = ["rmnet_core"],
     )
     registry.register(
@@ -393,6 +392,6 @@ def register_modules(registry):
             "datarmnet-ext/wlan/rmnet_wlan_stats.c",
         ],
         includes = ["datarmnet/core"],
-        copts = ["-Wno-misleading-indentation", "-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format", "-Wno-string-concatenation"],
+        copts = ["-Wno-misleading-indentation", "-Wno-string-concatenation"],
         deps = ["rmnet_core"],
     )

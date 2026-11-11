@@ -160,7 +160,6 @@ def register_modules(registry):
         srcs = [
             "drivers/thermal/qcom/thermal_minidump.c",
         ],
-        copts = ["-fstrict-flex-arrays=0"],
         deps = ["minidump"],
     )
     registry.register(
@@ -239,7 +238,6 @@ def register_modules(registry):
         srcs = [
             "drivers/soc/qcom/msm_performance.c",
         ],
-        copts = ["-fstrict-flex-arrays=0"],
         deps = ["qcom-pmu-lib", "qcom_scmi_client"],
     )
     registry.register(
@@ -299,7 +297,6 @@ def register_modules(registry):
         srcs = [
             "drivers/soc/qcom/dcvs/bwprof.c",
         ],
-        copts = ["-fstrict-flex-arrays=0"],
         deps = ["qcom-dcvs"],
     )
     registry.register(
@@ -309,7 +306,6 @@ def register_modules(registry):
         srcs = [
             "drivers/soc/qcom/dcvs/c1dcvs_scmi_v2.c",
         ],
-        copts = ["-fstrict-flex-arrays=0"],
         deps = ["qcom_scmi_client"],
     )
     registry.register(
@@ -319,7 +315,6 @@ def register_modules(registry):
         srcs = [
             "drivers/soc/qcom/dcvs/dynpf_scmi.c",
         ],
-        copts = ["-fstrict-flex-arrays=0"],
         deps = ["qcom_scmi_client"],
     )
     registry.register(

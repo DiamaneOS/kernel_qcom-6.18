@@ -6,5 +6,3 @@ msm_hw_fence-y := $(addprefix $(MM)/hw_fence/src/, hw_fence_drv_debug.o hw_fence
 ccflags-y += -DCONFIG_QTI_HW_FENCE -I$(FP6_TREE)/$(MM)/config -I$(FP6_TREE)/$(MM)/hw_fence/include \
 	-I$(FP6_TREE)/$(MM)/sync_fence/include -I$(FP6_TREE)/display/synx-kernel/include/uapi/synx \
 	-I$(FP6_TREE)/display/synx-kernel/include/uapi/synx/media -I$(FP6_TREE)/display/synx-kernel/msm/synx
-# 6.1 sources: flexible trailing arrays as 6.1 built them (UBSAN bounds)
-ccflags-y += -fstrict-flex-arrays=0

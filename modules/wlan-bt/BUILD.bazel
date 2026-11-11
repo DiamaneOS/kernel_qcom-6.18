@@ -49,11 +49,6 @@ ddk_module(
         "wlan/platform/inc",
         "wlan/platform/cnss_prealloc",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -74,11 +69,6 @@ ddk_module(
     includes = [
         "wlan/platform/inc",
         "wlan/platform/cnss_utils",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -102,11 +92,6 @@ ddk_module(
     includes = [
         "wlan/platform/cnss_utils",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -128,11 +113,6 @@ ddk_module(
     ],
     includes = [
         "wlan/platform/cnss_utils",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -156,11 +136,6 @@ ddk_module(
     includes = [
         "wlan/platform/inc",
         "wlan/platform/cnss_genl",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -196,9 +171,6 @@ ddk_module(
     ],
     copts = [
         "-Wno-format",
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -241,11 +213,6 @@ ddk_module(
         "CONFIG_I2C_RTC6226_QCA",
         "CONFIG_BTFM_SWR",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -280,11 +247,6 @@ ddk_module(
         "CONFIG_BTFM_SWR",
         "CONFIG_BT_HW_SECURE_DISABLE",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -316,11 +278,6 @@ ddk_module(
         "CONFIG_I2C_RTC6226_QCA",
         "CONFIG_BTFM_SWR",
         "CONFIG_BT_HW_SECURE_DISABLE",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -355,11 +312,6 @@ ddk_module(
         "CONFIG_I2C_RTC6226_QCA",
         "CONFIG_BTFM_SWR",
         "CONFIG_BT_HW_SECURE_DISABLE",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -2635,8 +2587,6 @@ ddk_module(
         "-include",
         "$(location :qcacld_grep_defines)",
         "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":qcacld_config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",

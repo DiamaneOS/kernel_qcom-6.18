@@ -10,7 +10,6 @@ def register_modules(registry):
             "drivers/dma/qcom/msm_gpi.c",
             "drivers/dma/qcom/msm_gpi_mmio.h",
         ],
-        copts = ["-Wno-error=missing-prototypes"],
         deps = ["qcom_ipc_logging", "smem"],
     )
     registry.register(
@@ -21,7 +20,6 @@ def register_modules(registry):
             "drivers/i2c/busses/i2c-msm-geni.c",
             "drivers/i2c/busses/i2c-qup-trace.h",
         ],
-        copts = ["-Wno-error=missing-prototypes"],
         deps = ["msm_gpi", "qcom_ipc_logging"],
     )
     registry.register(
@@ -32,7 +30,6 @@ def register_modules(registry):
             "drivers/spi/spi-msm-geni.c",
             "drivers/spi/spi-qup-trace.h",
         ],
-        copts = ["-Wno-error=missing-prototypes"],
         deps = ["qcom_ipc_logging"],
     )
     registry.register(
@@ -43,7 +40,6 @@ def register_modules(registry):
             "drivers/tty/serial/msm_geni_serial.c",
             "drivers/tty/serial/serial_trace.h",
         ],
-        copts = ["-Wno-error=missing-prototypes"],
         deps = ["msm_gpi", "qcom_ipc_logging"],
     )
     registry.register(
@@ -62,7 +58,6 @@ def register_modules(registry):
         srcs = [
             "drivers/iio/adc/qcom-spmi-adc5-gen3.c",
         ],
-        copts = ["-Wno-error=missing-prototypes"],
         deps = ["qcom-vadc-common", "qcom_ipc_logging"],
     )
     registry.register(
@@ -108,7 +103,6 @@ def register_modules(registry):
         srcs = [
             "drivers/input/hall_kernel/hall_det.c",
         ],
-        copts = ["-fstrict-flex-arrays=0"],
         deps = [],
     )
     registry.register(
@@ -119,7 +113,6 @@ def register_modules(registry):
             "drivers/input/misc/qcom-hv-haptics.c",
             "drivers/input/misc/qcom-hv-haptics-debugfs.h",
         ],
-        copts = ["-Wno-error=missing-prototypes"],
         deps = ["qti_battery_charger", "rproc_qcom_common"],
     )
     registry.register(
@@ -145,7 +138,6 @@ def register_modules(registry):
             "drivers/misc/haptic_hv/aw8693xs.c",
             "drivers/misc/haptic_hv/haptic_hv.c",
         ],
-        copts = ["-fstrict-flex-arrays=0"],
         deps = [],
     )
     registry.register(
@@ -155,7 +147,6 @@ def register_modules(registry):
         srcs = [
             "drivers/input/finger/focal_finger/ff_core.c",
         ],
-        copts = ["-fstrict-flex-arrays=0"],
         deps = [],
     )
     registry.register(
@@ -166,6 +157,5 @@ def register_modules(registry):
         ],
         includes = ["nfc/driver", "nfc/driver/linux", "nfc/driver/nfc", "securemsm-kernel/include", "securemsm-kernel/include/linux", "securemsm-kernel/linux", "securemsm-kernel/include/uapi/linux"],
         local_defines = ["CONFIG_SEC_NFC_IF_I2C", "CONFIG_SEC_NFC_PRODUCT_N5", "CONFIG_SEC_NFC_GPIO_CLK_AWAKE"],
-        copts = ["-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format"],
         deps = ["pinctrl-msm"],
     )

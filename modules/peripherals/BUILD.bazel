@@ -44,9 +44,6 @@ ddk_module(
     includes = [
         "drivers/dma/qcom",
     ],
-    copts = [
-        "-Wno-error=missing-prototypes",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -67,9 +64,6 @@ ddk_module(
     ],
     includes = [
         "drivers/i2c/busses",
-    ],
-    copts = [
-        "-Wno-error=missing-prototypes",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -92,9 +86,6 @@ ddk_module(
     includes = [
         "drivers/spi",
     ],
-    copts = [
-        "-Wno-error=missing-prototypes",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -114,9 +105,6 @@ ddk_module(
     ],
     includes = [
         "drivers/tty/serial",
-    ],
-    copts = [
-        "-Wno-error=missing-prototypes",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -155,9 +143,6 @@ ddk_module(
     ],
     includes = [
         "drivers/iio/adc",
-    ],
-    copts = [
-        "-Wno-error=missing-prototypes",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -255,9 +240,6 @@ ddk_module(
     includes = [
         "drivers/input/hall_kernel",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -276,9 +258,6 @@ ddk_module(
     ],
     includes = [
         "drivers/input/misc",
-    ],
-    copts = [
-        "-Wno-error=missing-prototypes",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -325,9 +304,6 @@ ddk_module(
     includes = [
         "drivers/misc/haptic_hv",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -345,9 +321,6 @@ ddk_module(
     ],
     includes = [
         "drivers/input/finger/focal_finger",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -378,11 +351,6 @@ ddk_module(
         "CONFIG_SEC_NFC_IF_I2C",
         "CONFIG_SEC_NFC_PRODUCT_N5",
         "CONFIG_SEC_NFC_GPIO_CLK_AWAKE",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",

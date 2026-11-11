@@ -122,9 +122,6 @@ ddk_module(
         "VL53L3",
         "VL53L1_LOG_ENABLE",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -477,8 +474,6 @@ ddk_module(
     copts = [
         "-Wno-implicit-fallthrough",
         "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -558,11 +553,6 @@ ddk_module(
     ],
     local_defines = [
         "CONFIG_MSM_VIDC_VOLCANO",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-        "-Wno-error=missing-prototypes",
-        "-Wno-error=format",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",

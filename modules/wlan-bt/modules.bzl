@@ -9,7 +9,6 @@ def register_modules(registry):
             "wlan/platform/cnss_prealloc/cnss_prealloc.c",
         ],
         includes = ["wlan/platform/cnss_utils", "wlan/platform/inc"],
-        copts = ["-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format"],
         deps = [],
     )
     registry.register(
@@ -19,7 +18,6 @@ def register_modules(registry):
             "wlan/platform/cnss_utils/cnss_utils.c",
         ],
         includes = ["wlan/platform/inc"],
-        copts = ["-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format"],
         deps = [],
     )
     registry.register(
@@ -30,7 +28,6 @@ def register_modules(registry):
             "wlan/platform/cnss_utils/ip_multimedia_subsystem_private_service_v01.c",
             "wlan/platform/cnss_utils/wlan_firmware_service_v01.c",
         ],
-        copts = ["-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format"],
         deps = ["qmi_helpers"],
     )
     registry.register(
@@ -40,7 +37,6 @@ def register_modules(registry):
             "wlan/platform/cnss_utils/cnss_plat_ipc_qmi.c",
             "wlan/platform/cnss_utils/cnss_plat_ipc_service_v01.c",
         ],
-        copts = ["-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format"],
         deps = ["qcom_ipc_logging", "qmi_helpers"],
     )
     registry.register(
@@ -50,7 +46,6 @@ def register_modules(registry):
             "wlan/platform/cnss_genl/cnss_nl.c",
         ],
         includes = ["wlan/platform/inc"],
-        copts = ["-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format"],
         deps = [],
     )
     registry.register(
@@ -68,7 +63,7 @@ def register_modules(registry):
             },
         },
         includes = ["wlan/platform/icnss2", "wlan/platform/cnss_utils", "wlan/platform/inc"],
-        copts = ["-Wno-format", "-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format"],
+        copts = ["-Wno-format"],
         deps = ["cnss_prealloc", "pdr_interface", "qcom_aoss", "qcom_ipc_logging", "qcom_ramdump", "qmi_helpers", "rproc_qcom_common", "socinfo", "wlan_firmware_service"],
     )
     registry.register(
@@ -79,7 +74,6 @@ def register_modules(registry):
         ],
         includes = ["bt-kernel/include", "securemsm-kernel/include", "securemsm-kernel/include/linux", "securemsm-kernel/linux", "securemsm-kernel/include/uapi/linux"],
         local_defines = ["CONFIG_MSM_BT_POWER", "CONFIG_BTFM_CODEC", "CONFIG_BTFM_SLIM", "CONFIG_I2C_RTC6226_QCA", "CONFIG_BTFM_SWR"],
-        copts = ["-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format"],
         deps = ["pinctrl-msm"],
     )
     registry.register(
@@ -93,7 +87,6 @@ def register_modules(registry):
         ],
         includes = ["bt-kernel/include", "bt-kernel/btfmcodec/include"],
         local_defines = ["CONFIG_MSM_BT_POWER", "CONFIG_BTFM_CODEC", "CONFIG_BTFM_SLIM", "CONFIG_I2C_RTC6226_QCA", "CONFIG_BTFM_SWR", "CONFIG_BT_HW_SECURE_DISABLE"],
-        copts = ["-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format"],
         deps = ["rproc_qcom_common"],
     )
     registry.register(
@@ -106,7 +99,6 @@ def register_modules(registry):
         ],
         includes = ["bt-kernel/include"],
         local_defines = ["CONFIG_MSM_BT_POWER", "CONFIG_BTFM_CODEC", "CONFIG_BTFM_SLIM", "CONFIG_I2C_RTC6226_QCA", "CONFIG_BTFM_SWR", "CONFIG_BT_HW_SECURE_DISABLE"],
-        copts = ["-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format"],
         deps = ["btpower", "slimbus"],
     )
     registry.register(
@@ -119,7 +111,6 @@ def register_modules(registry):
         ],
         includes = ["bt-kernel/include", "bt-kernel/btfmcodec/include"],
         local_defines = ["CONFIG_MSM_BT_POWER", "CONFIG_BTFM_CODEC", "CONFIG_BTFM_SLIM", "CONFIG_I2C_RTC6226_QCA", "CONFIG_BTFM_SWR", "CONFIG_BT_HW_SECURE_DISABLE"],
-        copts = ["-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format"],
         deps = ["btfmcodec", "btpower", "swr_dlkm"],
     )
     registry.register(
@@ -1067,6 +1058,7 @@ def register_modules(registry):
             },
         },
         includes = ["wlan/qcacld-3.0/api/hw/qca6750/v1", "wlan/qcacld-3.0/cmn/hal/wifi3.0/qca6750", "wlan/qcacld-3.0/cmn/hal/wifi3.0/li", "wlan/qcacld-3.0/api/fw", "wlan/qcacld-3.0/cmn/cfg/inc", "wlan/qcacld-3.0/cmn/coex/dispatcher/inc", "wlan/qcacld-3.0/cmn/dp/cmn_dp_api", "wlan/qcacld-3.0/cmn/dp/inc", "wlan/qcacld-3.0/cmn/dp/wifi3.0", "wlan/qcacld-3.0/cmn/dp/wifi3.0/be", "wlan/qcacld-3.0/cmn/dp/wifi3.0/monitor", "wlan/qcacld-3.0/cmn/dp/wifi3.0/monitor/1.0", "wlan/qcacld-3.0/cmn/dp/wifi3.0/monitor/2.0", "wlan/qcacld-3.0/cmn/ftm/core/src", "wlan/qcacld-3.0/cmn/ftm/dispatcher/inc", "wlan/qcacld-3.0/cmn/global_lmac_if/inc", "wlan/qcacld-3.0/cmn/global_lmac_if/src", "wlan/qcacld-3.0/cmn/gpio/core/inc", "wlan/qcacld-3.0/cmn/gpio/dispatcher/inc", "wlan/qcacld-3.0/cmn/hal/wifi3.0", "wlan/qcacld-3.0/cmn/hif/inc", "wlan/qcacld-3.0/cmn/hif/src", "wlan/qcacld-3.0/cmn/hif/src/ce", "wlan/qcacld-3.0/cmn/hif/src/dispatcher", "wlan/qcacld-3.0/cmn/hif/src/pcie", "wlan/qcacld-3.0/cmn/hif/src/ipcie", "wlan/qcacld-3.0/cmn/hif/src/snoc", "wlan/qcacld-3.0/cmn/htc", "wlan/qcacld-3.0/cmn/init_deinit/dispatcher/inc", "wlan/qcacld-3.0/cmn/ipa/core/inc", "wlan/qcacld-3.0/cmn/ipa/dispatcher/inc", "wlan/qcacld-3.0/cmn/os_if/linux", "wlan/qcacld-3.0/cmn/os_if/linux/afc/inc", "wlan/qcacld-3.0/cmn/os_if/linux/crypto/inc", "wlan/qcacld-3.0/cmn/os_if/linux/ftm/inc", "wlan/qcacld-3.0/cmn/os_if/linux/ftm/src", "wlan/qcacld-3.0/cmn/os_if/linux/gpio/inc", "wlan/qcacld-3.0/cmn/os_if/linux/mlme/inc", "wlan/qcacld-3.0/cmn/os_if/linux/scan/inc", "wlan/qcacld-3.0/cmn/os_if/linux/spectral/inc", "wlan/qcacld-3.0/cmn/os_if/linux/twt/inc", "wlan/qcacld-3.0/cmn/os_if/linux/wifi_pos/inc", "wlan/qcacld-3.0/cmn/qal/inc", "wlan/qcacld-3.0/cmn/qal/linux/src", "wlan/qcacld-3.0/cmn/qdf/inc", "wlan/qcacld-3.0/cmn/qdf/linux/src", "wlan/qcacld-3.0/cmn/qdf/test", "wlan/qcacld-3.0/cmn/scheduler/inc", "wlan/qcacld-3.0/cmn/spectral/core", "wlan/qcacld-3.0/cmn/spectral/dispatcher/inc", "wlan/qcacld-3.0/cmn/target_if/cfr/inc", "wlan/qcacld-3.0/cmn/target_if/core/inc", "wlan/qcacld-3.0/cmn/target_if/core/src", "wlan/qcacld-3.0/cmn/target_if/cp_stats/inc", "wlan/qcacld-3.0/cmn/target_if/crypto/inc", "wlan/qcacld-3.0/cmn/target_if/dcs/inc", "wlan/qcacld-3.0/cmn/target_if/dfs/inc", "wlan/qcacld-3.0/cmn/target_if/direct_buf_rx/inc", "wlan/qcacld-3.0/cmn/target_if/direct_buf_rx/src", "wlan/qcacld-3.0/cmn/target_if/dispatcher/inc", "wlan/qcacld-3.0/cmn/target_if/dp/inc", "wlan/qcacld-3.0/cmn/target_if/ftm/inc", "wlan/qcacld-3.0/cmn/target_if/gpio", "wlan/qcacld-3.0/cmn/target_if/green_ap/inc", "wlan/qcacld-3.0/cmn/target_if/init_deinit/inc", "wlan/qcacld-3.0/cmn/target_if/ipa/inc", "wlan/qcacld-3.0/cmn/target_if/mlme/psoc/inc", "wlan/qcacld-3.0/cmn/target_if/mlme/vdev_mgr/inc", "wlan/qcacld-3.0/cmn/target_if/mlo_mgr/inc", "wlan/qcacld-3.0/cmn/target_if/regulatory/inc", "wlan/qcacld-3.0/cmn/target_if/scan/inc", "wlan/qcacld-3.0/cmn/target_if/son/inc", "wlan/qcacld-3.0/cmn/target_if/spatial_reuse/inc", "wlan/qcacld-3.0/cmn/target_if/spectral", "wlan/qcacld-3.0/cmn/target_if/twt/inc", "wlan/qcacld-3.0/cmn/target_if/wifi_pos/inc", "wlan/qcacld-3.0/cmn/umac", "wlan/qcacld-3.0/cmn/umac/afc/core/inc", "wlan/qcacld-3.0/cmn/umac/afc/dispatcher/inc", "wlan/qcacld-3.0/cmn/umac/cfr/core/inc", "wlan/qcacld-3.0/cmn/umac/cfr/dispatcher/inc", "wlan/qcacld-3.0/cmn/umac/cmn_services/cmn_defs/inc", "wlan/qcacld-3.0/cmn/umac/cmn_services/crypto/inc", "wlan/qcacld-3.0/cmn/umac/cmn_services/crypto/src", "wlan/qcacld-3.0/cmn/umac/cmn_services/inc", "wlan/qcacld-3.0/cmn/umac/cmn_services/interface_mgr/inc", "wlan/qcacld-3.0/cmn/umac/cmn_services/mgmt_txrx/dispatcher/inc", "wlan/qcacld-3.0/cmn/umac/cmn_services/obj_mgr/inc", "wlan/qcacld-3.0/cmn/umac/cmn_services/obj_mgr/src", "wlan/qcacld-3.0/cmn/umac/cmn_services/regulatory/inc", "wlan/qcacld-3.0/cmn/umac/cmn_services/serialization/inc", "wlan/qcacld-3.0/cmn/umac/cmn_services/sm_engine/inc", "wlan/qcacld-3.0/cmn/umac/cmn_services/utils/inc", "wlan/qcacld-3.0/cmn/umac/cp_stats/dispatcher/inc", "wlan/qcacld-3.0/cmn/umac/dcs/dispatcher/inc", "wlan/qcacld-3.0/cmn/umac/dfs/dispatcher/inc", "wlan/qcacld-3.0/cmn/umac/global_umac_dispatcher/lmac_if/inc", "wlan/qcacld-3.0/cmn/umac/green_ap/dispatcher/inc", "wlan/qcacld-3.0/cmn/umac/mlme", "wlan/qcacld-3.0/cmn/umac/mlme/connection_mgr/dispatcher/inc", "wlan/qcacld-3.0/cmn/umac/mlme/connection_mgr/utf/inc", "wlan/qcacld-3.0/cmn/umac/mlme/include", "wlan/qcacld-3.0/cmn/umac/mlme/mlme_objmgr/dispatcher/inc", "wlan/qcacld-3.0/cmn/umac/mlme/mlme_utils", "wlan/qcacld-3.0/cmn/umac/mlme/pdev_mgr/dispatcher/inc", "wlan/qcacld-3.0/cmn/umac/mlme/psoc_mgr/dispatcher/inc", "wlan/qcacld-3.0/cmn/umac/mlme/vdev_mgr/dispatcher/inc", "wlan/qcacld-3.0/cmn/umac/mlo_mgr/inc", "wlan/qcacld-3.0/cmn/umac/regulatory/dispatcher/inc", "wlan/qcacld-3.0/cmn/umac/regulatory/core/src", "wlan/qcacld-3.0/cmn/umac/scan/dispatcher/inc", "wlan/qcacld-3.0/cmn/umac/thermal/dispatcher/inc", "wlan/qcacld-3.0/cmn/umac/twt/dispatcher/inc", "wlan/qcacld-3.0/cmn/umac/wifi_pos/inc", "wlan/qcacld-3.0/cmn/utils/epping/inc", "wlan/qcacld-3.0/cmn/utils/fwlog", "wlan/qcacld-3.0/cmn/utils/host_diag_log/inc", "wlan/qcacld-3.0/cmn/utils/host_diag_log/src", "wlan/qcacld-3.0/cmn/utils/logging/inc", "wlan/qcacld-3.0/cmn/utils/nlink/inc", "wlan/qcacld-3.0/cmn/utils/pktlog/include", "wlan/qcacld-3.0/cmn/utils/ptt/inc", "wlan/qcacld-3.0/cmn/utils/sys", "wlan/qcacld-3.0/cmn/wbuff/inc", "wlan/qcacld-3.0/cmn/wbuff/src", "wlan/qcacld-3.0/cmn/wlan_cfg", "wlan/qcacld-3.0/cmn/wmi/inc", "wlan/qcacld-3.0/cmn/wmi/src", "wlan/qcacld-3.0/components/action_oui/core/inc", "wlan/qcacld-3.0/components/action_oui/dispatcher/inc", "wlan/qcacld-3.0/components/cfg", "wlan/qcacld-3.0/components/cmn_services/interface_mgr/inc", "wlan/qcacld-3.0/components/cmn_services/logging/inc", "wlan/qcacld-3.0/components/cmn_services/policy_mgr/inc", "wlan/qcacld-3.0/components/cmn_services/policy_mgr/src", "wlan/qcacld-3.0/components/coap/core/inc", "wlan/qcacld-3.0/components/coap/dispatcher/inc", "wlan/qcacld-3.0/components/coex/core/inc", "wlan/qcacld-3.0/components/coex/dispatcher/inc", "wlan/qcacld-3.0/components/cp_stats/dispatcher/inc", "wlan/qcacld-3.0/components/target_if/mlme/inc", "wlan/qcacld-3.0/components/denylist_mgr/core/inc", "wlan/qcacld-3.0/components/denylist_mgr/dispatcher/inc", "wlan/qcacld-3.0/components/disa/core/inc", "wlan/qcacld-3.0/components/disa/dispatcher/inc", "wlan/qcacld-3.0/components/dp/core/inc", "wlan/qcacld-3.0/components/dp/core/src", "wlan/qcacld-3.0/components/dp/dispatcher/inc", "wlan/qcacld-3.0/components/dsc/inc", "wlan/qcacld-3.0/components/dsc/src", "wlan/qcacld-3.0/components/dsc/test", "wlan/qcacld-3.0/components/ftm_time_sync/core/inc", "wlan/qcacld-3.0/components/ftm_time_sync/dispatcher/inc", "wlan/qcacld-3.0/components/fw_offload/core/inc", "wlan/qcacld-3.0/components/fw_offload/dispatcher/inc", "wlan/qcacld-3.0/components/interop_issues_ap/core/inc", "wlan/qcacld-3.0/components/interop_issues_ap/dispatcher/inc", "wlan/qcacld-3.0/components/mlme/core/inc", "wlan/qcacld-3.0/components/mlme/core/src", "wlan/qcacld-3.0/components/mlme/dispatcher/inc", "wlan/qcacld-3.0/components/nan/core/inc", "wlan/qcacld-3.0/components/nan/core/src", "wlan/qcacld-3.0/components/nan/dispatcher/inc", "wlan/qcacld-3.0/components/ocb/core/inc", "wlan/qcacld-3.0/components/ocb/dispatcher/inc", "wlan/qcacld-3.0/components/p2p/dispatcher/inc", "wlan/qcacld-3.0/components/p2p/core/src", "wlan/qcacld-3.0/components/pkt_capture/core/inc", "wlan/qcacld-3.0/components/pkt_capture/dispatcher/inc", "wlan/qcacld-3.0/components/pmo/core/inc", "wlan/qcacld-3.0/components/pmo/core/src", "wlan/qcacld-3.0/components/pmo/dispatcher/inc", "wlan/qcacld-3.0/components/pmo/dispatcher/src", "wlan/qcacld-3.0/components/pre_cac/dispatcher/inc", "wlan/qcacld-3.0/components/pre_cac/core/src", "wlan/qcacld-3.0/components/qmi/core/inc", "wlan/qcacld-3.0/components/qmi/core/src", "wlan/qcacld-3.0/components/qmi/dispatcher/inc", "wlan/qcacld-3.0/components/son/dispatcher/inc", "wlan/qcacld-3.0/components/spatial_reuse/dispatcher/inc", "wlan/qcacld-3.0/components/target_if/action_oui/inc", "wlan/qcacld-3.0/components/target_if/coap/inc", "wlan/qcacld-3.0/components/target_if/coex/inc", "wlan/qcacld-3.0/components/target_if/connection_mgr/inc", "wlan/qcacld-3.0/components/target_if/denylist_mgr/inc", "wlan/qcacld-3.0/components/target_if/disa/inc", "wlan/qcacld-3.0/components/target_if/dp/inc", "wlan/qcacld-3.0/components/target_if/fw_offload/inc", "wlan/qcacld-3.0/components/target_if/interop_issues_ap/inc", "wlan/qcacld-3.0/components/target_if/nan/inc", "wlan/qcacld-3.0/components/target_if/p2p/inc", "wlan/qcacld-3.0/components/target_if/pkt_capture/inc", "wlan/qcacld-3.0/components/target_if/pmo/inc", "wlan/qcacld-3.0/components/target_if/pmo/src", "wlan/qcacld-3.0/components/target_if/sap/ll_sap/inc", "wlan/qcacld-3.0/components/target_if/tdls/inc", "wlan/qcacld-3.0/components/target_if/wfa_config/inc", "wlan/qcacld-3.0/components/tdls/dispatcher/inc", "wlan/qcacld-3.0/components/tdls/core/src", "wlan/qcacld-3.0/components/umac", "wlan/qcacld-3.0/components/umac/mlme/connection_mgr/dispatcher/inc", "wlan/qcacld-3.0/components/umac/mlme/connection_mgr/utf/inc", "wlan/qcacld-3.0/components/umac/mlme/mlo_mgr/inc", "wlan/qcacld-3.0/components/umac/mlme/mlo_mgr/dispatcher/inc", "wlan/qcacld-3.0/components/umac/mlme/wfa_config/dispatcher/inc", "wlan/qcacld-3.0/components/umac/mlme/sap/ll_sap/dispatcher/inc", "wlan/qcacld-3.0/components/umac/twt/dispatcher/inc", "wlan/qcacld-3.0/components/wifi_pos/core/inc", "wlan/qcacld-3.0/components/wifi_pos/dispatcher/inc", "wlan/qcacld-3.0/components/wmi/inc", "wlan/qcacld-3.0/components/wmi/src", "wlan/qcacld-3.0/core/bmi/inc", "wlan/qcacld-3.0/core/cds/inc", "wlan/qcacld-3.0/core/cds/src", "wlan/qcacld-3.0/core/dp/htt", "wlan/qcacld-3.0/core/dp/ol/inc", "wlan/qcacld-3.0/core/dp/txrx", "wlan/qcacld-3.0/core/hdd/inc", "wlan/qcacld-3.0/core/hdd/src", "wlan/qcacld-3.0/core/mac/inc", "wlan/qcacld-3.0/core/mac/src/dph", "wlan/qcacld-3.0/core/mac/src/include", "wlan/qcacld-3.0/core/mac/src/pe/include", "wlan/qcacld-3.0/core/mac/src/pe/lim", "wlan/qcacld-3.0/core/mac/src/pe/nan", "wlan/qcacld-3.0/core/mac/src/sys/common/inc", "wlan/qcacld-3.0/core/mac/src/sys/legacy/src/platform/inc", "wlan/qcacld-3.0/core/mac/src/sys/legacy/src/system/inc", "wlan/qcacld-3.0/core/mac/src/sys/legacy/src/utils/inc", "wlan/qcacld-3.0/core/pld/inc", "wlan/qcacld-3.0/core/pld/src", "wlan/qcacld-3.0/core/sap/inc", "wlan/qcacld-3.0/core/sap/src", "wlan/qcacld-3.0/core/sme/inc", "wlan/qcacld-3.0/core/sme/src/common", "wlan/qcacld-3.0/core/sme/src/csr", "wlan/qcacld-3.0/core/sme/src/nan", "wlan/qcacld-3.0/core/sme/src/qos", "wlan/qcacld-3.0/core/sme/src/rrm", "wlan/qcacld-3.0/core/wma/inc", "wlan/qcacld-3.0/core/wma/src", "wlan/qcacld-3.0/os_if/coap/inc", "wlan/qcacld-3.0/os_if/coex/inc", "wlan/qcacld-3.0/os_if/cp_stats/inc", "wlan/qcacld-3.0/os_if/dp/inc", "wlan/qcacld-3.0/os_if/fw_offload/inc", "wlan/qcacld-3.0/os_if/interop_issues_ap/inc", "wlan/qcacld-3.0/os_if/mlme/sap/ll_sap/inc", "wlan/qcacld-3.0/os_if/nan/inc", "wlan/qcacld-3.0/os_if/p2p/inc", "wlan/qcacld-3.0/os_if/pkt_capture/inc", "wlan/qcacld-3.0/os_if/pre_cac/inc", "wlan/qcacld-3.0/os_if/qmi/inc", "wlan/qcacld-3.0/os_if/son/inc", "wlan/qcacld-3.0/os_if/sync/inc", "wlan/qcacld-3.0/os_if/sync/src", "wlan/qcacld-3.0/os_if/tdls/inc", "wlan/qcacld-3.0/os_if/twt/inc", "wlan/qcacld-3.0/uapi/linux", "wlan/platform/icnss2", "wlan/platform/cnss_utils", "wlan/platform/inc"],
-        copts = ["-include", "wlan/qcacld-3.0/configs/default_config.h", "-include", "wlan/qcacld-3.0/configs/config_to_feature.h", "-Wunused-but-set-parameter", "-include", "$(location :qcacld_grep_defines)", "-fstrict-flex-arrays=0", "-Wno-error=missing-prototypes", "-Wno-error=format"],
+        # -fstrict-flex-arrays=0 stays until the driver is audited: dot11f MeasurementReport[1] is indexed past [0].
+        copts = ["-include", "wlan/qcacld-3.0/configs/default_config.h", "-include", "wlan/qcacld-3.0/configs/config_to_feature.h", "-Wunused-but-set-parameter", "-include", "$(location :qcacld_grep_defines)", "-fstrict-flex-arrays=0"],
         deps = ["cnss_nl", "cnss_prealloc", "cnss_utils", "icnss2", "qcom_va_minidump"],
     )

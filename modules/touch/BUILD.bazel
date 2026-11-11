@@ -31,7 +31,7 @@ ddk_module(
         "eswin_eph861x.c", "eswin_eph861x_bootloader.c", "eswin_eph861x_comms.c", "eswin_eph861x_eswin.c",
         "eswin_eph861x_i2c.c", "eswin_eph861x_spi.c", "eswin_eph861x_tlv_command.c", "eswin_eph861x_tlv_report.c",
     ]],
-    copts = ["-DCONFIG_MSM_TOUCH", "-DCONFIG_TOUCHSCREEN_EPHTouch", "-DTOUCH_DLKM_ENABLE", "-fstrict-flex-arrays=0"],
+    copts = ["-DCONFIG_MSM_TOUCH", "-DCONFIG_TOUCHSCREEN_EPHTouch", "-DTOUCH_DLKM_ENABLE"],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [

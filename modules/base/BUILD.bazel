@@ -564,9 +564,6 @@ ddk_module(
         "drivers/clk/qcom",
         "include/dt-bindings/clock",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -585,9 +582,6 @@ ddk_module(
     includes = [
         "drivers/clk/qcom",
         "include/dt-bindings/clock",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -608,9 +602,6 @@ ddk_module(
         "drivers/clk/qcom",
         "include/dt-bindings/clock",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -629,9 +620,6 @@ ddk_module(
     includes = [
         "drivers/clk/qcom",
         "include/dt-bindings/clock",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -652,9 +640,6 @@ ddk_module(
         "drivers/clk/qcom",
         "include/dt-bindings/clock",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -672,9 +657,6 @@ ddk_module(
     includes = [
         "drivers/clk/qcom",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -691,9 +673,6 @@ ddk_module(
     ],
     includes = [
         "drivers/clk/qcom",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -730,9 +709,6 @@ ddk_module(
     includes = [
         "drivers/pinctrl/qcom",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -749,9 +725,6 @@ ddk_module(
     ],
     includes = [
         "drivers/pinctrl/qcom",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -849,9 +822,6 @@ ddk_module(
     includes = [
         "drivers/interconnect/qcom",
         "include/dt-bindings/interconnect",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -958,9 +928,6 @@ ddk_module(
     ],
     includes = [
         "drivers/regulator",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -1341,9 +1308,6 @@ ddk_module(
     includes = [
         "drivers/ufs/host",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -1367,9 +1331,6 @@ ddk_module(
     includes = [
         "drivers/ufs/host",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -1392,9 +1353,6 @@ ddk_module(
         "drivers/soc/qcom",
         "include/linux",
     ],
-    copts = [
-        "-fstrict-flex-arrays=0",
-    ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
     deps = [
@@ -1416,9 +1374,6 @@ ddk_module(
     includes = [
         "drivers/soc/qcom",
         "include/linux",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -1444,9 +1399,6 @@ ddk_module(
     includes = [
         "drivers/soc/qcom/tmecom",
         "include/linux",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
@@ -2143,9 +2095,6 @@ ddk_module(
     ],
     includes = [
         "drivers/soc/qcom",
-    ],
-    copts = [
-        "-fstrict-flex-arrays=0",
     ],
     config = ":config",
     kernel_build = "//devices/fairphone/fp6/kernel:fp6_aarch64",
