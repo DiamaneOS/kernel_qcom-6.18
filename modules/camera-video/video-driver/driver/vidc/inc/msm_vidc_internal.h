@@ -1052,7 +1052,7 @@ struct msm_vidc_stability {
 
 struct msm_vidc_sfr {
 	u32 buf_size;
-	u8 rg_data[1];
+	u8 rg_data[];
 };
 
 struct msm_vidc_ctrl_data {
