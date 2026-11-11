@@ -112,7 +112,7 @@ err:
 	return rc;
 }
 
-void cam_tfe_csid_component_unbind(struct device *dev,
+static void cam_tfe_csid_component_unbind(struct device *dev,
 	struct device *master_dev, void *data)
 {
 	struct cam_tfe_csid_hw         *csid_dev = NULL;

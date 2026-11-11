@@ -33,6 +33,7 @@
 #include "camera_main.h"
 #include "cam_common_util.h"
 #include "cam_context_utils.h"
+#include "cam_icp_subdev.h"
 
 
 #define CAM_ICP_IS_DEV_IDX_INVALID(dev_idx)                   \

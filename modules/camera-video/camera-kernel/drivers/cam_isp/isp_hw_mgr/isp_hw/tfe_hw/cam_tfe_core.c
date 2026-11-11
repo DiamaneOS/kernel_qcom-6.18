@@ -180,7 +180,7 @@ static int cam_tfe_get_evt_payload(struct cam_tfe_hw_core_info *core_info,
 	return 0;
 }
 
-int cam_tfe_put_evt_payload(void             *core_info,
+static int cam_tfe_put_evt_payload(void             *core_info,
 	struct cam_tfe_irq_evt_payload  **evt_payload)
 {
 	struct cam_tfe_hw_core_info        *tfe_core_info = core_info;
@@ -210,7 +210,7 @@ int cam_tfe_get_hw_caps(void *hw_priv, void *get_hw_cap_args,
 	return -EPERM;
 }
 
-void cam_tfe_get_timestamp(struct cam_isp_timestamp *time_stamp)
+static void cam_tfe_get_timestamp(struct cam_isp_timestamp *time_stamp)
 {
 	struct timespec64 ts;
 
@@ -2203,7 +2203,7 @@ static int cam_tfe_camif_irq_reg_dump(
 	return rc;
 }
 
-int cam_tfe_set_top_debug(struct cam_tfe_hw_core_info    *core_info,
+static int cam_tfe_set_top_debug(struct cam_tfe_hw_core_info    *core_info,
 	void *cmd_args, uint32_t arg_size)
 {
 	struct cam_tfe_top_priv              *top_priv;
@@ -2242,7 +2242,7 @@ static int cam_tfe_bus_get_path_port_map(void *top_hw_info,
 	return 0;
 }
 
-int cam_tfe_top_reserve(void *device_priv,
+static int cam_tfe_top_reserve(void *device_priv,
 	void *reserve_args, uint32_t arg_size)
 {
 	struct cam_tfe_top_priv                 *top_priv;
@@ -2377,7 +2377,7 @@ int cam_tfe_top_reserve(void *device_priv,
 	return rc;
 }
 
-int cam_tfe_top_release(void *device_priv,
+static int cam_tfe_top_release(void *device_priv,
 	void *release_args, uint32_t arg_size)
 {
 	struct cam_tfe_top_priv            *top_priv;
@@ -2625,7 +2625,7 @@ static int cam_tfe_ppp_resource_start(
 	return 0;
 }
 
-int cam_tfe_top_start(struct cam_tfe_hw_core_info *core_info,
+static int cam_tfe_top_start(struct cam_tfe_hw_core_info *core_info,
 	void *start_args, uint32_t arg_size)
 {
 	struct cam_tfe_top_priv                 *top_priv;
@@ -2741,7 +2741,7 @@ end:
 	return rc;
 }
 
-int cam_tfe_top_stop(struct cam_tfe_hw_core_info *core_info,
+static int cam_tfe_top_stop(struct cam_tfe_hw_core_info *core_info,
 	void *stop_args, uint32_t arg_size)
 {
 	struct cam_tfe_top_priv                 *top_priv;
@@ -2842,7 +2842,7 @@ int cam_tfe_top_stop(struct cam_tfe_hw_core_info *core_info,
 	return rc;
 }
 
-int cam_tfe_top_init(
+static int cam_tfe_top_init(
 	struct cam_hw_soc_info                 *soc_info,
 	struct cam_hw_intf                     *hw_intf,
 	void                                   *top_hw_info,
@@ -3001,7 +3001,7 @@ end:
 }
 
 
-int cam_tfe_top_deinit(struct cam_tfe_top_priv  *top_priv)
+static int cam_tfe_top_deinit(struct cam_tfe_top_priv  *top_priv)
 {
 	int i, rc = 0;
 

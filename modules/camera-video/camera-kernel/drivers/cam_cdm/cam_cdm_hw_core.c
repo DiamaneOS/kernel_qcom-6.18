@@ -219,7 +219,7 @@ static int cam_hw_cdm_pause_core(struct cam_hw_info *cdm_hw, bool pause)
 	return rc;
 }
 
-int cam_hw_cdm_enable_core_dbg(struct cam_hw_info *cdm_hw, uint32_t value)
+static int cam_hw_cdm_enable_core_dbg(struct cam_hw_info *cdm_hw, uint32_t value)
 {
 	int rc = 0;
 	struct cam_cdm *core = (struct cam_cdm *)cdm_hw->core_info;
@@ -234,7 +234,7 @@ int cam_hw_cdm_enable_core_dbg(struct cam_hw_info *cdm_hw, uint32_t value)
 	return rc;
 }
 
-int cam_hw_cdm_disable_core_dbg(struct cam_hw_info *cdm_hw)
+static int cam_hw_cdm_disable_core_dbg(struct cam_hw_info *cdm_hw)
 {
 	int rc = 0;
 	struct cam_cdm *cdm_core = (struct cam_cdm *)cdm_hw->core_info;
@@ -248,7 +248,7 @@ int cam_hw_cdm_disable_core_dbg(struct cam_hw_info *cdm_hw)
 	return rc;
 }
 
-void cam_hw_cdm_dump_scratch_registors(struct cam_hw_info *cdm_hw)
+static __maybe_unused void cam_hw_cdm_dump_scratch_registors(struct cam_hw_info *cdm_hw)
 {
 	uint32_t dump_reg = 0;
 	int i;
@@ -266,7 +266,7 @@ void cam_hw_cdm_dump_scratch_registors(struct cam_hw_info *cdm_hw)
 	}
 }
 
-int cam_hw_cdm_bl_fifo_pending_bl_rb_in_fifo(
+static int cam_hw_cdm_bl_fifo_pending_bl_rb_in_fifo(
 	struct cam_hw_info *cdm_hw,
 	uint32_t fifo_idx,
 	uint32_t *pending_bl_req)
@@ -603,7 +603,7 @@ void cam_hw_cdm_dump_core_debug_registers(struct cam_hw_info *cdm_hw,
 		cam_hw_cdm_pause_core(cdm_hw, false);
 }
 
-enum cam_cdm_arbitration cam_cdm_get_arbitration_type(
+static enum cam_cdm_arbitration cam_cdm_get_arbitration_type(
 		uint32_t cdm_version,
 		enum cam_cdm_id id)
 {
@@ -625,7 +625,7 @@ end:
 	return arbitration;
 }
 
-int cam_hw_cdm_set_cdm_blfifo_cfg(struct cam_hw_info *cdm_hw)
+static int cam_hw_cdm_set_cdm_blfifo_cfg(struct cam_hw_info *cdm_hw)
 {
 	int rc = 0, i;
 	struct cam_cdm *core = (struct cam_cdm *)cdm_hw->core_info;
@@ -666,7 +666,7 @@ end:
 	return rc;
 }
 
-int cam_hw_cdm_set_cdm_core_cfg(struct cam_hw_info *cdm_hw)
+static int cam_hw_cdm_set_cdm_core_cfg(struct cam_hw_info *cdm_hw)
 {
 	uint32_t cdm_version;
 	uint32_t cfg_mask = 0;
@@ -720,7 +720,7 @@ end:
 	return rc;
 }
 
-int cam_hw_cdm_wait_for_bl_fifo(
+static int cam_hw_cdm_wait_for_bl_fifo(
 		struct cam_hw_info *cdm_hw,
 		uint32_t            bl_count,
 		uint32_t            fifo_idx)
@@ -797,7 +797,7 @@ end:
 	return rc;
 }
 
-bool cam_hw_cdm_bl_write(
+static bool cam_hw_cdm_bl_write(
 		struct cam_hw_info *cdm_hw, uint32_t src,
 		uint32_t len, uint32_t tag, bool set_arb,
 		uint32_t fifo_idx)
@@ -825,7 +825,7 @@ bool cam_hw_cdm_bl_write(
 	return false;
 }
 
-bool cam_hw_cdm_commit_bl_write(struct cam_hw_info *cdm_hw, uint32_t fifo_idx)
+static bool cam_hw_cdm_commit_bl_write(struct cam_hw_info *cdm_hw, uint32_t fifo_idx)
 {
 	struct cam_cdm *cdm_core = (struct cam_cdm *)cdm_hw->core_info;
 
@@ -838,7 +838,7 @@ bool cam_hw_cdm_commit_bl_write(struct cam_hw_info *cdm_hw, uint32_t fifo_idx)
 	return false;
 }
 
-int cam_hw_cdm_submit_gen_irq(
+static int cam_hw_cdm_submit_gen_irq(
 	struct cam_hw_info *cdm_hw,
 	struct cam_cdm_hw_intf_cmd_submit_bl *req,
 	uint32_t fifo_idx)
@@ -941,7 +941,7 @@ int cam_hw_cdm_submit_gen_irq(
 	return rc;
 }
 
-int cam_hw_cdm_submit_debug_gen_irq(
+static int cam_hw_cdm_submit_debug_gen_irq(
 	struct cam_hw_info *cdm_hw,
 	struct cam_cdm_hw_intf_cmd_submit_bl *req,
 	uint32_t            fifo_idx)
@@ -1511,7 +1511,7 @@ handle_cdm_pf:
 	}
 }
 
-irqreturn_t cam_hw_cdm_irq(int irq_num, void *data)
+static irqreturn_t cam_hw_cdm_irq(int irq_num, void *data)
 {
 	struct cam_hw_info *cdm_hw = data;
 	struct cam_hw_soc_info *soc_info = &cdm_hw->soc_info;
@@ -1887,7 +1887,7 @@ int cam_hw_cdm_hang_detect(
 	return rc;
 }
 
-int cam_hw_cdm_get_cdm_config(struct cam_hw_info *cdm_hw)
+static int cam_hw_cdm_get_cdm_config(struct cam_hw_info *cdm_hw)
 {
 	struct cam_hw_soc_info *soc_info = NULL;
 	struct cam_cdm *core = NULL;
@@ -2582,7 +2582,7 @@ const static struct component_ops cam_hw_cdm_component_ops = {
 	.unbind = cam_hw_cdm_component_unbind,
 };
 
-int cam_hw_cdm_probe(struct platform_device *pdev)
+static int cam_hw_cdm_probe(struct platform_device *pdev)
 {
 	int rc = 0;
 
@@ -2594,7 +2594,7 @@ int cam_hw_cdm_probe(struct platform_device *pdev)
 	return rc;
 }
 
-void cam_hw_cdm_remove(struct platform_device *pdev)
+static void cam_hw_cdm_remove(struct platform_device *pdev)
 {
 	component_del(&pdev->dev, &cam_hw_cdm_component_ops);
 }

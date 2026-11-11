@@ -14,6 +14,7 @@
 #include "cam_tfe_csid665.h"
 #include "cam_tfe_csid_dev.h"
 #include "camera_main.h"
+#include "cam_tfe_csid.h"
 
 #define CAM_TFE_CSID_DRV_NAME                    "tfe_csid"
 

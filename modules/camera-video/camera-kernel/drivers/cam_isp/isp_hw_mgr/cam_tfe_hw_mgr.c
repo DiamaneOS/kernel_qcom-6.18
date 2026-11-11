@@ -1988,7 +1988,7 @@ err:
 	return rc;
 }
 
-void cam_tfe_cam_cdm_callback(uint32_t handle, void *userdata,
+static void cam_tfe_cam_cdm_callback(uint32_t handle, void *userdata,
 	enum cam_cdm_cb_status status, void *cookie)
 {
 	struct cam_isp_prepare_hw_update_data *hw_update_data = NULL;
@@ -2297,7 +2297,7 @@ static int cam_tfe_mgr_acquire_get_unified_structure(
 	return 0;
 }
 
-int cam_tfe_hw_mgr_csiphy_clk_sync(
+static int cam_tfe_hw_mgr_csiphy_clk_sync(
 	struct cam_tfe_hw_mgr_ctx *ctx, void *cmd_args)
 {
 	int                          rc = -EINVAL;
@@ -2610,7 +2610,7 @@ err:
 	return rc;
 }
 
-int cam_tfe_mgr_acquire_get_unified_dev_str(
+static int cam_tfe_mgr_acquire_get_unified_dev_str(
 	struct cam_isp_tfe_in_port_info   *in,
 	struct cam_isp_tfe_in_port_generic_info *in_port)
 {
@@ -5338,7 +5338,7 @@ end:
 	return rc;
 }
 
-int cam_tfe_add_command_buffers(
+static int cam_tfe_add_command_buffers(
 	struct cam_hw_prepare_update_args  *prepare,
 	struct cam_kmd_buf_info            *kmd_buf_info,
 	struct cam_isp_ctx_base_info       *base_info,

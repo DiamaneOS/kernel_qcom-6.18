@@ -381,7 +381,7 @@ static int cam_sensor_i2c_driver_probe(struct i2c_client *client)
 }
 
 #if KERNEL_VERSION(6, 1, 0) <= LINUX_VERSION_CODE
-void cam_sensor_i2c_driver_remove(struct i2c_client *client)
+static void cam_sensor_i2c_driver_remove(struct i2c_client *client)
 {
 	component_del(&client->dev, &cam_sensor_i2c_component_ops);
 }
@@ -687,7 +687,7 @@ static ssize_t CamOTPB_store(struct device *dev,struct  device_attribute *attr,c
         sprintf(CamOTPB,"%s","1");
     }else{
         printk("otp flag = 0\n");
-        sprintf(CamOTPB,"%s%","0");
+        sprintf(CamOTPB,"%s","0");
     }
 
     return count;
@@ -769,7 +769,7 @@ static void remove_deviceinfo_nodes(void)
     }
 }
 
-int deviceinfo_init(void)
+static int deviceinfo_init(void)
 {
     int ret = -1;
 
@@ -795,7 +795,7 @@ int deviceinfo_init(void)
     return ret;
 }
 
-void deviceinfo_exit(void)
+static void deviceinfo_exit(void)
 {
     remove_deviceinfo_nodes();
     device_destroy(deviceinfo_class, 0);

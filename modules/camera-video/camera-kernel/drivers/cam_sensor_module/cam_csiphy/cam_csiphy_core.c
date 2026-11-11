@@ -200,7 +200,7 @@ void cam_csiphy_update_auxiliary_mask(struct csiphy_device *csiphy_dev)
 		CAM_BOOL_TO_YESNO(csiphy_dev->aux_params.aux_mem_update_en));
 }
 
-int32_t cam_csiphy_get_instance_offset(struct csiphy_device *csiphy_dev, int32_t dev_handle)
+static int32_t cam_csiphy_get_instance_offset(struct csiphy_device *csiphy_dev, int32_t dev_handle)
 {
 	int32_t i = 0;
 
@@ -438,7 +438,7 @@ static int __csiphy_prgm_common_data(uint32_t phy_idx, struct csiphy_reg_t *csip
 	return 0;
 }
 
-void cam_csiphy_query_cap(struct csiphy_device *csiphy_dev,
+static void cam_csiphy_query_cap(struct csiphy_device *csiphy_dev,
 	struct cam_csiphy_query_cap *csiphy_cap)
 {
 	struct cam_hw_soc_info *soc_info = &csiphy_dev->soc_info;
@@ -1052,7 +1052,7 @@ static int32_t __cam_csiphy_generic_blob_handler(void *user_data,
 	return rc;
 }
 
-int32_t cam_cmd_buf_parser(struct csiphy_device *csiphy_dev,
+static int32_t cam_cmd_buf_parser(struct csiphy_device *csiphy_dev,
 	struct cam_config_dev_cmd *cfg_dev)
 {
 	int                      rc = 0, i;
@@ -1170,7 +1170,7 @@ void cam_csiphy_cphy_irq_config(struct csiphy_device *csiphy_dev)
 	}
 }
 
-void cam_csiphy_cphy_irq_disable(struct csiphy_device *csiphy_dev)
+static __maybe_unused void cam_csiphy_cphy_irq_disable(struct csiphy_device *csiphy_dev)
 {
 	int32_t i;
 	void __iomem *csiphybase =
@@ -1459,7 +1459,7 @@ static int cam_csiphy_program_secure_mode(struct csiphy_device *csiphy_dev,
 	return rc;
 }
 
-int32_t cam_csiphy_config_dev(struct csiphy_device *csiphy_dev,
+static int32_t cam_csiphy_config_dev(struct csiphy_device *csiphy_dev,
 	int32_t dev_handle, uint8_t datarate_variant_idx)
 {
 	int32_t      rc = 0;

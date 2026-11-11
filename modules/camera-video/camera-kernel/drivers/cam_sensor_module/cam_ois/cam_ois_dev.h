@@ -141,4 +141,6 @@ int cam_ois_driver_init(void);
  * @brief : API to remove OIS Hw from platform framework.
  */
 void cam_ois_driver_exit(void);
+
+int ois_creat_sysfs(struct cam_ois_ctrl_t *o_ctrl);
 #endif /*_CAM_OIS_DEV_H_ */

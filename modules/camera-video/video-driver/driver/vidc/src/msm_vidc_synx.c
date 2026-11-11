@@ -9,6 +9,7 @@
 #include "msm_vidc_internal.h"
 #include "msm_vidc_fence.h"
 #include "msm_vidc_debug.h"
+#include "msm_vidc_synx.h"
 #include <synx_api.h>
 
 #define MSM_VIDC_SYNX_FENCE_CLIENT_ID      SYNX_CLIENT_HW_FENCE_VID_CTX0
@@ -87,7 +88,7 @@ static struct msm_vidc_fence *msm_vidc_get_synx_fence_from_id(
 	}
 
 	if (!found) {
-		i_vpr_l(inst, "%s: no fence available for id: %u\n",
+		i_vpr_l(inst, "%s: no fence available for id: %llu\n",
 			__func__, fence_id);
 		return NULL;
 	}
@@ -258,7 +259,7 @@ destroy_dma_fence:
 	return NULL;
 }
 
-int msm_vidc_synx_fence_create_fd(struct msm_vidc_inst *inst,
+static int msm_vidc_synx_fence_create_fd(struct msm_vidc_inst *inst,
 	struct msm_vidc_fence *fence)
 {
 	int rc = 0;
@@ -299,7 +300,7 @@ static int msm_vidc_synx_fence_signal(struct msm_vidc_inst *inst, u64 fence_id)
 
 	fence = msm_vidc_get_synx_fence_from_id(inst, fence_id);
 	if (!fence) {
-		i_vpr_e(inst, "%s: no fence available to signal with id: %u\n",
+		i_vpr_e(inst, "%s: no fence available to signal with id: %llu\n",
 			__func__, fence_id);
 		rc = -EINVAL;
 		goto exit;

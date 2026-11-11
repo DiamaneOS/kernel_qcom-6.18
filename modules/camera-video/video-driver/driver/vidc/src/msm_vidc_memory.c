@@ -418,7 +418,7 @@ static int msm_vidc_memory_unmap_free(struct msm_vidc_core *core, struct msm_vid
 
 	d_vpr_h(
 		"%s: dmabuf %pK, size %d, kvaddr %pK, buffer_type %s, secure %d, region %d\n",
-		__func__, mem->device_addr, mem->size, mem->kvaddr,
+		__func__, (void *)(uintptr_t)mem->device_addr, mem->size, mem->kvaddr,
 		buf_name(mem->type), mem->secure, mem->region);
 
 	cb = msm_vidc_get_context_bank_for_region(core, mem->region);
@@ -513,8 +513,8 @@ static int msm_vidc_dma_unmap_page(struct msm_vidc_core *core,
 	}
 
 	d_vpr_l(
-		"%s: type %11s, device_addr %#x, refcount %d, region %d\n",
-		__func__, buf_name(mem->type), mem->device_addr,
+		"%s: type %11s, device_addr %pad, refcount %d, region %d\n",
+		__func__, buf_name(mem->type), &mem->device_addr,
 		mem->refcount, mem->region);
 
 	if (mem->refcount)
@@ -555,13 +555,13 @@ static int msm_vidc_iommu_map(struct msm_vidc_core *core, struct msm_vidc_mem *m
 	rc = iommu_map(cb->domain, mem->device_addr, mem->phys_addr,
 		mem->size, IOMMU_READ | IOMMU_WRITE | IOMMU_MMIO, GFP_KERNEL);
 	if (rc) {
-		d_vpr_e("iommu_map failed for device_addr 0x%x, size %d, rc:%d\n",
-			mem->device_addr, mem->size, rc);
+		d_vpr_e("iommu_map failed for device_addr %pad, size %d, rc:%d\n",
+			&mem->device_addr, mem->size, rc);
 		return rc;
 	}
 
-	d_vpr_h("%s: phys_addr %#x size %#x device_addr %#x, mem_region %d\n",
-		__func__, mem->phys_addr, mem->size, mem->device_addr, mem->region);
+	d_vpr_h("%s: phys_addr %pa size %#x device_addr %pad, mem_region %d\n",
+		__func__, &mem->phys_addr, mem->size, &mem->device_addr, mem->region);
 
 	return rc;
 }
@@ -583,8 +583,8 @@ static int msm_vidc_iommu_unmap(struct msm_vidc_core *core, struct msm_vidc_mem 
 		return -EIO;
 	}
 
-	d_vpr_h("%s: phys_addr %#x size %#x device_addr %#x, mem_region %d\n",
-		__func__, mem->phys_addr, mem->size, mem->device_addr, mem->region);
+	d_vpr_h("%s: phys_addr %pa size %#x device_addr %pad, mem_region %d\n",
+		__func__, &mem->phys_addr, mem->size, &mem->device_addr, mem->region);
 
 	iommu_unmap(cb->domain, mem->device_addr, mem->size);
 	mem->device_addr = 0x0;

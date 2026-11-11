@@ -402,7 +402,7 @@ enum msm_vidc_buffer_type v4l2_type_to_driver(u32 type, const char *func)
 	return buffer_type;
 }
 
-u32 v4l2_type_from_driver(enum msm_vidc_buffer_type buffer_type,
+static u32 v4l2_type_from_driver(enum msm_vidc_buffer_type buffer_type,
 	const char *func)
 {
 	u32 type = 0;
@@ -1390,7 +1390,7 @@ int msm_vidc_state_change_psc_last_flag(struct msm_vidc_inst *inst)
 	return rc;
 }
 
-int msm_vidc_get_fence_fd(struct msm_vidc_inst *inst, int *fence_fd)
+static int msm_vidc_get_fence_fd(struct msm_vidc_inst *inst, int *fence_fd)
 {
 	int rc = 0;
 	struct msm_vidc_fence *fence, *dummy_fence;
@@ -1563,7 +1563,7 @@ int vb2_buffer_to_driver(struct vb2_buffer *vb2,
 	return rc;
 }
 
-int msm_vidc_process_readonly_buffers(struct msm_vidc_inst *inst,
+static int msm_vidc_process_readonly_buffers(struct msm_vidc_inst *inst,
 	struct msm_vidc_buffer *buf)
 {
 	int rc = 0;
@@ -1728,7 +1728,7 @@ int msm_vidc_update_input_rate(struct msm_vidc_inst *inst, u64 time_us)
 	return 0;
 }
 
-int msm_vidc_flush_input_timer(struct msm_vidc_inst *inst)
+static int msm_vidc_flush_input_timer(struct msm_vidc_inst *inst)
 {
 	struct msm_vidc_input_timer *input_timer, *dummy_timer;
 	struct msm_vidc_core *core;
@@ -4182,7 +4182,7 @@ int msm_vidc_trigger_ssr(struct msm_vidc_core *core,
 			(unsigned long)SSR_TYPE) >> SSR_TYPE_SHIFT;
 
 	if (!is_ssr_type_allowed(core, ssr->ssr_type)) {
-		d_vpr_h("SSR Type %#llx is not allowed\n", ssr->ssr_type);
+		d_vpr_h("SSR Type %#x is not allowed\n", ssr->ssr_type);
 		return 0;
 	}
 
@@ -5004,7 +5004,7 @@ int msm_vidc_check_core_mbps(struct msm_vidc_inst *inst)
 	core_unlock(core, __func__);
 
 	if (critical_mbps > core->capabilities[MAX_MBPS].value) {
-		i_vpr_e(inst, "%s: Hardware overloaded with critical sessions. needed %u, max %u",
+		i_vpr_e(inst, "%s: Hardware overloaded with critical sessions. needed %llu, max %u",
 			__func__, critical_mbps, core->capabilities[MAX_MBPS].value);
 		return -ENOMEM;
 	}
@@ -5026,7 +5026,7 @@ int msm_vidc_check_core_mbps(struct msm_vidc_inst *inst)
 	if (is_encode_session(inst)) {
 		/* reject encoder if all encoders mbps is greater than MAX_MBPS */
 		if (enc_mbps > core->capabilities[MAX_MBPS].value) {
-			i_vpr_e(inst, "%s: Hardware overloaded. needed %u, max %u", __func__,
+			i_vpr_e(inst, "%s: Hardware overloaded. needed %llu, max %u", __func__,
 				mbps, core->capabilities[MAX_MBPS].value);
 			return -ENOMEM;
 		}
@@ -5058,7 +5058,7 @@ int msm_vidc_check_core_mbps(struct msm_vidc_inst *inst)
 		}
 	}
 
-	i_vpr_h(inst, "%s: HW load needed %u is within max %u", __func__,
+	i_vpr_h(inst, "%s: HW load needed %llu is within max %u", __func__,
 			total_mbps, core->capabilities[MAX_MBPS].value);
 
 	return 0;

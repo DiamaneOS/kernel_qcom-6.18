@@ -8058,7 +8058,7 @@ cmd_work_failed:
 	return rc;
 }
 
-void cam_icp_mgr_destroy_wq(struct cam_icp_hw_mgr *hw_mgr)
+static void cam_icp_mgr_destroy_wq(struct cam_icp_hw_mgr *hw_mgr)
 {
 	cam_req_mgr_workq_destroy(&hw_mgr->timer_work);
 	cam_req_mgr_workq_destroy(&hw_mgr->msg_work);

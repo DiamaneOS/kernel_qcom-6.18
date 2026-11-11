@@ -218,7 +218,7 @@ void cam_sfe_get_num_hws(uint32_t *sfe_num)
 		CAM_ERR(CAM_SFE, "Invalid argument, g_num_sfe_hws: %u", g_num_sfe_hws);
 }
 
-int cam_sfe_probe(struct platform_device *pdev)
+static int cam_sfe_probe(struct platform_device *pdev)
 {
 	int rc = 0;
 
@@ -232,7 +232,7 @@ int cam_sfe_probe(struct platform_device *pdev)
 	return rc;
 }
 
-void cam_sfe_remove(struct platform_device *pdev)
+static void cam_sfe_remove(struct platform_device *pdev)
 {
 	component_del(&pdev->dev, &cam_sfe_component_ops);
 }

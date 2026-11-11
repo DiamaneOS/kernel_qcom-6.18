@@ -49,7 +49,7 @@ static const struct dma_fence_ops msm_vidc_dma_fence_ops = {
 	.release = msm_vidc_dma_fence_release,
 };
 
-struct msm_vidc_fence *msm_vidc_fence_create(struct msm_vidc_inst *inst)
+static struct msm_vidc_fence *msm_vidc_fence_create(struct msm_vidc_inst *inst)
 {
 	struct msm_vidc_fence *fence = NULL;
 
@@ -80,7 +80,7 @@ struct msm_vidc_fence *msm_vidc_fence_create(struct msm_vidc_inst *inst)
 	return fence;
 }
 
-int msm_vidc_dma_fence_create_fd(struct msm_vidc_inst *inst,
+static int msm_vidc_dma_fence_create_fd(struct msm_vidc_inst *inst,
 	struct msm_vidc_fence *fence)
 {
 	int rc = 0;
@@ -125,7 +125,7 @@ static struct msm_vidc_fence *msm_vidc_get_dma_fence_from_id(
 	}
 
 	if (!found) {
-		i_vpr_l(inst, "%s: no fence available for id: %u\n",
+		i_vpr_l(inst, "%s: no fence available for id: %llu\n",
 			__func__, fence_id);
 		return NULL;
 	}
@@ -140,7 +140,7 @@ static int msm_vidc_fence_signal(struct msm_vidc_inst *inst, u64 fence_id)
 
 	fence = msm_vidc_get_dma_fence_from_id(inst, fence_id);
 	if (!fence) {
-		i_vpr_e(inst, "%s: no fence available to signal with id: %u\n",
+		i_vpr_e(inst, "%s: no fence available to signal with id: %llu\n",
 			__func__, fence_id);
 		rc = -EINVAL;
 		goto exit;

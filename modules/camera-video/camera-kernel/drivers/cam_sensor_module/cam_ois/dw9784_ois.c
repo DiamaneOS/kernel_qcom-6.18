@@ -483,13 +483,13 @@ int dw9784_download_fw(struct cam_ois_ctrl_t *o_ctrl,int module_state)
 /*****************************************************************
 jinghuang  fw dump
 ******************************************************************/
-int dw9784_fw_force_enable(struct cam_ois_ctrl_t *o_ctrl)
+static int dw9784_fw_force_enable(struct cam_ois_ctrl_t *o_ctrl)
 {
     froce_enable=1;
 
     return FUNC_PASS;
 }
-int dw9784_fw_dump(struct cam_ois_ctrl_t *o_ctrl)
+static int dw9784_fw_dump(struct cam_ois_ctrl_t *o_ctrl)
 {
     int i =0;
     unsigned int addr;
@@ -867,7 +867,7 @@ int dw9784_ois_on(struct cam_ois_ctrl_t *o_ctrl)
 
 	return FUNC_FAIL;
 }
-int dw9784_ois_off(struct cam_ois_ctrl_t *o_ctrl)
+static int dw9784_ois_off(struct cam_ois_ctrl_t *o_ctrl)
 {
     printk("[dw9784_ois_off] servo on mode change");
     write_reg_16bit_value_16bit(o_ctrl,0x7012, 0x0001); /* set control mode */
@@ -1458,7 +1458,7 @@ static ssize_t accgain_store(const struct class *class, const struct class_attri
 }
 
 
-void dw9784_ois_initial_setting(struct cam_ois_ctrl_t *o_ctrl)
+static __maybe_unused void dw9784_ois_initial_setting(struct cam_ois_ctrl_t *o_ctrl)
 {
 	write_reg_16bit_value_16bit(o_ctrl,0x7019, 0x8000); /* enable tripod mode */
 	write_reg_16bit_value_16bit(o_ctrl,0x701A, 0x8000); /* enable dd func. */

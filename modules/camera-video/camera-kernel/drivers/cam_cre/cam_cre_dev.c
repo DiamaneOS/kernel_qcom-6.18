@@ -18,6 +18,7 @@
 #include "cam_smmu_api.h"
 #include "camera_main.h"
 #include "cam_context_utils.h"
+#include "cre_dev_intf.h"
 
 #define CAM_CRE_DEV_NAME "cam-cre"
 

@@ -334,7 +334,7 @@ static int32_t cam_actuator_driver_i2c_probe(struct i2c_client *client)
 }
 
 #if KERNEL_VERSION(6, 1, 0) <= LINUX_VERSION_CODE
-void cam_actuator_driver_i2c_remove(
+static void cam_actuator_driver_i2c_remove(
 	struct i2c_client *client)
 {
 	component_del(&client->dev, &cam_actuator_i2c_component_ops);

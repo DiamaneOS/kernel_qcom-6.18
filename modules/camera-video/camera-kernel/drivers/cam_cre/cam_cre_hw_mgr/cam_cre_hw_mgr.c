@@ -1322,7 +1322,7 @@ static int cam_cre_mgr_cre_clk_update(struct cam_cre_hw_mgr *hw_mgr,
 	return rc;
 }
 
-int32_t cam_cre_hw_mgr_cb(void *irq_data, int32_t result_size, void *data)
+static int32_t cam_cre_hw_mgr_cb(void *irq_data, int32_t result_size, void *data)
 {
 	int32_t rc = 0;
 	unsigned long flags;

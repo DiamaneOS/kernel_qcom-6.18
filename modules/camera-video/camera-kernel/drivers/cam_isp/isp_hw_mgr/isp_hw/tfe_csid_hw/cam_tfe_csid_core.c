@@ -24,6 +24,7 @@
 #include "cam_tfe_csid_hw_intf.h"
 #include <dt-bindings/msm-camera.h>
 #include "cam_cpas_hw_intf.h"
+#include "cam_tfe_csid_dev.h"
 
 /* Timeout value in msec */
 #define TFE_CSID_TIMEOUT                               1000
@@ -3014,7 +3015,7 @@ end:
 	return rc;
 }
 
-int cam_tfe_csid_halt(struct cam_tfe_csid_hw *csid_hw,
+static int cam_tfe_csid_halt(struct cam_tfe_csid_hw *csid_hw,
 	void *halt_args)
 {
 	struct cam_isp_resource_node         *res;

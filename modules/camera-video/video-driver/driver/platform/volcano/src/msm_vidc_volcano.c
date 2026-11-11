@@ -6343,7 +6343,7 @@ static const struct msm_vidc_platform_data volcano_data_v2 = {
 	.sku_version = SKU_VERSION_2,
 };
 
-int msm_vidc_volcano_check_ddr_type(struct msm_vidc_platform_data *platform_data,
+static int msm_vidc_volcano_check_ddr_type(struct msm_vidc_platform_data *platform_data,
 				    u32 hbb_override_val)
 {
 	u32 ddr_type = DDR_TYPE_LPDDR5;

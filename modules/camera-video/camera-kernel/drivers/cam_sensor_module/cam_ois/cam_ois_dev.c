@@ -11,9 +11,6 @@
 #include "cam_debug_util.h"
 #include "camera_main.h"
 #include "cam_compat.h"
-#ifdef CONFIG_OIS_DW9784
-extern int ois_creat_sysfs(struct cam_ois_ctrl_t *o_ctrl);
-#endif 
 static struct cam_i3c_ois_data {
 	struct cam_ois_ctrl_t                       *o_ctrl;
 	struct completion                            probe_complete;
@@ -326,7 +323,7 @@ static int cam_ois_i2c_driver_probe(struct i2c_client *client)
 }
 
 #if KERNEL_VERSION(6, 1, 0) <= LINUX_VERSION_CODE
-void cam_ois_i2c_driver_remove(struct i2c_client *client)
+static void cam_ois_i2c_driver_remove(struct i2c_client *client)
 {
 	component_del(&client->dev, &cam_ois_i2c_component_ops);
 }
