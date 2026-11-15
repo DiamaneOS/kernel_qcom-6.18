@@ -57,6 +57,12 @@ CONFIG_INTERCONNECT=y
 # CONFIG_KGDB is not set
 # CONFIG_KEXEC is not set
 # CONFIG_KEXEC_FILE is not set
+# Android virtual machines are off on the FP6. The hypervisor refuses ordinary VMs and the
+# OS does not switch on protected ones. No module or vendor driver uses these VM functions
+# or Qualcomm's trusted VM support (QTVM_WITH_AVF is not set).
+# CONFIG_GUNYAH_IRQFD is not set
+# CONFIG_GUNYAH_IOEVENTFD is not set
+# CONFIG_GUNYAH_QCOM_TRUSTED_VM is not set
 CONFIG_SECURITY_SELINUX=y
 CONFIG_SECURITY_SELINUX_DEVELOP=y
 CONFIG_SECURITY_LOCKDOWN_LSM=y
