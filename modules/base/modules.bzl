@@ -1794,6 +1794,17 @@ def register_modules(registry):
         ],
     )
     registry.register(
+        name = "drivers/virt/gunyah/gunyah_qcom",
+        out = "gunyah_qcom.ko",
+        config = "CONFIG_GH_QCOM_PLATFORM_HOOKS",
+        srcs = [
+            "drivers/virt/gunyah/gunyah_qcom.c",
+        ],
+        deps = [
+            "drivers/firmware/qcom/qcom-scm",
+        ],
+    )
+    registry.register(
         name = "drivers/virt/gunyah/gh_virt_wdt",
         out = "gh_virt_wdt.ko",
         config = "CONFIG_GH_VIRT_WATCHDOG",

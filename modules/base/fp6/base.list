@@ -16,6 +16,7 @@ drivers/soc/qcom/debug_symbol
 drivers/soc/qcom/minidump
 drivers/soc/qcom/qcom_sdei
 drivers/soc/qcom/qcom_wdt_core
+drivers/virt/gunyah/gunyah_qcom
 drivers/virt/gunyah/gh_virt_wdt
 drivers/soc/qcom/llcc-qcom
 drivers/soc/qcom/qcom_va_minidump

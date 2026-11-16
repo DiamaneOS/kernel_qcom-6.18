@@ -310,6 +310,7 @@ drivers/virt/gunyah/gh_rm_core.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/
 drivers/virt/gunyah/gh_rm_drv_private.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/virt/gunyah/gh_rm_core.c
 drivers/virt/gunyah/gh_rm_iface.c	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/virt/gunyah/gh_rm_iface.c
 drivers/virt/gunyah/gh_virt_wdt.c	kernel_qcom-6.1 51b4986 kernel_platform/msm-kernel/drivers/virt/gunyah/gh_virt_wdt.c (ported to the 5.0 watchdog core)
+drivers/virt/gunyah/gunyah_qcom.c	kernel_common-6.18 cd7bef4 drivers/virt/gunyah/gunyah_qcom.c (unchanged)
 drivers/virt/gunyah/hcall_dbl.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/virt/gunyah/gh_dbl.c
 drivers/virt/gunyah/hcall_msgq.h	KERNEL.PLATFORM.5.0.r48-00400-kernel.0 drivers/virt/gunyah/gh_msgq.c
 drivers/virt/gunyah/rsc_mgr.h	kernel_common-6.18 1533d5d18d15 (GrapheneOS 17) drivers/virt/gunyah/rsc_mgr.h, kept identical (core-headers.json)

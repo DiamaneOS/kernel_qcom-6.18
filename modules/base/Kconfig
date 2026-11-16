@@ -37,6 +37,9 @@ config GH_MEM_NOTIFIER
 config GH_MSGQ
 	tristate "GH_MSGQ"
 
+config GH_QCOM_PLATFORM_HOOKS
+	tristate "GH_QCOM_PLATFORM_HOOKS"
+
 config GH_RM_DRV
 	tristate "GH_RM_DRV"
 
