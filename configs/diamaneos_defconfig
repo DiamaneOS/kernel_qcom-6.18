@@ -57,11 +57,11 @@ CONFIG_INTERCONNECT=y
 # CONFIG_KGDB is not set
 # CONFIG_KEXEC is not set
 # CONFIG_KEXEC_FILE is not set
-# Android virtual machines are off on the FP6. The hypervisor refuses ordinary VMs and the
-# OS does not switch on protected ones. No module or vendor driver uses these VM functions
-# or Qualcomm's trusted VM support (QTVM_WITH_AVF is not set).
-# CONFIG_GUNYAH_IRQFD is not set
-# CONFIG_GUNYAH_IOEVENTFD is not set
+# Android's protected VMs run on Gunyah (the hypervisor refuses ordinary ones). crosvm uses the
+# irqfd and ioeventfd VM functions, which gki_defconfig builds in. The FP6 resource manager has
+# no demand paging, so VM memory is lent before the VM starts. Qualcomm's trusted VM support
+# stays off (QTVM_WITH_AVF is not set).
+CONFIG_GUNYAH_LEND_UPFRONT=y
 # CONFIG_GUNYAH_QCOM_TRUSTED_VM is not set
 CONFIG_SECURITY_SELINUX=y
 CONFIG_SECURITY_SELINUX_DEVELOP=y
