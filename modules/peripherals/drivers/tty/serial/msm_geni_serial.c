@@ -62,7 +62,10 @@ static bool con_enabled = IS_ENABLED(CONFIG_SERIAL_MSM_GENI_CONSOLE_DEFAULT_ENAB
 #define M_FW_ERR_STATUS			(0x628)
 #define M_GP_LENGTH			(0x910)
 #define S_GP_LENGTH			(0x914)
+/* DiamaneOS: the common kernel defines it too (geni-se.h, same value) */
+#ifndef SE_HW_PARAM_2
 #define SE_HW_PARAM_2			(0xE2C)
+#endif
 #define SE_DMA_DEBUG_REG0		(0xE40)
 #define SE_DMA_IF_EN			(0x004)
 #define SE_GENI_GENERAL_CFG		(0x10)
