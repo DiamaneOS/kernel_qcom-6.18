@@ -16,6 +16,7 @@
 #include <linux/err.h>
 #include <linux/export.h>
 #include <linux/firmware/qcom/qcom_scm.h>
+#include <linux/firmware/qcom/diamaneos_scm_mem.h> /* DiamaneOS: assignment outcomes */
 #include <linux/firmware/qcom/qcom_tzmem.h>
 #include <linux/init.h>
 #include <linux/interconnect.h>
@@ -1233,7 +1234,7 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
 	ret = qcom_scm_assign_mem_notify(mem_addr, mem_sz, srcvm, newvm, dest_cnt);
 	/* If notifier handled it (NOTIFY_STOP) or returned an error, return early */
 	if (ret & NOTIFY_STOP_MASK)
-		return notifier_to_errno(ret);
+		return notifier_to_errno(ret) ? QCOM_SCM_ASSIGN_UNKNOWN : 0;
 
 	src_sz = hweight64(srcvm_bits) * sizeof(*src);
 	mem_to_map_sz = sizeof(*mem_to_map);
@@ -1244,7 +1245,7 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
 	void *ptr __free(qcom_tzmem) = qcom_tzmem_alloc(__scm->mempool,
 							ptr_sz, GFP_KERNEL);
 	if (!ptr)
-		return -ENOMEM;
+		return QCOM_SCM_ASSIGN_NOT_ISSUED;
 
 	ptr_phys = qcom_tzmem_to_phys(ptr);
 
@@ -1279,7 +1280,7 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
 	if (ret) {
 		dev_err(__scm->dev,
 			"Assign memory protection call failed %d\n", ret);
-		return -EINVAL;
+		return QCOM_SCM_ASSIGN_UNKNOWN;
 	}
 
 	*srcvm = next_vm;
