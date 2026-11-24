@@ -6,9 +6,6 @@
 #   CONFIG_CRYPTO_SHA1_ARM64_CE is gone: SHA-1 is part of the crypto library.
 #   CONFIG_DEBUG_CREDENTIALS is gone since 6.7.
 #   Lockdown confidentiality: 6.18 uses integrity (production) or none (bring-up).
-#   CONFIG_RANDSTRUCT_FULL: 6.18 builds Rust only without RANDSTRUCT, and it uses Rust
-#   and the Rust binder as GrapheneOS 17 does (decided 2026-10-29), built in with no C binder
-#   as GrapheneOS 17 builds it since def292d9e.
 # CONFIG_POSIX_MQUEUE is not set
 # CONFIG_ARCH_TEGRA is not set
 CONFIG_ARM64_VA_BITS_48=y
@@ -30,7 +27,6 @@ CONFIG_INIT_STACK_ALL_ZERO=y
 CONFIG_INIT_ON_ALLOC_DEFAULT_ON=y
 CONFIG_INIT_ON_FREE_DEFAULT_ON=y
 CONFIG_ZERO_CALL_USED_REGS=y
-CONFIG_RANDSTRUCT_NONE=y
 CONFIG_RUST=y
 # CONFIG_ANDROID_BINDER_IPC is not set
 CONFIG_ANDROID_BINDER_IPC_RUST=y
