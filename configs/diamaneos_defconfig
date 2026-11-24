@@ -59,6 +59,11 @@ CONFIG_INTERCONNECT=y
 # stays off (QTVM_WITH_AVF is not set).
 CONFIG_GUNYAH_LEND_UPFRONT=y
 # CONFIG_GUNYAH_QCOM_TRUSTED_VM is not set
+# SD cards and USB disks: the filesystem VM reads their partition tables, never this kernel.
+# vold adds partitions itself (adoptable storage, and a mixed card's public partition), from
+# ranges the VM read and checked. Needs CONFIG_BLK_DEV_SD and CONFIG_MMC_BLOCK built in, which
+# the tools' kernel policies check in the final configuration.
+CONFIG_BLK_NO_EXTERNAL_PART_SCAN=y
 CONFIG_SECURITY_SELINUX=y
 CONFIG_SECURITY_SELINUX_DEVELOP=y
 CONFIG_SECURITY_LOCKDOWN_LSM=y
