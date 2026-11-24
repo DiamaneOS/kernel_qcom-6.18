@@ -64,6 +64,10 @@ CONFIG_GUNYAH_LEND_UPFRONT=y
 # ranges the VM read and checked. Needs CONFIG_BLK_DEV_SD and CONFIG_MMC_BLOCK built in, which
 # the tools' kernel policies check in the final configuration.
 CONFIG_BLK_NO_EXTERNAL_PART_SCAN=y
+# A new SD card waits unpowered while the phone is locked, until the next unlock: the MMC core
+# parses a card's registers in this kernel, and the card slot's controller cannot go to a VM.
+# The system server sets kernel.hold_new_sd from the lock screen (vendor_diamaneos sd_hold).
+CONFIG_MMC_HOLD_NEW_CARDS=y
 CONFIG_SECURITY_SELINUX=y
 CONFIG_SECURITY_SELINUX_DEVELOP=y
 CONFIG_SECURITY_LOCKDOWN_LSM=y
